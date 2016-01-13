@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import wx
-from WxMOO.Window.Main import Main
+from wxpymoo.window.main import Main
 
 def run():
     app = wx.App(False)
