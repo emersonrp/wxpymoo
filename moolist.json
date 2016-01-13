@@ -1,0 +1,1910 @@
+[
+{
+    "host:port" : "moo.afterdark.co.il:2020",
+    "name" : "AfterDark",
+    "url" : [
+        "http://moo.afterdark.co.il/",
+    "http://moo.afterdark.co.il/afterdark/",
+    "http://moo.afterdark.co.il/irc"
+        ],
+    "theme" : "social",
+    "note" : "The first Israeli MOO around.  Very new and looking for coders."
+},
+{
+    "name" : "AICore MOO",
+    "host:port" : "aicore.moo.mud.org:2357",
+    "url" : "http://aicore.moo.mud.org:2357/",
+    "theme" : "educational",
+    "note" : "Discussion of AI (Artificial Intelligence) and related issues.  Offers joint programming ventures on and off the MOO.  You can request BotMaker porting of MOO AI information.  Run by the Franklin College of Arts and Sciences of <a href=\"http://www.uga.edu/\">The University of Georgia</a>.  Strengths include logic programming, expert systems, neural nets, genetic algorithms, and natural language processing."
+},
+{
+    "name" : "AlienMOO",
+    "host:port" : "moo.upm.edu.ph:7777",
+    "theme" : "social",
+    "note" : "It says it is probably only system of its kind in the Philippines.  It is run by the <a href=\"http://moo.upm.edu.ph/\">UP Manila Intranet</a>.  It appears to only have one room."
+},
+{
+    "name" : "AllianceMOO",
+    "host:port" : "alliance.fdf.net:8888",
+    "url" : [
+        "http://www.webring.org/cgi-bin/webring?home&ring=moo",
+    "http://alliance.fdf.net/~alliance",
+    "http://alliance.fdf.net:7755"
+        ],
+    "theme" : "RPG",
+    "note" : "Based on <B>StarWars</B>. You get a FREE personal web page. It is undergoing some major important changes right now: the guild system and space system are being completely redone."
+},
+{
+    "name" : "A Midsummer Night's Dream",
+    "url" : [
+        "http://cmc.uib.no/dream/",
+    "http://cmc.uib.no:8000/"
+        ],
+    "theme" : "educational",
+    "note" : "It is run by the <a href=\"http://cmc.uib.no/\">cyber/media/culture (cmc) project</a> at the <a href=\"http://www.uib.no\">University of Bergen</a>.  It is all about Shakespeare's play <B>A Midsummer Night's Dream</B>.  The goal is to develop and experiment with new methods of teaching university level English literature on the Internet."
+},
+{
+    "name" : "AnonyMOO",
+    "host:port" : [
+        "moo.stac.org:8888",
+    "198.214.138.34:8888"
+        ],
+    "url" : "http://moo.stac.org:8888/",
+    "theme" : "educational",
+    "note" : "A high school project Sponsored By <a href=\"http://www.lbjhs.net/\">LBJ High School</a> in Austin, Texas that started 31 December 1995.  Run mostly by students, they give out quota on a daily basis and have helpful Wizards.  It is set in a modern US City."
+},
+{
+    "name" : "AnonyMOOs",
+    "host:port" : "curtain.dyndns.com:1998",
+    "url" : [
+        "http://curtain.dyndns.com:1999/",
+    "http://curtain.dyndns.com:1999/62"
+        ],
+    "theme" : "social",
+    "note" : "The theme is continally evolving, but focuses on the out doors.  The center point is a bridge under which one first connects."
+},
+{
+    "name" : "AnsibleMOO",
+    "host:port" : "moo.ansible.org:6000",
+    "url" : [
+        "http://www.ansible.org/",
+    "http://www.ansible.org:7000"
+        ],
+    "theme" : "RPG sci-fi",
+    "note" : "Set in the Battle School of the book <B>Ender's Game</B> by Orson Scott Card."
+},
+{
+    "name" : "Anti MOO",
+    "host:port" : "anti.woo.net:8888",
+    "url" : "http://www.woo.net/",
+    "theme" : "social",
+    "note" : "They claim to be a &quot;very reliable moo, and smoking fast.&quot; The theme is &quot;Theme? Give the people what they want!&quot;"
+},
+{
+    "name" : "ApocaMOOalypse",
+    "host:port" : [
+        "moo.eyetraxx.net:8888",
+    "europa.rad.unc.edu:8888",
+    "bugs.mics.net:8888"
+        ],
+    "theme" : "social",
+    "note" : "The theme changes because players are allowed to create and implement themes without restriction, so don't be surprised if the name on the screen is different.  Their philosophy is: \"Do what you want, and don't annoy the other animals unless it is funny.\"  They have MOObucks, awards given for good ideas, good building, and high scores in the games.  You can redeem your bucks in the Magic Prize Well, off the Arcade."
+},
+{
+    "name" : "AppalachiaMOO",
+    "host:port" : "ariel.clc.wvu.edu:7777",
+    "url" : "http://ariel.clc.wvu.edu:7000/",
+    "theme" : "educational",
+    "note" : "Hosted by the <a href=\"http://ariel.clc.wvu.edu/\">Center for Literary Computing</a> in the Department of English and <a href=\"http://www.as.wvu.edu/\">Eberly College of Arts and Sciences</A> at <a href=\"http://www.wvu.edu/\">West Virginia University</A>.\"  It is designed in part to represent the campus and surroundings of the university.  It \"also has imaginary areas stretching into other historical periods, worlds, and places on Planet Earth.\""
+},
+{
+    "name" : "AquaMOO",
+    "host:port" : "techno.king.net:2345",
+    "theme" : "social",
+    "note" : "Tropic island and underwater realm theme.  You can have a different form for land and water; explore the possibilities of morphing.  Players are encouraged to limit their building to ocean or near ocean areas."
+},
+{
+    "name" : "Arcana",
+    "host:port" : [
+        "arcana.o-r-g.org:7777",
+    "192.189.3.126:7777"
+        ],
+    "url" : "http://arcana.o-r-g.org/",
+    "theme" : "RPG",
+    "note" : "Opened in November 2000, it is based on the Ghostwheel core.  The theme is a Tolkein-style medieval fantasy with a lot of C.S. Lewis, Marian Zimmer Bradley, and other fantasy influences."
+},
+{
+    "name" : "Arkay MOO",
+    "host:port" : "moo.arkay.net:7777",
+    "theme" : "social",
+    "note" : "The hustle and bustle of a thriving town coaxes you to enter into the happy festivities.  The town square is the main center of prosperity, and it goes without saying that people of all persuasions work and play together rather peacefully in this welcoming place. Rumor has it that years and years ago, magical stones played an important part in the building of the town.. a kind of 'mystical' and 'magical' beginning. Some areas are reminders of these times, and some are reminders of hippie happiness.  You can almost hear whispers on the wind saying... 'Peace and happiness!' and... 'Let's be happy!' Beautiful beaches line the eastern edge, with clear, cool water that sparkles like tiny stars in the sunlight. This is a place of diversity, with the common thread of friendship binding it all together."
+},
+{
+    "name" : "ATHEMOO",
+    "host:port" : "uhunix2.its.Hawaii.Edu:9999",
+    "theme" : "research",
+    "note" : "A professional community where people interested in theatre come to exchange information, have meetings and learn about MOO technology and its uses for classroom and other projects.  It was developed under the auspices of the Association for Theatre in Higher Education (ATHE) and with the support of the <a href=\"http://www.hawaii.edu/welcome/manoa.html\">University of Hawai'i at Manoa</a>."
+},
+{
+    "name" : "Atlantis MOO",
+    "host:port" : "atlantis.fe.up.pt:7777",
+    "url" : [
+        "http://atlantis.fe.up.pt/",
+    "http://atlantis.fe.up.pt/client/",
+    "http://atlantis.fe.up.pt:8000/"
+        ],
+    "theme" : "ESL educational",
+    "note" : "It is a <B>portug&ecirc;s / Portuguese</B> educational MOO located at <a href=\"http://www.fe.up.pt/feupwww/english/\">the College of Engineering of the University of Porto</a> in Portugal.  \"O AtlantisMOO &eacute; um MOO baseado na antiga civiliza&ccedil;&atilde;o Atlantis.  Foi criado por um pequeno grupo de estudantes na <a href=\"http://www.fe.up.pt/\">FEUP</A>, com a colabora&ccedil;&atilde;o do <a href=\"http://www.fe.up.pt/cica3w/\">CICA</a> nomeadamente na disponibiliza&ccedil;&atilde;o da máquina onde se encontra alojado.  O intuito inicial na cria&ccedil;&atilde;o deste projecto, e que ainda hoje se mant&eacute;m foi criar um MOO educativo onde as pessoas pudessem aprender, trocar e discutir os mais variados assuntos e ao mesmo tempo   promover a troca de culturas, uma vez que este tipo de ambientes permite que v&aacute;rias pessoas situadas fisicamente em locais diferentes do globo, se 'juntem' num mesmo local virtual e a&iacute; possam conversar, quer para aprender quer para se divertirem.\""
+},
+{
+    "name" : "AussieMOO",
+    "host:port" : "farrer.riv.csu.edu.au:7777",
+    "url" : "http://farrer.riv.csu.edu.au/aussiemoo.html",
+    "theme" : "social educational",
+    "note" : "An on-line environment designed to facilitate educational needs. It is also used for social interaction. They cater for classes and conferences, as well as a multi-themed public area. They have a very friendly wizardly and administration staff and an excellent interactive tutorial. AussieMOO began on 21 September 1994 as an open-styled, experimental and research MOO for social interaction, conferencing, computer-supported cooperative work (CSCW), lifelong education (beyond just K-Ph.D), object-oriented programming, experimental psychology and philosophy."
+},
+{
+    "name" : "Babylon 6",
+    "host:port" : "palace.sxpress.com:8888",
+    "theme" : "social",
+    "note" : "Formerly <B>Beacon in the Night MOO (BITN MOO)</B> and <B>Beyond The Rim MOO (BTRM)</B>, this is a social MOO with a mostly Babylon 5 theme.  It takes place aboard the Babylon 6 station.  Programmers are welcome."
+},
+{
+    "name" : "BayMOO",
+    "host:port" : [
+        "baymoo.org:8888",
+    "64.145.166.254:8888"
+        ],
+    "url" : [
+        "http://baymoo.org:4242/",
+    "http://charon.sfsu.edu/moo.html",
+    "http://simon.baymoo.org/"
+        ],
+    "theme" : "social",
+    "note" : "VR of the real and imaginative world of the San Francisco Bay Area.  BayMOO is divided into three hubs (The Bay Area, Netspace, Other Worlds), each connected to a central space called the Aquatic Dome.  It was founded 1 October 1993.  It was formerly run by <a href=\"http://www.sfsu.edu/\">San Francisco State University</a>.  It is very active."
+},
+{
+    "name" : "BioMOO",
+    "host:port" : "bioinfo.weizmann.ac.il:8888",
+    "url" : [
+        "http://bioinfo.weizmann.ac.il:8888",
+    "http://bioinformatics.weizmann.ac.il/BioMOO/",
+    "http://bioinformatics.weizmann.ac.il/BioMOO/BioGate/"
+        ],
+    "theme" : "research educational",
+    "note" : "BioMOO is a professional community of Biology researchers connected to the Globewide Network Academy.  Running on a server at the <a href=\"http://bioinformatics.weizmann.ac.il/bioinformatics_unit.html\">BioInformatics Unit</a> of the <a href=\"http://www.weizmann.ac.il/\">Weizmann Institute of Science</A>, Israel."
+},
+{
+    "name" : "BlobMOO",
+    "host:port" : "blob.skylarking.com:8888",
+    "theme" : "research",
+    "note" : "In the year 637, Lord Blob set out to find a new home, to escape the wars that plagued the rest of the world.  Three years later, he found a suitable site north of the river Fraes.  This is that town.  BlobMOO is a medieval fantasy town with four quadrants, for magicians, thieves, clerics, and fighters.  It is a small MOO where people can learn programming.  Each player owns a shop and sells different things."
+},
+{
+    "name" : "BushMOO",
+    "host:port" : "bushnet.qld.edu.au:7777",
+    "url" : "http://www.bushnet.qld.edu.au/~jay/bushmoo/",
+    "theme" : "educational",
+    "note" : "It is a multi-cultural community set in the Australian Bush.  It is part of the <a href=\"http://www.bushnet.qld.edu.au/\">BushNet</a>."
+},
+{
+    "name" : "Cafe MOOlano",
+    "host:port" : "moolano.berkeley.edu:8888",
+    "url" : [
+        "http://www-moolano.berkeley.edu/",
+    "http://moolano.berkeley.edu/"
+        ],
+    "theme" : "educational",
+    "note" : "The <a href=\"http://www.berkeley.edu/\">UC Berkeley</a> MOO.  Includes a large section built by french students (like <a href= \"http://www.reinyday.com/rachel/daily/entry/french.html\">I was</A>). It is being developed, hosted, and technically supported by the <a href=\"http://www.itp.berkeley.edu/\">Instructional Technology Program</A>, and the Workstation Support Services' <a href=\"http://tuna2.berkeley.edu/facility/\">Workstation and Microcomputer Facilities</A> group -- units of <a href=\"http://www.itp.berkeley.edu/\">IS&T</A>, at <a href=\"http://www.berkeley.edu/\">UC Berkeley</A>."
+},
+{
+    "name" : "Cara MOO",
+    "host:port" : [
+        "moo.adultedu.gla.ac.uk:7777",
+    "130.209.29.40:7777"
+        ],
+    "theme" : "educational",
+    "note" : "Set up to support the internet-mediated, adult education courses offered by the Department of Adult and Continuing Education, <a href=\"http://www.gla.ac.uk/\">University of Glasgow</a>.  Students on these courses, or former students can connect to it at any time and seek help, advice, companionship or whatever else [they] might seek in the campus coffee bar.  Of course, in the general internet spirit of free interaction, others are also welcome to spend time here, and to request characters.  Cara is an uninhabited island immediately south of Gigha, off the West coast of Kintyre and Cara MOO has a vaguely Hebridean flavour, reflecting the early importance of the rural West of Scotland in the development of these courses.  On the whole it will feel like modern offices and teaching rooms, in perhaps quite an old university, somehow merged with a sparsely inhabited Hebridean island."
+},
+{
+    "name" : "CardiffMOO",
+    "host:port" : "cm.cf.ac.uk:7777",
+    "url" : "http://www.cm.cf.ac.uk/User/Andrew.Wilson/CardiffMOO/",
+    "theme" : "research",
+    "note" : "Running on a computer in the Department of Computing Mathematics (COMMA) at <a href=\"http://info.cf.ac.uk/\">University of Wales, College of Cardiff (UWCC)</a>."
+},
+{
+    "name" : "Castle MOO",
+    "host:port" : [
+        "216.254.69.123:9800",
+    "saeihr.net:9800"
+        ],
+    "theme" : "social",
+    "note" : "A mythological moo.  As you enter this mythological world surrounded by knights and ghosts you will kindly be asked to tour a haunted bus.  This bus gives tours 24/7 to all the new castle_ghosts.  Our haunted bus will take you room to room in through the world of mythology and evil spirits.  An enchanting place where chat and spirits communicate.  My fellow wizard staff as well as the spirits of castle moo await you in silence but remind you to be careful as you tour our enchanted moo."
+},
+{
+    "name" : "Centre d'Activite et ed Formation Virtuel (CAFV)",
+    "host:port" : "core.auteurs-associes.com:7777",
+    "url" : [
+        "http://core.auteurs-associes.com:7778/",
+    "http://core.auteurs-associes.com/gate3.html"
+        ],
+    "theme" : "social",
+    "note" : "This MOO has a total graphic interface using technologies like Macromedia Flash (for action, manipulating or moving) and JAVA."
+},
+{
+    "name" : "ChibaMOO",
+    "host:port" : [
+        "sensemedia.net:7777",
+    "ginger.lei.net:7777",
+    "ginger.sensemedia.net:7777",
+    "sprawl.sensemedia.net:7777",
+    "world.sensemedia.net:7777",
+    "chiba.picosof.com:7777",
+    "moo.picosof.com:7777"
+        ],
+    "url" : [
+        "http://sensemedia.net/sprawl/",
+    "http://sensemedia.net/sprawl/15411",
+    "http://sensemedia.net/woo",
+    "http://sensemedia.net/about",
+    "http://sensemedia.net/voodo/1810"
+        ],
+    "theme" : "social sci-fi",
+    "note" : "Run by <a href=\"http://sensemedia.net/\">Sensemedia</a>, ChibaMOO is the world's First Public Access Web Server and Multi Media MOO.  The Sprawl is loosely themed around the cyberscape of William Gibson's Cyberpunk literature.  The Sprawl now consists of several thousand rooms and nearly 2000 players and is growing at a rate of 10 players a day.  All objects on the Sprawl are accessible via MUD or WWW client, and anyone is welcome to publish their own non-commercial WWW page there."
+},
+{
+    "host:port" : "seahorse.acs.brockport.edu:7878",
+    "name" : "The City",
+    "url" : "http://www.acs.brockport.edu/~mb8177/GothicMOO/",
+    "theme" : "RPG",
+    "note" : "The year is 1923. You are in America. The game will follow the <a href=\"http://www.white-wolf.com/\">White Wolf</a> system."
+},
+{
+    "name" : "City MOO",
+    "host:port" : "city.moo.ca:1234",
+    "url" : [
+        "http://www.webring.org/cgi-bin/webring?home&ring=moo",
+    "http://city.moo.ca:2345/",
+    "http://city.moo.ca:2345/connect/"
+        ],
+    "theme" : "social",
+    "note" : "It is set in a contemporary city, somewhere on the West Coast of North America."
+},
+{
+    "name" : "c-moo",
+    "host:port" : "c-moo.c-base.org:7777",
+    "url" : [
+        "http://www.c-base.org/c-moo/",
+    "http://www.c-base.org/cv30f/cience/c-moo/client_g.html"
+        ],
+    "theme" : "ESL sci-fi",
+    "note" : "A German language MOO. The wreck of an ancient space station has been discovered under the city of Berlin and a group of scientists and artists is engaged in rebuilding and relaunching the station. This MOO isn't in English (it doesn't even have connection instructions or a web page in English)."
+},
+{
+    "name" : "College Town",
+    "host:port" : [
+        "ctown.bvu.edu:7777",
+    "patty.bvu.edu:7777",
+    "galaxy.bvu.edu:7777",
+    "147.92.3.20:7777"
+        ],
+    "url" : [
+        "http://www.bvu.edu/ctown",
+    "http://www.bvu.edu/ctown/WebMOO.html"
+        ],
+    "theme" : "educational",
+    "note" : "Running on a server at Buena Vista University in Storm Lake, Iowa.  Its purpose is to serve as a platform for the academic pursuits of students and faculty at that institution and the wider world.  The MOO/WEB Java Client is accessible from the web page."
+},
+{
+    "name" : "ComMOOnity",
+    "host:port" : "tortie.me.uiuc.edu:4242",
+    "url" : [
+        "http://tortie.me.uiuc.edu:4243/",
+    "http://tortie.me.uiuc.edu/~moo/connection_selector/frame_choice1_t.html",
+    "http://tortie.me.uiuc.edu:4243/61"
+        ],
+    "theme" : "educational research social",
+    "note" : "It was started on 5 November 1996.  It serves many purposes, including a testbed for research into collaboration technologies, a social gathering place, and a stable, fast environment for the expansion of MOO technologies. They say the best way to understand it is to explore it. Its theme is oriented towards neighborhoods that allow various levels of local control over membership, arrangement, etc. It is hosted by <a href=\"http://www.uiuc.edu/\">the University of Illinois at Urbana-Champaign</a>."
+},
+{
+    "name" : "CompuCraze MOO",
+    "host:port" : [
+        "eli.elilabs.com:7700",
+    "compucraze.net:7777",
+    "204.248.54.178:7777"
+        ],
+    "url" : [
+        "http://www.compucraze.net:6767/",
+    "http://www.compucraze.net:6767/62"
+        ],
+    "theme" : "educational social",
+    "note" : "It is developing and has many wonderful and interesting objects. There are many games, player classes and other things. They are currently in need of Wizards and Programmers so you are invited if you are serious and talented."
+},
+{
+    "name" : "Connections",
+    "host:port" : "connections.moo.mud.org:3333",
+    "url" : "http://web.nwe.ufl.edu/~tari/connections/",
+    "theme" : "educational",
+    "note" : "Since November 1994, it has provided an alternative learning environment for classes and other groups.  Any class, of any level, studying any subject, is welcome.  It also provides space for projects outside the confines of \"school subjects\".  It is topographically organized by a realm system, with different building themes."
+},
+{
+    "name" : "CountryMOO",
+    "host:port" : [
+        "moo.cmoo.com:5555",
+    "countrymoo.cmoo.com:5555",
+    "country.cmoo.com:5555",
+    "moo.cmoo.com:5555"
+        ],
+    "url" : [
+        "http://www.cmoo.com:5556/",
+    "http://www.cmoo.com:5556/61/"
+        ],
+    "theme" : "social",
+    "note" : "It has a country setting.  They offer FREE web pages to members!  It is a <a href=\"http://cmoo.com/moo/\">CMOO</a> MOO."
+},
+{
+    "name" : "CPDEEMOO",
+    "host:port" : "moo.cpdee.ufmg.br:7777",
+    "theme" : "ESL",
+    "note" : "A Brazilian MOO; mainly Portuguese. CPDEE stands for <a href=\"http://www.cpdee.ufmg.br/index.html\">Centro de Pesquisa e Desenvolvimento em Engenharia Eletrica</a>. UFMG stands for the <a href=\"http://www.cpdee.ufmg.br/cursogeral/ufmg.html\">Universidade Federal de Minas Gerais</A>.  Bem vindo ao CPDEEMOO. Este e' um espaco virtual, com objetivo educacional. Neste espaco voce pode participar de diversos cursos, alem de conhecer pessoas de diferentes lugares do planeta. Apesar de ser uma sociedade virtual, os conceitos e normas de convivencia da sociedade real devem ser utilizados e incorporados aqui tambem, possibilitando a vida em comunidade no ambiente virtual. Lembre-se, atras de cada monitor de cada personagem, esta' um ser humano, capaz de raciocinar e de ter emocoes. O respeito e' fator preponderante em qualquer tipo de sociedade. Abaixo estao listados alguns conceitos basicos de convivencia social, conceitos estes que gostariamos que voce observasse."
+},
+{
+    "name" : "Craggy Island MOO",
+    "host:port" : [
+        "necro.mcc.ac.uk:7777",
+    "maverick.mcc.ac.uk:7777",
+    "www.feck.net:7777",
+    "130.88.202.49:7777"
+        ],
+    "url" : [
+        "http://www.feck.net:6666/",
+    "http://www.feck.net/hm/",
+    "http://www.feck.net:9990/request"
+        ],
+    "theme" : "social",
+    "note" : "Formerly <B>NecroMOO</B>. It takes place in 2005 and is based on the British series <B>Father Ted</B>. It offers free web based e-mail with    every character requested,  be &lt;person name&gt;@feck.net -- avalible through the moo and on the web."
+},
+{
+    "name" : "Crime Lords MOO",
+    "host:port" : "wyrm.darkmux.net:1701",
+    "url" : "http://wyrm.darkmux.net/~phalanx/",
+    "theme" : "RPG",
+    "note" : "This MOO is under construction.  The theme consists of \"a modern society in which a number of the worlds superpowers have lost their leaders in a mass planned assasination.  With a barely functioning economy the world was driven into chaos where every day life is a struggle to surrvive.  The game itself will rely on the RP ablities of it's player base, and assisted by original coded systems of land and sea, air, space, economy, combat, health and advancement.  Useless killing of the player base will not be condoned, and will be punished. However player death will be a    reality, in an enviroment where food will be a precious commodity and money usless to the less powerful. Player death as a cuase of genuine RP and character concept will also be allowed.\" The developer writes, \"Currently we are in need of coders and wizard staff.  As a matter of fact I myself do not nesscarily have to be the arch wizard. I am a storyline developer and I have little to no skill in coding. I am willing to learn to code, but my main intention is to develope the direction of game flow.  I have server space and a minimal db setup, now I need the talent to make what I beleive is a good game Idea take off.\"  The server base is running on an AMD K6-2 500 Mhz with 128MB of RAM and a high speed connection."
+},
+{
+    "name" : "The Crystal Chantry",
+    "url" : [
+        "chantry.virtadpt.net:2422/",
+    "http://www.virtadpt.net/",
+    "http://www.virtadpt.net/clients.html"
+        ],
+    "theme" : "social",
+    "note" : "Primarily a social MOO, though programming and roleplaying are encouraged.  There are multiple themes in implementation there (they try for a 'something for everyone' atmosphere), and while it has been around for a while, they have not advertised it heavily."
+},
+{
+    "name" : "CubeMOO",
+    "host:port" : "wsogmm.dhs.org:7777",
+    "theme" : "social",
+    "note" : "It's primarily social/building, no over-all theme yet (other than The loose theme is 'pliable reality' and there are theme areas. There is a gothic fantasy/film-noir section, a generic urban district, stretches of savanah/wilderness, and apparently a whole second city is currently being constructed.  There are also some attempts to institute formal roleplaying mechanics, but they've been 'in development' for months now.  Only one 'bot character, with *very* limited abilities, but plans are also in effect to develop stationary NPCs.  It is very quiet."
+},
+{
+    "name" : "CurtainMOO",
+    "host:port" : "curtain.dyndns.com:6969",
+    "url" : "http://curtain.dyndns.com/",
+    "theme" : "social",
+    "note" : "The goal is to create the past or future world of your dreams -- linked to the rest of the moo via curtains."
+},
+{
+    "name" : "CWRU MOO",
+    "host:port" : "cwrumoo.cwru.edu:7777",
+    "url" : [
+        "http://cwrumoo.cwru.edu/",
+    "http://cwrumoo.cwru.edu:7000/"
+        ],
+    "theme" : "educational",
+    "note" : "A virtual representation of <a href=\"http://www.cwru.edu/\">Case Western Reserve University</a>.  Its  construction was begun and is supervised by the <a href=\"http://www.cwru.edu/net/csg/csg.html\">Curriculum Support Group</A>."
+},
+{
+    "name" : "Cyberia",
+    "host:port" : "cyberia.univr.it:7777",
+    "theme" : "ESL",
+    "note" : "This is an Italian-language world.  \"Cyberia &egrave; un progetto sperimentale creato in collaborazione con <a href=\"http://cyberia.univr.it/\">l'Universit&agrave; di Verona</a>, nella persona del Dott. Germano Rossi."
+},
+{
+    "name" : "CyberSphere MOO",
+    "host:port" : [
+        "cs.vv.com:7777",
+    "altair.vv.com:7777",
+    "206.27.96.11:7777"
+        ],
+    "url" : [
+        "http://cs.vv.com/cs/connect.html",
+    "http://cs.vv.com/",
+    "http://clubs.yahoo.com/clubs/cyberspherepurepr"
+        ],
+    "theme" : "sci-fi RPG",
+    "note" : "An RPG MOO set in the dark American future of a fictional metropolis known as Night City.  Monolithic corporations and apathetic governments have reduced society to a writhing neo-anarchy of violence and the struggle of the individual to survive.  The streets are deadly, and crime runs rampant. Described as, &quot;Virtual reality RPG based in a post-holocaust cyberpunk world. The best dream you've ever had.  Hard realism.  Non-traditional MOO.&quot;"
+},
+{
+    "name" : "CyberVille",
+    "host:port" : "capitalnet.com:7777",
+    "theme" : "social",
+    "note" : "This MOO is brand new and does not seem to have a theme.  The does however have a list of rules which you shoulld be aware of (type <tt>help rules</tt>. It also has a pirate system."
+},
+{
+    "name" : "DaMOO",
+    "host:port" : "damoo.csun.edu:7777",
+    "url" : [
+        "http://www.webring.org/cgi-bin/webring?home&ring=moo",
+    "http://DaMOO.csun.edu:8888/",
+    "http://DaMOO.csun.edu:8888/auth",
+    "http://DaMOO.csun.edu/connect.html",
+    "http://DaMOO.csun.edu:8888/request"
+        ],
+    "theme" : "educational",
+    "note" : "Devoted to the notion that online education is the place to be. Explores the possibilities the MOO has to offer researchers, educators, and students.  Each new area, conceptualized as planets, spirals out adding new dimensions and possiblities with its own theme and purpose. Running with the cooperation of <A HREF=\"http://lrc.csun.edu/\">the Learning Resource Center</A> at <A HREF=\"http://www.csun.edu/\">California State University, Northridge</A>."
+},
+{
+    "name" : "Dare To Dream MOO",
+    "host:port" : [
+        "dtdream.cmoo.com:9911",
+    "tangerine.cmoo.com:9911",
+    "moo.cmoo.com:9911",
+    "216.37.163.19:9911"
+        ],
+    "url" : [
+        "http://www.webring.org/cgi-bin/webring?home&ring=moo",
+    "http://www.techie-web.com/dream/"
+        ],
+    "theme" : "social RPG",
+    "note" : "It is a family moo.  The theme is fun/fantasy/nostalgia/magical/mystical.  It is \"very fun and colorful.\"  There is an RPG section installed and growing.  Great for teens.  I've have never had a friendlier greeting at any MOO!"
+},
+{
+    "name" : "Dark Legions",
+    "host:port" : [
+        "grape.cmoo.com:7007",
+    "216.37.163.9:7007"
+        ],
+    "theme" : "RPG",
+    "note" : "It is multi-themed involving \"The Terran Alliance\" and \"The Risen\".  It \"is a vision of a future that could very well exist, in an alternate dimension.  While combat and death are quite present on this MOO, it is not the primary focus.  The primary focus is of the MOO is on humanity itself and how it reacts.  It is also meant to be a pleasant pasttime to interact with other people, build friendships, and experience new things in a virtual environment.\""
+},
+{
+    "name" : "De Digitale Metro",
+    "host:port" : [
+        "demetro.nl:8888",
+    "demetro.nl:902",
+    "metro.dds.nl:8888"
+        ],
+    "url" : [
+        "http://www.demetro.nl/",
+    "http://www.demetro.nl/bezoek/java/index.htm"
+        ],
+    "theme" : "ESL",
+    "note" : "This world is in Dutch. It is located around the capital's subway and is only accesible for those who are registered on their home page. Everything is in Dutch, but they are friendly enough to speak your language (if they can.) Most of the residents are able to speak English. Dit is een Nederlandse Moo. <!--Het speelt zich af rond de hoofdstedelijke metro en is alleen toegankelijk voor mensen die ingeschreven zijn bij <A HREF=\"http://www.dds.nl\">http://www.dds.nl</A>.--> Alles is in het Nederlands, maar ze zijn aardig genoeg om in jou taal te praten (als ze het kunnen), de meeste mensen spreken ook Engels."
+},
+{
+    "name" : "Demon MOO",
+    "host:port" : "demonmoo.carleton.ca:7777",
+    "note" : "It is under development, seeking programmers and skilled guardians.      Guests cannot log in.  Questions should go to <A HREF=\"mailto:holden@demonmoo.carleton.ca\">holden@demonmoo.carleton.ca</A>."
+},
+{
+    "name" : "DevolutionMOO",
+    "host:port" : "devolution.net:2222",
+    "url" : "http://www.devolution.net/current.html",
+    "theme" : "research",
+    "note" : "Many online gamers wish to know more about programming, but can never manage to get on the staff of a game. Sound like you? Perhaps you'd like to take a step into devolutionMOO, where you don't need a staffing position to program. Come in and create fancy gadgets and gizmos, or just goof around."
+},
+{
+    "name" : "Dhalgren",
+    "host:port" : "dhalgren.briar.com:7777",
+    "theme" : "social research",
+    "note" : "A small electronic community devoted to interdisciplinary discussion and research, the exploration of connections between art and technology, and the building of long-standing personal relationships.  It was originally focused on the exploration and criticism of virtual reality and postmodern science fiction.  The theme is inspired by the works of Samuel Delaney, William Burroughs, Philip K. Dick, and others. Set in the nearly abandoned city of Bellona, it is almost isolated from the world by a mysterious catastrophe which continues to distort perception and the laws of physics. It has room classes that provide ambient noise, daytime-dependant descriptions and virtual weather.  It was started at Princeton University in 1994."
+},
+{
+    "host:port" : "moo.ml.org:7777",
+    "name" : "DiaMOOnd",
+    "url" : [
+        "http://moo.ml.org/",
+    "http://moo.ml.org/$player_start"
+        ],
+    "theme" : "social",
+    "note" : "A new MOO, with no real theme.  The DiaMOOnd project is led by <A HREF=\"mailto:root@stat222.cadvision.com\">Mathieu Fenniak</A>."
+},
+{
+    "host:port" : "hal.utmb.edu:8888",
+    "name" : "DigitalMOO",
+    "theme" : "social",
+    "note" : "A new MOO with lots of room to grow.  Self described as, \"No rules...no themes...no guidelines...total and complete anarchy.  Take all you can eat, eat all you take.\""
+},
+{
+    "host:port" : "du.org:8888",
+    "name" : "Diversity University MOO",
+    "url" : [
+        "http://www.du.org/",
+    "http://www.academic.marist.edu/duwww.htm",
+    "http://moo.du.org:8000/"
+        ],
+    "theme" : "educational",
+    "note" : "It was the first MOO designed specifically for classroom use.  It is an experiment in interactive learning through the Internet, and is to be used for serious experimentation in network-based, interactive teaching, learning and social services. To preserve this atmosphere, the administration reserves the right to do unannounced monitoring as required.  Information gathered will be treated in strict accordance with the U.S. Federal Electronic Communications Privacy Act of 1986."
+},
+{
+    "host:port" : "kaschynna.com:8888",
+    "name" : "Doc's MOO",
+    "theme" : "social",
+    "note" : "A social MOO. It has no apparent theme."
+},
+{
+    "name" : "Dominions",
+    "host:port" : [
+        "confabulation.com:2000",
+    "confabulation.com:2001"
+        ],
+    "theme" : "social",
+    "note" : "There is no specific theme set or enforced, so users are encouraged to devise their own theme for their creations. It has an FO that allows players to translate object descriptions and help msgs into any of several different languages (or setup their own translation DB). Also, there is a room that allows players to type in their language, yet other players see the text in 'their' own language(s)."
+},
+{
+    "name" : "DoveMOO",
+    "host:port" : [
+        "tangerine.cmoo.com:7700",
+    "dove.cmoo.com:7777",
+    "grape.cmoo.com:7777",
+    "216.37.163.9:7777"
+        ],
+    "url" : [
+        "http://grape.cmoo.com:7778/",
+    "http://grape.cmoo.com:7778/62"
+        ],
+    "theme" : "social",
+    "note" : "Created as a place of friendship and caring...it is intended as a family atmopshere...sharing with each other in peace and love with avoidance of conflict. The main thing that is asked of you as a player..in fact...EXPECTED..is that you respect ideas, beliefs, and personhood of others....that you put yourself in their shoes and try to understand what life is like for them. The hub of Dove is the PeaceGarden. In addition   there are a number of mailing lists, a chanel system, <!--including a Public Channel and a Bible Talk Channel for religious discussion;--> and a Clothing PC so you may role play if you wish."
+},
+{
+    "name" : "DownMOO",
+    "host:port" : "moo.downmoo.org:8888",
+    "theme" : "social",
+    "note" : "\"Where your core crash is our joy.\" Started on June 13, 1996 by refugees from Lambda, DownMOO is full of self-described GDFONs (God-Damned Freaks Of Nature). Queerness, perversion, and silliness prevail.  Occasional coding and scrabble happen.  Many players here have asbestos underwear, but the wizards make no bones about toading trolls."
+},
+{
+    "name" : "Dragon Dreams MOO",
+    "host:port" : "dragondreams.servegame.com:7007",
+    "theme" : "RPG",
+    "note" : "It is a fantasy set in the world of Khariea, \"where elves, pixies, dwarves, and humans bond with telepathic dragons to defeat the threat of the evil gryphons.\""
+},
+{
+    "name" : "Dragons' Dusk MOO",
+    "host:port" : [
+        "dusk.otaking.org:5000",
+    "moo.otaking.org:5000"
+        ],
+    "url" : "http://www.geocities.com/Area51/Lair/1644/ddusk/",
+    "theme" : "RPG",
+    "note" : "Based on the <B>Dragonriders of Pern</B> series by Anne McCaffrey. \"Can't have too many Pern MOOs.  We try to keep the 'rules' down to a minimum.  The Pern 100 turns post-AIVAS is very different from the Pern that still feared threadfall. Technology is advancing in leaps and bounds.\""
+},
+{
+    "host:port" : "isumataq.eskimo.com:7777",
+    "name" : "Dragonsfire MOO",
+    "theme" : "RPG",
+    "note" : "Based on the <B>Dragonriders of Pern</B> series by Anne McCaffrey. It is very role-play intensive."
+},
+{
+    "host:port" : "shadowfax.rh.ncsu.edu:9000",
+    "name" : "Dreamwheels",
+    "url" : "http://shadowfax.rh.ncsu.edu/",
+    "note" : "An Urban Fantasy based in the fictitious modern day city, Azington.  It focuses on cooperative storytelling in a world where not everything is what it might seem to be."
+},
+{
+    "name" : "Dreistadt",
+    "theme" : "ESL educational",
+    "url" : [
+        "http://cmc.uib.no/dreistadt/informationen2.html",
+    "http://cmc.uib.no:7001/"
+        ],
+    "note" : "A German language MOO.  \"Dreistadt ist eine virtuelle Stadt im Internet.  Hier kann man sich ganz einfach treffen, mit Freunden reden oder neue Leute kennenlernen, sich ein Haus bauen und einrichten... aber auch Deutsch studieren, Hausarbeiten einschicken, mit Lehrern und Mitstudenten diskutieren. <b>P&auml;dagogisch</b> wurde Dreistadt konzipiert als ein Raum, der den prozesshaften und dynamischen Charakter nat&uuml;rlichen Spracherwerbs betont und sich bewusst zunutze macht.  Fremdsprachenlerner k&ouml;nnen in authentischen und nat&uuml;rlichen Kontakt mit der Zielkultur treten und so auf neue und kreative Weise ihre Sprachkompetenz st&auml;rken.  It is sponsored by the <a href=\"http://www.uib.no/\">Universit&auml;t Bergen/Norwegen</A>, <a href=\"http://www.hf.uib.no/hi/\">Sektion f&uuml;r humanistische Informatik</A>.\""
+},
+{
+    "name" : "EdenMOO",
+    "host:port" : "avatar.phys-plant.utoledo.edu:4444",
+    "theme" : "social",
+    "note" : "Striving to be a 'Garden of Eden' where the world can be built as the users wish it to be.  It hopes to \"provide an atmosphere free of prohibitive policies, politics, and stupid, obnoxious player classes.\"  Run by <A HREF=\"http://www.utoledo.edu/\">The University of Toledo</A>."
+},
+{
+    "name" : "EdMOO",
+    "host:port" : "edx3.educ.monash.edu.au:7777",
+    "url" : [
+        "http://edx1.educ.monash.edu.au/projects/moo/",
+    "http://edx3.educ.monash.edu.au/edmoo/"
+        ],
+    "theme" : "educational",
+    "note" : "The Education Multimedia Moo at <A HREF=\"http://edx1.educ.monash.edu.au/\" >Monash University</A>, Australia. It has enhanced multimedia features available throught the web site. The project is run by the <A HREF=\"http://www.education.monash.edu.au/\">Education Faculty</A>."
+},
+{
+    "host:port" : "moo.cmoo.com:2261",
+    "name" : "Eftea MOO",
+    "url" : "http://www.javanet.com/~winslow",
+    "theme" : "social sci-fi",
+    "note" : "The theme is Babylon 5, the planet Dergart, and Arts & Entertainment."
+},
+{
+    "host:port" : "laurence.v-wave.com:7777",
+    "name" : "Ego MOO",
+    "url" : "http://laurence.v-wave.com/index.html",
+    "theme" : "social",
+    "note" : "Self described as: &quot;A Charming Little Metropolis on the Cutting Edge of PostModern Pretension.&quot; It's layout mirrors a big person, making an extratopological universe of indeterminate size and shape. The ego is inside the head (where one starts), the superego is outside of the head, and the id is the organs. The MOO intends to implement a tiered reality system of objects/rooms; that is, each room will/should have several descriptions for the reality perception of the viewer."
+},
+{
+    "host:port" : "archipelago.mvp.com:8888",
+    "name" : "ElderMOO",
+    "url" : "http://www.mindspring.com/~huntzinger/elder.html",
+    "theme" : "social sci-fi",
+    "note" : "Time and space are displaced there. It is a planet of islands, called Ea by most of its inhabitants, is now populated by a patchwork of societies from different times and places."
+},
+{
+    "name" : "El MOOndo",
+    "host:port" : [
+        "moon.pepperdine.edu:7777",
+    "gsep.pepperdine.edu:7777"
+        ],
+    "url" : "http://moon.pepperdine.edu/~lpolin/MOOStuff.html",
+    "theme" : "educational research",
+    "note" : "It is aimed at k-12 research and is currently under construction.  Some rooms are specially designated class meeting rooms for courses in graduate programs at the <A HREF=\"http://moon.pepperdine.edu/gsep/\" >Pepperdine University Graduate School of Education and Psychology</A>.  They ask you to respect the right of students engaged in formal class meetings to bar your entry into their space."
+},
+{
+    "name" : "E_MOO",
+    "host:port" : [
+        "emoo.imaginary.com:4242",
+    "tecfa.unige.ch:4242",
+    "tecfasun1.unige.ch:4242",
+    "129.194.12.39:4242"
+        ],
+    "url" : [
+        "http://emoo.imaginary.com:4243/",
+    "http://tecfa.unige.ch:4243",
+    "http://tecfasun1.unige.ch:4243"
+        ],
+    "theme" : "research",
+    "note" : "Its main purpose is programming and research.  Guests are welcome, but it is not accepting any new characters."
+},
+{
+    "host:port" : "avatar.phys-plant.utoledo.edu:5555",
+    "name" : "EnviroMOO",
+    "url" : "http://www.phys-plant.utoledo.edu:5656/",
+    "note" : "It is a multi-user virtual environment for promoting the real-time discussion of issues relating to Environmental Health and Safety.  EnviroMOO is operated by <A HREF=\"http://www.safety.utoledo.edu/\">The University of Toledo Safety and Health Office</A>."
+},
+{
+    "host:port" : "raven.concord.edu:7777",
+    "name" : "FantasyMOO",
+    "url" : "http://raven.concord.edu/moo/",
+    "theme" : "social sci-fi",
+    "note" : "Contains Ravenloft and other science fiction/fantasy worlds. It is part of a Masters project, so you'll be helping with research. Some observation of behavior may occur, but always in public places."
+},
+{
+    "host:port" : "spam.rh.rit.edu:8888",
+    "name" : "ffaMOO",
+    "url" : "http://www.holo.org/",
+    "theme" : "social",
+    "note" : "A very new and pretty bare MOO. The free-for-all is not a joke. Everyone gets a programmer bit and a big quota - just ask. Need help? You can ask.  Otherwise, you're on your own. No theme, although you're welcome to suggest one. It is running off a very fast NT workstation that is unused most of the time, and it seemed like a waste until it was decided to get some kind of server up and running. So here it is."
+},
+{
+    "name" : "Final Frontiers",
+    "host:port" : "trekmoo.planetx.com:2499",
+    "url" : [
+        "http://www.planetx.com/trekmoo/",
+    "http://trekmoo.planetx.com/"
+        ],
+    "theme" : "RPG",
+    "note" : "Revived by its original creators, TrekMOO is back.  Not exactly the same as its original form from 1993, but much of the same spirit of fun."
+},
+{
+    "name" : "FleetMOO",
+    "host:port" : "moo.cmoo.com:2222",
+    "theme" : "RPG",
+    "note" : "They claim to be one of the most unique MOO's ever constructed.  They \"are focussing on the time after the 3rd world war. Earth has been abandonded to allow for nature to try to heal the problems that were caused by man. Man has therefore went into space and began living and trading there. Unfotunatly some of the restrictions caused most of Earths inhabitants to leave the solar system to try to find a new home. Our story begins with those that decided to remain behind.\""
+},
+{
+    "name" : "FooMOO",
+    "host:port" : "camel.ethereal.net:4500",
+    "url" : "http://www.foomoo.org/",
+    "note" : "There is currently no theme.  It is an environment for MOO programmers to write code that may be ported to other MOOs.  It supports ANSI, MacMOOSE, etc."
+},
+{
+    "host:port" : "avatar.phys-plant.utoledo.edu:8888",
+    "name" : "Forest MOO",
+    "url" : [
+        "http://avatar.phys-plant.utoledo.edu:8888/",
+    "http://avatar.phys-plant.utoledo.edu/~trick/ForestMOO/java_telnet.html"
+        ],
+    "theme" : "social",
+    "note" : "Nature theme.  Run by the <A HREF=\"http://www.utoledo.edu/\">University of Toledo</A>."
+},
+{
+    "name" : "Four Seasons MOO",
+    "host:port" : "4s.cmoo.com:8989",
+    "url" : "http://cmoo.nws.net/~lis/4s.html",
+    "theme" : "RPG",
+    "note" : "An RPG that centers around a totally unique world.  Various time zones feature Medieval as well as Futuristic worlds.  There are also extensive chat, game, and help areas, so it is bound to have something for everyone."
+},
+{
+    "name" : "FutureMOO",
+    "host:port" : [
+        "futuremoo.dyns.cx:7777",
+    "futuremoo.dyns.cx:8888"
+        ],
+    "url" : [
+        "http://futuremoo.dyns.cx:8080/",
+    "http://future.dyns.cx/"
+        ],
+    "theme" : "ESL social",
+    "note" : "It is a <B>Dutch</B>, fantasy, social MOO. They are working on several planet where players can live.  It began in December 1999."
+},
+{
+    "name" : "Galaxy Web: Stellar Epoch",
+    "host:port" : "moo.squidsoft.net:6666",
+    "url" : [
+        "http://www.squidsoft.net/gwse/",
+    "http://www.squidsoft.net/cgi-bin/ikonboard/ikonboard.cgi"
+        ],
+    "theme" : "RPG",
+    "note" : "Learn about an ancient interstellar computer net known as the Galaxy Web.  This space MOO has been open to the public since 12 October 2001.  There are no guest log-ins, so you will need to create <A HREF=\"http://moo.squidsoft.net:3333/\">a SquidSoft.net account</A>."
+},
+{
+    "name" : "GaltMOO",
+    "host:port" : [
+        "juana.viper.net.au:7777",
+    "203.31.238.30:7777"
+        ],
+    "url" : "http://www.viper.net.au/~njr/moo/",
+    "theme" : "social",
+    "note" : "Created in February 2000, this MOO is still very small.  There is no apparent theme."
+},
+{
+    "name" : "Gap In Thyme",
+    "host:port" : "fluff.dhs.org:1977",
+    "theme" : "RPG",
+    "note" : "Started in January 2000, it is a non-profit (free) rp-intensive MOO based on <A HREF=\"http://www.amazon.com/exec/obidos/redirect?tag=reinyday&path=\">Piers Anthony</A>'s <B>Xanth</B> series.  Permissions have been granted and while the moo has diverged from the books (so as not to interfere with the author's writings), the spirit is pure Xanth."
+},
+{
+    "name" : "Ghostwheel MOO",
+    "host:port" : [
+        "casper.bga.com:6969",
+    "205.238.128.161:6969"
+        ],
+    "url" : "http://www.nexus.net/~bholmes/",
+    "theme" : "sci-fi",
+    "note" : "Sponsored by the real-life Real/Time Communications in Austin, Texas.  Set in 2600, when society as we know it has been erased by a series of mysterious cataclysms.  Dakirion Industries monopolizes weaponry, and also makes recombinant DNA creatures (commonly called recombs). Kilmor Labs is the source of bionics, metal-plated but graceful limbs. And what was once 'The Internet' is controlled by the mysterious Shadowfax, Inc.  Magick has reentered the world: dragons fly the skies while a race of gilled humanoids swim beneath the waves. Violence can be found everywhere. It features structured strategic combat, nudity and object-oriented clothing, Scrabble, and ANSI accents."
+},
+{
+    "name" : "GilMOO",
+    "host:port" : [
+        "gilmour.pvt.k12.oh.us:7777",
+    "207.54.143.1:7777"
+        ],
+    "theme" : "educational",
+    "note" : "A place where K-12 students from all over the world can get together and share ideas and information."
+},
+{
+    "name" : "Gonturan",
+    "host:port" : "mth.kydance.net:7777",
+    "url" : "http://gonturan.kydance.net/",
+    "theme" : "RPG",
+    "note" : "Free game based on <A HREF=\"http://www.amazon.com/exec/obidos/tg/browse/-/15628/reinyday/\">Robin McKinley's Damar novels</A>, and is still very much under construction.  However, you are welcome to drop in and create a character if you wish.  Anyone familiar with the world of Damar, and with MOO building experience will be stapled to the game and not allowed to leave until they promise to help build."
+},
+{
+    "name" : "GTworld MOO",
+    "host:port" : "moo.gtworld.org:8888",
+    "url" : "http://www.gtworld.org/moo.html",
+    "theme" : "educational",
+    "note" : "It was set up by a group who were involved with the TAG Writing Project  at GrassRoots MOO.  No guest logins are available and there are strict guidelines for behavior there.  It is totally dedicated to the needs of gifted children and their parents."
+},
+{
+    "name" : "Grassroots MOO",
+    "host:port" : "moo.enabling.org:8888",
+    "url" : [
+        "http://www.webring.org/cgi-bin/webring?home&ring=moo",
+    "http://www.enabling.org/grassroots/",
+    "http://www.enabling.org/grassroots/java-new/",
+    "http://www.enabling.org/grassroots/java/"
+        ],
+    "theme" : "educational",
+    "note" : "A Unibase Research and Development MOO.  It provides a learning environment where K-12 students are creating their neighborhoods and students from several universities are involved in collaborative study and research. There is a special emphasis on inclusion for those with educational and physical disabilities."
+},
+{
+    "name" : "Haeric MOO",
+    "host:port" : "sandwich.net:8888",
+    "url" : [
+        "http://haeric.sandwich.net/",
+    "http://haeric.sandwich.net/reqchar.html",
+    "http://haeric.sandwich.net/telnet/index.html"
+        ],
+    "theme" : "RPG",
+    "note" : "There is an island theme, with distinct lands: Lumis, Narkellia, Jur'gaan, Terra, Auqion, and Airon. The six provinces are each styled after an element: Fire, Water, Air, Earth, Light, and Darkness.  Each character is also aligned with an element."
+},
+{
+    "name" : "Harper's Tale",
+    "host:port" : "harpers-tale.com:7007",
+    "url" : [
+        "http://www.harpers-tale.com/",
+    "http://www.harpers-tale.com/java/",
+    "http://harpers-tale.com:7008/1407"
+        ],
+    "theme" : "RPG",
+    "note" : "RPG based on the <B>Dragonriders of Pern</B> series by Anne McCaffrey.  The game is played with the author's permission."
+},
+{
+    "name" : "HavenMOO",
+    "host:port" : "haven.cmoo.com:8888",
+    "theme" : "social",
+    "note" : "Takes place in Zenith, center of intergalactic trade and commerce, capital of culture and technology, headquarters of the four most powerful corporations in the galaxy.  The city is 21 million strong, and has 100 million visitors every solar cycle.  Self-described as: \"Here, your former identity means less than nothing.  Here, old crimes are just a fading memory.  Here, you have no past but you might have a future... if you're lucky.\""
+},
+{
+    "name" : "hellyeah! moo",
+    "host:port" : "moo.hellyeah.com:7777",
+    "url" : [
+        "http://www.hellyeah.com/moo/",
+    "http://shesaid.hellyeah.com/moomap.html"
+        ],
+    "theme" : "social",
+    "note" : "Self-described as a \"virtual hipster ghetto.\""
+},
+{
+    "name" : "Hogwarts MOO",
+    "host:port" : "hogwarts.dune.net:7500",
+    "url" : "http://hogwarts.dune.net/",
+    "theme" : "RPG",
+    "note" : "It was created win November 1999 and is based on the <B>Harry Potter</B> series by J.K. Rowling.  The theme is set roughly one hundred years before the first book; Voldemort has not been born, none of the characters of the books appear on their world. They feature a flying system including Quidditch as well as a complete monetary system with exchange rates.  It is currently under construction."
+},
+{
+    "name" : "Holo Trek",
+    "host:port" : "holotrek.org:1701",
+    "url" : "http://www.holotrek.org/",
+    "theme" : "RPG",
+    "note" : "It is a virtual recreation of the <B>Star Trek</B> universe, around the <B>Deep Space Nine</B> era, run by \"The Q Continuum\".  The advanced Role  Playing Environment stresses RP and character development.  There are three <I>major</I> familiar Star Trek factions, along with an original faction creation, with room to expand.  Newbies welcomed."
+},
+{
+    "name" : "HolonMOO",
+    "url" : "http://noisey.oise.utoronto.ca/holon.html",
+    "note" : "The Infusion Model Curriculum Development Project of the Ontario Society for Environmental Education.  Under development, but should be up at some point in 1998.  For information, contact <A HREF=\"mailto:jason@noisey.oise.utoronto.ca:\">Jason</A>."
+},
+{
+    "name" : "Hope Station: Phoenix",
+    "host:port" : "phoenix.otaking.org:2132",
+    "url" : [
+        "http://games.otaking.org/~phoenix/",
+    "http://games.otaking.org/~phoenix/theme.html"
+        ],
+    "theme" : "RPG",
+    "note" : "Set in 2132, it takes place in the aftermath of a system-wide war with an advanced alien race."
+},
+{
+    "name" : "HybridMOO",
+    "host:port" : "hybrid.moo.mud.org:8888",
+    "url" : [
+        "http://www.bytenik.com/HybridMOO/",
+    "http://hybrid.moo.mud.org:9999/"
+        ],
+    "theme" : "RPG",
+    "note" : "It is a space aged MOO with many different planets.  Different ranks of players do the dirty work of hauling goods, and the higher ranks manage planets. Trade on their commodity or stock exchanges and become filty rich, or aim to become the most powerful player in the game.  According to co-ArchWizard ByteNik, it \"could be considered theme-less.  As long as a planet does not act as if it is not a planet, any theme is acceptable.  We use Pueblo extensions to make your playing time even more exciting, since it can be enriched in HTML.  We have ANSI color for maximum enjoyment.  We try to make HybridMOO appropriate for all ages, although we make no guarantees.\""
+},
+{
+    "name" : "IhabfatMOO",
+    "host:port" : "moo.astroarch.com:9018",
+    "url" : "http://www.ica.net/pages/marc/ihabfat/",
+    "theme" : "RPG sci-fi",
+    "note" : "StarWars-based MOO. Takes place 5 years after Return of the Jedi, and is based on the movies.  Not for chatting; currently new characters cannot be created."
+},
+{
+    "name" : "Immaterial Park MOO",
+    "host:port" : [
+        "park.newport.ac.uk:7777",
+    "parkmoo.dds.nl:7777",
+    "193.63.82.129:7777"
+        ],
+    "url" : "http://park.newport.ac.uk:6666/",
+    "theme" : "social",
+    "note" : "Modeled after a real living and breathing park in the big wide real world. Creativity is encouraged."
+},
+{
+    "name" : "Inner Spheres II",
+    "theme" : "social RPG",
+    "host:port" : "whitestar.soark.net:7777",
+    "note" : "It is Inner Sphere MOO resurrected.  The theme is based on the original mystical D&D magic theme.  It is primarily a social MOO, with a RPG element being developed."
+},
+{
+    "name" : "InterMOO",
+    "host:port" : "intermoo.cmoo.com:4488",
+    "theme" : "social",
+    "note" : "Formerly Medieval MOO. It is a &quot;Utopian Community&quot; which promotes creativness, and friendliness. They encourage you to do anyhing that is for the good of the moo and would be considered appropriate, including Porting and programming."
+},
+{
+    "name" : "Isle of the Net",
+    "host:port" : "maryann.hu.mtu.edu:8888",
+    "url" : [
+        "http://moo.hu.mtu.edu:7000/",
+    "http://www.hu.mtu.edu/moo/"
+        ],
+    "theme" : "educational",
+    "note" : "<A HREF=\"http://www.mtu.edu/\">Michigan Tech</A>'s Educational MOO."
+},
+{
+    "name" : "ISU MOO",
+    "host:port" : "ux4.isu.edu:7778",
+    "url" : "http://www.isu.edu/~jon/moo/isumoo.html",
+    "theme" : "educational",
+    "note" : "Guest logins are not allowed.  It is a virtual learning center for <A HREF=\"http://www.isu.edu/\">Idaho State University</A>.  It is intended for academic use by ISU students, staff, and faculty."
+},
+{
+    "name" : "JHM MOO (Jay's House MOO)",
+    "host:port" : [
+        "jhm.ccs.neu.edu:1709",
+    "129.10.111.77:1709"
+        ],
+    "url" : [
+        "http://jhm.moo.mud.org:7043/",
+    "http://jh.ccs.neu.edu:7043/"
+        ],
+    "theme" : "research",
+    "note" : "A place for research and development into information structures, tools for collaboration, and cohesive simulated environments.  It is located in southern Minnesota, on a twelve mile stretch of highway between the towns of St. Peter and Mankato.  The feel is modern and semi-realistic (there is nothing magical or really anachronistic).  All characters are expected to be humans."
+},
+{
+    "name" : "JihadMooII",
+    "host:port" : "jm2.sandwich.org:7777",
+    "theme" : "RPG",
+    "note" : "A bunch of jihaddi running around and <A HREF=\"http://www.ntr.net/~sheridan/jihad/\">no purple dinosaurs</A>."
+},
+{
+    "name" : "JungleMOO",
+    "host:port" : [
+        "hrclinux.wmin.ac.uk:7777",
+    "daisy.cdm.wmin.ac.uk:7777"
+        ],
+    "url" : "http://daisy.cdm.wmin.ac.uk/~Pilgrim/jng_home.html",
+    "theme" : "research",
+    "note" : "It is a research project hosted by the <A HREF=\"http://www.hrc.wmin.ac.uk\">HyperMedia Research Centre</A> at the <A HREF=\"http://www.wmin.ac.uk\">University of Westminster</A>."
+},
+{
+    "name" : "KashaCVW",
+    "host:port" : "kasha.cvw.mud.org:8888",
+    "url" : [
+        "http://kasha.cvw.mud.org/",
+    "http://kasha.cvw.mud.org:9000/"
+        ],
+    "theme" : "research",
+    "note" : "\"Based at <a href=\"http://www.neu.edu/\">Northeastern University</a> in Boston, MA, the KashaCVW project is trying to build a virtual world based on <a href=\"http://www.mitre.org/\" >MITRE</a>'s <a href=\"http://cvw.mitre.org/\">CVW</a> project, which was originally developed for millitary use, but has since become an <a href=\"http://www.opensource.org/\">OpenSource</a> program.\"  It is themed as a floating city, completely autonomous from outside forces.  Developers are all welcome to <A HREF=\"mailto:ru2def@whoever.com\">email Justin Richer</A> to gain access to the MOO. It is accessable via standard MOO/MUD clients as well as the specialized CVW client."
+},
+{
+    "name" : "KCCMO'O",
+    "host:port" : "moo.kcc.hawaii.edu:7777",
+    "url" : "http://moo.kcc.hawaii.edu:8888/",
+    "theme" : "educational",
+    "note" : "An educational MOO located at <A HREF= \"http://www.kcc.hawaii.edu/default.html\">Kapi'olani Community College in Hawai'i</A>. There are some online classes some days of the week, but everyone is welcome."
+},
+{
+    "name" : "Kids' MOO",
+    "host:port" : "kidsmoo.2y.net:8888",
+    "url" : [
+        "http://kidsmoo.2y.net/",
+    "http://kidsmoo.2y.net/kidsmoo-application.html",
+    "http://kidsmoo.2y.net/kidsmoo/hm14/html/config1.htm",
+    "http://kidsmoo.2y.net/cgi-bin/tour"
+        ],
+    "theme" : "social",
+    "note" : "It was created in March 2000 specifically for kids and teenagers.  This is a virtual environment for children to gather and meet with friends, old and new, to talk about practically anything or roleplay their characters."
+},
+{
+    "name" : "Kingdoms of Kaddar",
+    "host:port" : "mushhaven.net:4321",
+    "theme" : "RPG",
+    "note" : "In the three rival kingdoms of Kaddar, the elves, dwarves, and humans all are 'Talented' -- they have small magical powers, such as scrying, illusion, and other small spellcasting.  Some rare mages have the powers of the four elements. These are the mages who are the strongest, and when brought together with fire, water, wind, and earth, can destroy the world if they so chose.  So the Kingdoms of Srasri, Thaynn, and Kraine have seperated the elemental magi, the school of Fire and Earth in Kraine, Wind in Thaynn, and Water in Srasri. But with the kingdoms verging on war, which of the mage groups will reign victorious?  This is an original  fantasy world that opened in April 2000."
+},
+{
+    "name" : "Kosmos",
+    "host:port" : "141.250.25.44:4444",
+    "url" : [
+        "http://kosmos.stud.unipg.it/",
+    "http://jump.altavista.com/trans.go?urltext=http%3a%2f%2fkosmos%2estud%2eunipg%2eit%2fdxnav-index%2ehtml&language=it"
+        ],
+    "theme" : "ESL",
+    "note" : "An <B>Italian</B> Moo with nice people where you can start as a builder and dig. Un moo italiano con gente molto simpatica dove puoi iniziare gia' da subito con la mansione di builder a costruire."
+},
+{
+    "name" : "KrynnMoo",
+    "host:port" : "krynn.orisis.net:8888",
+    "url" : "http://www.ilos.net/~shawns/krynndex.htm",
+    "theme" : "social",
+    "note" : "It opened on 5 April 2000.  It has free character request, and is loosely based on a medieval fantasy theme slightly derived from the world of Krynn.  Character names and discussion are not solely limited to that of a medieval nature but requests for rooms, objects and nifty things to do  should have the theme in mind."
+},
+{
+    "name" : "LambdaMOO",
+    "host:port" : "lambda.moo.mud.org:8888",
+    "url" : [
+        "ftp://ftp.lambda.moo.mud.org/pub/MOO/ProgrammersManual_toc.html",
+    "http://www.welcome.to/moogallery/",
+    "http://idt.net/~everett3/gallery.html",
+    "http://www.amanita.net/bashfaq.html",
+    "http://www.amanita.net/mooring.html",
+    "http://www.fortunecity.com/bally/skull/100/lambdamooers.html",
+    "http://members.xoom.com/MOO_Crew/",
+    "http://www.angband.org/~gp/"
+        ],
+    "theme" : "social",
+    "note" : "The first MOO ever!  It started in 1991 and has over 6000 members. It is one massive VR party, taking place in a mansion loosely modeled after the creator's home in California.  Usually has lots of lag because there are always a lot of people on. Described as \"An adventure if you have the patience.\"  It was developed at <A HREF=\"http://www.parc.xerox.com/parc-go.html\">Xerox PARC (Palo Alto Research Center)</A> by Pavel Curtis."
+},
+{
+    "name" : "Lingua MOO",
+    "host:port" : "lingua.utdallas.edu:8888",
+    "url" : [
+        "http://lingua.utdallas.edu/",
+    "http://lingua.utdallas.edu:7000/",
+    "http://lingua.utdallas.edu/connections.html"
+        ],
+    "theme" : "educational",
+    "note" : "Lingua MOO is an academic virtual community for teaching and research hosted by the <A HREF=\"http://www.utdallas.edu/\">University of Texas at Dallas</A>. It was designed and built by <A HREF=\"http://lingua.utdallas.edu/jan/\">Jan Rune Holmevik</A> (Department of Humanistic Informatics, <A HREF=\"http://www.uib.no/\">University of Bergen</A>, Norway) and <A HREF=\"http://wwwpub.utdallas.edu/~cynthiah/\">Cynthia Haynes</A> (<A HREF=\"http://www.utdallas.edu/\">University of Texas at Dallas</A>) in 1995."
+},
+{
+    "name" : "LitMUSE",
+    "host:port" : "litmuse.cas.usf.edu:8888",
+    "url" : [
+        "http://litmuse.cas.usf.edu/",
+    "http://litmuse.cas.usf.edu/litmuse.html",
+    "http://litmuse.cas.usf.edu:7777"
+        ],
+    "theme" : "educational social",
+    "note" : "Hosted by the <A HREF=\"http://www.usf.edu/\">University of South Florida College of Arts and Sciences</A>, it \"hopes to highlight and encourage creative and innovative approaches to the teaching of various text-based studies, such as literature and writing, and foster a hyper-theatrical sense of space.  While its primary directive is education, social activities and interactions are equally encouraged.\""
+},
+{
+    "name" : "Little Italy",
+    "host:port" : "little.usr.dsi.unimi.it:4444",
+    "url" : [
+        "http://www.dsi.unimi.it/users/aprile/Home.html",
+    "http://kame.usr.dsi.unimi.it:4444/"
+        ],
+    "theme" : "social ESL",
+    "note" : "Social interaction in Italian. This does not mean that no English is spoken, but the language of choice is Italian. Little Italy e' un \"laboratorio vivente\" per la realizzazione di una societa' e di una economia digitali e distribuite. Questo laboratorio e' realizzato dal Dipartimento di Scienze dell'Informazione dell'Universita' degli Studi di Milano."
+},
+{
+    "name" : "LogMOO",
+    "host:port" : "ahynes1.homeip.net:7777",
+    "url" : [
+        "http://ahynes1.homeip.net:8000/moo/",
+    "http://ahynes1.homeip.net:8000/cupmud/",
+    "http://ahynes1.homeip.net:9999/"
+        ],
+    "theme" : "social educational",
+    "note" : "It is primarily aimed at MOO developers, with both social and educational  aspects.  It is currently exploring Brave New World."
+},
+{
+    "name" : "LostAges MOO",
+    "host:port" : [
+        "mudz.org:6969",
+    "24.4.115.104:6969"
+        ],
+    "url" : [
+        "http://mudz.org:6970/",
+    "http://mudz.org/javamoo.htm"
+        ],
+    "theme" : "RPG",
+    "note" : "For a character, e-mail <A HREF=\"mailto:skeetre@gnt.net\" >skeetre@gnt.net</A> with your request.  Think Medieval Times like King Arthur and knights of the round table... jousting Tournaments, saving damsels in distress, adventure and questing... The time period is around the 14th century. The theme isn't strictly set to be just like this period, or just like King Arthur's knights of the round table, that's just want it's loosely based on. It basically has a fantasy medieval setting with coded combat."
+},
+{
+    "name" : "LynxMOO",
+    "host:port" : "z.ml.org:7777",
+    "url" : [
+        "http://z.ml.org:7775/",
+    "http://z.ml.org:7775/62"
+        ],
+    "theme" : "educational",
+    "note" : "It is an extension of Lynx, a free public-access Unix machine. There is an ongoing project to design an RPG MOO incorporating artifical intelligence and other innovative ideas based on Stephen King's <B>Dark Tower</B> series of novels. Using an educational MOO to aid in research and team collaboration to bring such an immense project to a reality."
+},
+{
+    "name" : "MarlDOoM",
+    "host:port" : [
+        "www.math.utoronto.ca:7777",
+    "128.100.68.4:7777"
+        ],
+    "url" : [
+        "http://brauer.math.utoronto.ca:7777/",
+    "http://www.math.utoronto.ca/jjchew/doom/faq.html"
+        ],
+    "note" : "It is a public crossword games server. A <A HREF= \"http://www.math.utoronto.ca/jjchew/doom/faq.html#s1\">DOoM</A> is a Distributed Object-oriented Mud, which was created to replace ScrabbleMOO."
+},
+{
+    "name" : "MediaMOO",
+    "host:port" : "mediamoo.cc.gatech.edu:8888",
+    "url" : "http://www.cc.gatech.edu/fac/Amy.Bruckman/MediaMOO/",
+    "theme" : "educational research",
+    "note" : "A professional community for media researchers.  It is a research project of <A HREF=\"http://www.cc.gatech.edu/fac/Amy.Bruckman/\">Amy Bruckman</A>, formerly of the <A HREF=\"http://el.www.media.mit.edu/groups/el\" >Epistemology and Learning Group</A> at the <A HREF=\"http://www.media.mit.edu\">The MIT Media Lab</A>, and now of the <A HREF=\"http://www.cc.gatech.edu/\">College of Computing</A> at <A HREF=\"http://www.cc.gatech.edu/\">Georgia Tech</A>."
+},
+{
+    "name" : "Medieval",
+    "host:port" : "www.medieval.nl:1111",
+    "url" : "http://www.medieval.nl/",
+    "theme" : "ESL",
+    "note" : "A Dutch MOO. They are \"working on a RPG and making it bilingual (Dutch and English).\" It is a fantasy MOO set in the Middle Ages."
+},
+{
+    "name" : "Meridian",
+    "host:port" : "meridian.moo.mud.org:7777",
+    "url" : "http://meridian.moo.mud.org/",
+    "note" : "Themes of virtual travel and cultural exchange.  Can be thought of as a global village where people represent the essential \"flavors\" of real places they know well."
+},
+{
+    "name" : "MiamiMOO",
+    "host:port" : [
+        "moo.cas.muohio.edu:7777",
+    "holychao.cas.muohio.edu:7777",
+    "134.53.14.184:7777"
+        ],
+    "url" : [
+        "http://miamimoo.mcs.muohio.edu/",
+    "http://moo.cas.muohio.edu/cgi-bin/moo?look+100"
+        ],
+    "theme" : "educational",
+    "note" : "MiamiMOO is an experimental MOO server that aims to provide an environment for classes of highly motivated students to build both MOO and WWW versions of the buildings, regions, environments or cultures they are studying. Run by <A HREF=\"http://www.muohio.edu/\">Miami University</A>. Contact <A HREF=\"mailto:moo@moo.cas.muohio.edu\" >moo@moo.cas.muohio.edu</A> for more information."
+},
+{
+    "name" : "MirrorMOO",
+    "host:port" : "mirror.moo.mud.org:8889",
+    "url" : "http://mirror.moo.mud.org:8080/",
+    "theme" : "research",
+    "note" : "A forum for research and development. This MOO is running a simulation of the LambdaMOO server called <A HREF=\"http://www.mars.org/home/rob/proj/lpmoo/\">LPMOO</A>, based on <A HREF= \"http://www.mars.org/home/rob/dgd.html\">DGD</A>. The chosen theme is Alice's Wonderland; however, the theme is not the primary focus.  An effort is being made to combine the positive contributions of both the MOO and LPmud communities."
+},
+{
+    "name" : "MithrealMOO",
+    "host:port" : "sunray.dyndns.com:5400",
+    "theme" : "social RPG",
+    "note" : "Created in July 1999, it has a theme of medieval and magic.  It is mostly social, but an RPG is being built.  Merlin the ArchWiz writes, \"We're a small, new MOO hoping to bring lots of new players to make this MOO one of their homes. As we are a new MOO, I offer special benefits and rewards to builders especially who will build for the public MOO, and some benefits also for public programmers. I am also currently writing a MUD system which will allow for both MOO and MUD (either basically is optional  though) for the players. You will not be required to play the MUD, or play the MOO really, except for certain things that might be necessary (I am still developing this, so to say what it will be like is impossible).  I hope you will join us, and leave a message to Merlin if you wish to be a public builder/programmer.\""
+},
+{
+    "name" : "MooAtNite",
+    "host:port" : [
+        "mooatnite.cmoo.com:1999",
+    "mooatnite.dhs.org:1999",
+    "216.37.163.9:1999"
+        ],
+    "url" : "http://mooatnite.cmoo.com:2000/",
+    "theme" : "social",
+    "note" : "Based loosely on a small town in southern New Jersey. It is looking for players, builders and programmers.  There is no apparent theme."
+},
+{
+    "name" : "MOO Canada, Eh?",
+    "host:port" : "moo.ca:7777",
+    "url" : "http://moo.ca/",
+    "theme" : "social",
+    "note" : "Late 1998, SchoolNet MOO was renamed and is now being managed privately.  It says it \"is the largest and best MOO in Canada.  It is a live community of about a thousand users who use the MOO environment to socialize, build and program.\""
+},
+{
+    "name" : "MOO Fran&ccedil;ais",
+    "host:port" : [
+        "admiral.umsl.edu:7777",
+    "134.124.15.13:7777"
+        ],
+    "url" : "http://www.umsl.edu/~moosproj/moofrancais.html",
+    "theme" : "educational ESL",
+    "note" : "French language MOO. It has found a new home at <A HREF=\"http://www.umsl.edu/\">University of Missouri - St. Louis</A>."
+},
+{
+    "name" : "MOOkti",
+    "host:port" : "noisey.oise.utoronto.ca:9696",
+    "url" : [
+        "http://noisey.oise.utoronto.ca/moooise.html",
+    "http://noisey.oise.utoronto.ca:9996",
+    "http://noisey.oise.utoronto.ca/mooca/mooca/MudClient3.html",
+    "http://noisey.oise.utoronto.ca:9996/1067/"
+        ],
+    "theme" : "educational social",
+    "note" : "It is intended for social and academic events in the areas of teaching and learning, and is not a virtual classroom or a laboratory.  The name comes from the Sandskrit &quot;mukti&quot; meaning a setting or becoming free, release."
+},
+{
+    "name" : "MOOlah",
+    "host:port" : "kasmud.com:1234",
+    "url" : "http://www.tcn.dhs.org/moo/",
+    "theme" : "social",
+    "note" : "Currently a Social MOO, but is soon to become an RPG as well.  I couldn't find any theme."
+},
+{
+    "name" : "MOOphoria",
+    "host:port" : "phoria.yeehaw.net:8888",
+    "url" : "http://phoria.yeehaw.net:8889/",
+    "theme" : "social",
+    "note" : "You have to love their theme: \"Be happy. Let others be happy.\"  It features free ear cleanings for all new players, an arcade, and a variety of interactive games (Scrabble, KaBoom, Card Guppies, Blackjack, etc.)."
+},
+{
+    "name" : "MOOsaico",
+    "host:port" : [
+        "moo.di.uminho.pt:7777",
+    "moosaico.moo.mud.org:7777",
+    "193.136.20.102:7777"
+        ],
+    "url" : [
+        "http://mes01.di.uminho.pt/RVirtual/AMB_VIRT/amb_virt.en.html",
+    "http://moo.di.uminho.pt/~pmoo/index.en.html",
+    "http://mes01.di.uminho.pt/RVirtual/AMB_VIRT/amb_virt.html",
+    "http://moo.di.uminho.pt/~pmoo/"
+        ],
+    "theme" : "educational ESL",
+    "note" : "A Portuguese language MOO. The theme is one cultural connectivity.  Like the world, it is woven together out of the individual fabrics of a variety of local cultures.  Although real world cultures vary from one to another, they are forced by circumstance to co-exist in the tiny confines of the globe, and whatever they collectively form comes to define the world as we know it; so, too, with this multilingual MOO. It is located at Universidade Do Minho, Informatic Department."
+},
+{
+    "name" : "MOOScape",
+    "host:port" : "scape.uta.edu:7777",
+    "url" : "http://scape.uta.edu/MOOScape/",
+    "theme" : "educational",
+    "note" : "\"Devoted to rethinking the social and educational landscapes of virtual worlds\" and is hosted by <A HREF=\"http://www.uta.edu/\">the University of Texas at Arlington</A>."
+},
+{
+    "name" : "MOOSE Crossing",
+    "host:port" : [
+        "moose-crossing.cc.gatech.edu:7777",
+    "moose-crossing.media.mit.edu:7777"
+        ],
+    "url" : "http://www.cc.gatech.edu/elc/moose-crossing/",
+    "theme" : "educational",
+    "note" : "It is a place for kids to \"hang out and make funky things.\"  It is a research project of <A HREF=\"http://www.cc.gatech.edu/fac/Amy.Bruckman/\">Amy Bruckman</A>.  No guest access is allowed."
+},
+{
+    "name" : "MOOtown",
+    "host:port" : [
+        "mootown.dhs.org:1998",
+    "shadowforge.net:1998",
+    "24.124.36.129:1998"
+        ],
+    "theme" : "social",
+    "note" : "It is a community based on the play <B>Our Town</B> by Thornton Wilder.  There are two parts of this typical rural town.  The north and west side of town is where you can find socialized activities, games, and interactive rooms.  The adult side of town is found on the east and south side of the tracks.  Building public areas should be themely, and connected to the town.  They promote creativity and friendliness. They encourage you to make things that are unique and for public use.  They offer over 35 games, with a different interactive realtime game every night of the week at 9:00 pm cdt."
+},
+{
+    "name" : "MOOville",
+    "host:port" : "moo.nwe.ufl.edu:9898",
+    "url" : [
+        "http://web.nwe.ufl.edu/writing/help/moo/",
+    "http://moo.nwe.ufl.edu:8080/"
+        ],
+    "theme" : "research educational",
+    "note" : "It is for students and teachers in the <A HREF= \"http://web.nwe.ufl.edu/writing/\">Networked Writing Environment</A> at the <A HREF=\"http://www.ufl.edu/\">University of Florida</A>."
+},
+{
+    "name" : "MooWP",
+    "host:port" : [
+        "it.uwp.edu:7777",
+    "moo.uwp.edu:7777"
+        ],
+    "url" : [
+        "http://moo.uwp.edu:8000/",
+    "http://it.uwp.edu/moo/"
+        ],
+    "theme" : "educational social",
+    "note" : "The educational moo of <A HREF=\"http://www.uwp.edu/\">University of Wisconsin-Parkside</A>.  It has a \"mildly literary flavor in many sections\" and welcomes social players."
+},
+{
+    "name" : "MundoHispano",
+    "host:port" : [
+        "admiral.umsl.edu:8888",
+    "134.124.15.13:8888"
+        ],
+    "url" : [
+        "http://www.umsl.edu/~moosproj/mundo.html",
+    "http://www.umsl.edu/~moosproj/mundosp.html"
+        ],
+    "theme" : "educational ESL",
+    "note" : "Spanish speaking MOO. It is an academic MOO for speakers and learners of Spanish, not a game. The use of English there is strongly discouraged. It has found a new home at <A HREF=\"http://www.umsl.edu/\">University of Missouri - St. Louis</A>."
+},
+{
+    "name" : "MusicWorld",
+    "host:port" : "musicworld.dyndns.org:7777",
+    "url" : "http://musicworld.dyndns.org/",
+    "theme" : "ESL social",
+    "note" : "MusicWorld is a <B>Dutch</B> social MOO in the theme of Music. It was started in January 2000 and is still being developed."
+},
+{
+    "name" : "Nebula MOO",
+    "host:port" : [
+        "moore-375-37.moore.clarkson.edu:6666",
+    "128.153.152.45:6666"
+        ],
+    "theme" : "social",
+    "note" : "Housed by <A HREF=\"http://www.clarkson.edu/\">Clarkson University</A>, the general theme is good vs. bad. They are trying to maintain a wizard/player ratio of 1/30 and the wizards are extremely friendly."
+},
+{
+    "name" : "NorthWoodsMOO",
+    "host:port" : "www.hu.mtu.edu:7700",
+    "url" : "http://www.hu.mtu.edu/northwoods/",
+    "theme" : "educational",
+    "note" : "This MOO is designed to support learning activities and emergent design literacies for a range of participants: K-12 teachers and students in Michigan's Upper Peninsula and college level writing courses.  Visitors are welcome!"
+},
+{
+    "name" : "NowMOO",
+    "host:port" : [
+        "nowmoo.dds.nl:2001",
+    "nowmoo.dds.nl:9000",
+    "194.109.20.8:2001",
+    "194.109.20.8:9000"
+        ],
+    "url" : [
+        "http://www.dds.nl/~nowmoo/",
+    "http://www.dds.nl/~nowmoo/aanmeld.html"
+        ],
+    "theme" : "ESL social",
+    "note" : "It is mostly in <B>Dutch</B>.  Absurdity is the theme of choice, so think strange.  It was created in June 1997."
+},
+{
+    "name" : "NullMOO",
+    "host:port" : "nullmoo.ath.cx:7777",
+    "url" : [
+        "http://www.flamingsphere.com/null/",
+    "http://nullmoo.ath.cx:7778/"
+        ],
+    "theme" : "social",
+    "note" : "It is a formerly invitation-only communal social MOO for a circle of online friends.  This group has inhabited various MOOs and chats in the  course of its existence, most recently Speakeasy.  Programmer's and builder's bits are almost always available, and hard disk space is practically unlimited. There's a facility to link built areas to a public place, and also somewhere to display information about programmed objects.  You must talk to a Wizard for character creation. As with Speakeasy, obscene language is totally allowed, but character abuse and prejudiced hatred is not."
+},
+{
+    "name" : "OldPuebloMOO",
+    "host:port" : "oldpueblomoo.arizona.edu:7777",
+    "url" : "http://oldpueblomoo.arizona.edu/",
+    "theme" : "educational",
+    "note" : "It is the <A HREF=\"http://www.arizona.edu/\">University of Arizona</A>'s educational MOO. Its \"architexture\" draws on \"the rich and unique culture, geography, and heritage of the Tucson community, offering students and Internet travelers an opportunity to view the University of Arizona within its broader context. While OldPuebloMOO primarily serves affiliates of the University of Arizona, all visitors are welcome.\""
+},
+{
+    "name" : "OpalMOO",
+    "host:port" : "moo.opal.org:7878",
+    "theme" : "social",
+    "note" : "It is considered the second or third oldest public MOO (in dispute with JHM).  The theme is described as \"Gritty and Sensual\".  They prefer an abandoned, lived-in feel to everything shiny and new."
+},
+{
+    "name" : "Pangaea",
+    "host:port" : [
+        "pangaeamoo.org:7777",
+    "confabulation.com:7777"
+        ],
+    "url" : [
+        "http://www.pangaeamoo.org/",
+    "http://www.angelfire.com/scifi/pangaea",
+    "http://www.pangaeamoo.org/",
+    "http://www.angelfire.com/scifi/pangaea/",
+    "http://www.pangaeamoo.org/masterframe.html"
+        ],
+    "theme" : "ESL social",
+    "note" : "It \"is dedicated to being a multi-lingual community, with many areas that are especially friendly to specific language speaking people.\"  It is specifically designed for English, Espa&ntilde;ol (Spanish), fran&ccedil;ais (French), Deutsch (German), portug&ecirc;s (Portuguese), italiano (Italian), and Pinyin (Latinized Chinese). There is an on-MOO and off-MOO instant translator in use.  It has TTS (text to speech) modifications to make \"the MOOing experience more enjoyable for blind persons.\"  The theme is internationalism based on fictional realignment of the earth's continents in the year 2052.  Special areas are being developed to accommodate various ethnic groups witht he ambition to blend cultures. The goal is \"Fun, Chatting, Learning, Programming, Gaming, and attempting to return to the original purpose of MOOS -- to experiment with 'community' and sense of presence.\" It opened 21 January 2000.  En l&iacute;nea, el texto bas&oacute; el mundo con el traductor libre de la traducci&oacute;n del lenguaje para los estudiantes, los profesores, y los utilizadores ocultos.  Interacci&oacute;n en tiempo real."
+},
+{
+    "name" : "Paradise MOO",
+    "host:port" : [
+        "kamber.cobra.net:8888",
+    "131.123.56.158:8888"
+        ],
+    "theme" : "social",
+    "note" : "It is a tropical island.  Your small ship brought you there onto their beautiful white sand beaches.  They have a beautiful hotel where you can wait to talk to the Wizards, the island is covered in beautiful beaches, scuba diving, sunbathing men and women...  What more could you ask for?  If your answer is a unicorn, space shuttle, or anything to do with civilization, then you're probably in the wrong place.  But if you want a condo on the sea shore, a small tropical jungle hut, or a place to spend hours doing nothing but sunbathing and talking to other sun lovers, then you have come to the right place.  If you want to become a builder, talk to one of the Wizards and ask them to give you builder status.  They will add your personal rooms to whatever area you would like to live near.  Be sure to explore everywhere to make sure you'll be happy where you are.  Please make sure that you follow the tropical island getaway theme and please don't put anything there that doesn't belong on a tropical island.  Have fun and enjoy yourself!"
+},
+{
+    "name" : "Paradoxia",
+    "host:port" : "AandEgames.gameverse.org:9999",
+    "url" : "http://AandEgames.gameverse.org/paradoxia/",
+    "theme" : "RPG",
+    "note" : "&quot;This is the story of a plane of existence that has been lost to the Mana Lands, named Paradoxia by its inhabitants, now trapped together in a dangerous world of magic and nature...&quot;"
+},
+{
+    "name" : "PennMOO",
+    "host:port" : "ccat.sas.upenn.edu:7777",
+    "url" : "http://ccat.sas.upenn.edu/PennMOO/",
+    "theme" : "educational",
+    "note" : "Based loosely on the geographies of the Penn campus and the city of Philadelphia, PennMOO provides a 'place' where faculty hold classes and   office hours, students gather for group projects, and real-time events bring users from Penn and around the world together in cyberspace. PennMOO is also an evolving experiment, seeking to help redefine the traditional walls of the college classroom."
+},
+{
+    "name" : "PlowMOO",
+    "host:port" : [
+        "waystation.com:7777",
+    "198.68.2.28:7777"
+        ],
+    "theme" : "social",
+    "note" : "Does not have a theme as such, aside from a commitment to general weirdness, silliness, and all around wackiness. As long as you build something, and it isn't really annoying, or generally stupid, it's considered in theme."
+},
+{
+    "name" : "PMC-2 (Postmodern Culture MOO - 2)",
+    "host:port" : [
+        "hero.village.virginia.edu:7777",
+    "128.143.200.59:7777"
+        ],
+    "url" : "http://jefferson.village.virginia.edu/pmc/pmc-moo.html",
+    "theme" : "educational",
+    "note" : "A virtual space designed to promote the exploration of postmodern theory and practice; a place for intellectual meandering. There, the unstable \"real world\" of postmodernity is mixed with the solid virtuality of MOOspace. Membership is restricted to those doing postmodernism research. It is a production of the <A HREF=\"http://jefferson.village.virginia.edu/\">Institute for Advanced Technology in the Humanities (IATH)</A> at the <A HREF=\"http://www.virginia.edu/\">University of Virginia</A> in <A HREF=\"http://www.virginia.edu/cville.html\">Charlottesville</A>."
+},
+{
+    "name" : "PoseidonMoo",
+    "host:port" : "pnt.arkay.net:8000",
+    "theme" : "social",
+    "note" : "It is an underwater themed moo, and is in the making. The archwizard is Goldfishy, his email addy is goldfishy@litmuse.cas.usf.edu. If you need to know more please contact him."
+},
+{
+    "name" : "Project Achieve",
+    "host:port" : "achieve.utoronto.ca:2222",
+    "url" : "http://achieve.utoronto.ca/",
+    "theme" : "educational",
+    "note" : "It is a \"Schoolnet Collaborative Virtual Learning Environment.\"  It is a project-based collaborative learning environment for Canadian learners and their friends.  It is funded by Canada's Schoolnet, and sponsored by the Knowledge Media Design Institute of the University of Toronto.  Achieve features the VASE: Virtual Assignment Server Environment, and file upload/management utilities integrated with the Xpress GUI."
+},
+{
+    "name" : "Pueblo",
+    "host:port" : "140.198.16.20:7777",
+    "url" : "http://pc2.pc.maricopa.edu/hobbes/moobie/",
+    "theme" : "educational",
+    "note" : "K-6 MOO based on educational learning and the virtual experience."
+},
+{
+    "name" : "Puget Sound Community School Virtual Educational Environment (PSCS VEE)",
+    "host:port" : "moo.speakeasy.org:7777",
+    "url" : "http://www.pscs.org/moo.html",
+    "theme" : "educational",
+    "note" : "MOO of the <A HREF=\"http://www.pscs.org/\">Puget Sound Community School</A>."
+},
+{
+    "name" : "Quest World Adventures",
+    "host:port" : [
+        "quest.cmoo.com:9999",
+    "199.224.73.136:9999"
+        ],
+    "theme" : "social"
+},
+{
+    "name" : "Raclya MOO",
+    "host:port" : "mushhaven.net:4000",
+    "url" : "http://mushhaven.net/~4000/",
+    "theme" : "RPG",
+    "note" : "It is just starting up; the theme is about a divided world called Raclya, where the OldKingdom has divided into two seperate kingdoms due to many misunderstandings.  Between theses two divided Kingdoms are the People and intelligent animals which can bond to these humans, share their thoughts, feelings, and beings with their bonded partner."
+},
+{
+    "name" : "Res Rocket Surfer",
+    "host:port" : "rocket.resrocket.com:1111",
+    "url" : "http://www.resrocket.com/",
+    "note" : "Join a world wide jam session, where you can groove with musicians from Oslo, San Francisco, and Notting Hill. Or if you're looking for comments on your freshly mixed MIDI files, upload them to your locker on the Res Rocket web site for other others to browse. Based out of a studio in Notting Hill, west London, Internet band Res Rocket Surfer developed this world and the associated web site. They invite musicians to hook up their MIDIs to jam in real time, using the Distributed Realtime Groove Network realtime jamming DRGN software. While the realtime jamming takes place on the web realtime chat takes place on their MOO. On the web, go to the control room to sample some tracks and add comments, or go the ResRocket Backstage Bar on the MOO to hang and chat."
+},
+{
+    "name" : "River MOO",
+    "host:port" : "rivermoo.com:8888",
+    "url" : [
+        "http://rivermoo.com:8889/",
+    "http://rivermoo.com:8889/1606",
+    "http://rivermoo.com:8889/4052"
+        ],
+    "theme" : "social",
+    "note" : "Theme wise, this world has only one constant force: the river. Its purpose is socializing and programming. Its primary function is to provide a medium for advancing the uses of HTML as a foundation for communication over the internet. It is home to 1,214 players and 7,253 objects.  It is run by the Indiana University Honors Division."
+},
+{
+    "name" : "The Real Life MOO (RLMOO)",
+    "host:port" : [
+        "rlmoo.woo.net:7777",
+    "199.237.128.49:7777"
+        ],
+    "url" : "http://www.dreamscape.com/sagreiss/rlmoo.htm",
+    "theme" : "social",
+    "note" : "Self described as, &quot;This is not a toy.  This is not a game.  This is real life.  There's no such thing as virtual reality.  RLMOO is dedicated to the pursuit of linguistic research, literary creation, and social change. It's the text-based equivalent of a conference call.  It is also a new medium for art, education, and communication.  Morever, RLMOO is an experiment in anarchist politics.&quot; You must be twenty-one or older to connect."
+},
+{
+    "name" : "RockMOO",
+    "host:port" : "atlas.pingnet.com:7777",
+    "theme" : "social",
+    "note" : "They need new programmers and players, as there aren't many now.  So stop on by and help them."
+},
+{
+    "name" : "ROO MOO",
+    "host:port" : "saga.umkc.edu:4444",
+    "url" : [
+        "http://iml.umkc.edu/roo/",
+    "http://saga.umkc.edu:8000/",
+    "http://iml.umkc.edu/roo/faq-policy.html",
+    "http://iml.umkc.edu/roo/mission.html",
+    "http://iml.umkc.edu/roo/moohelp.html"
+        ],
+    "theme" : "educational",
+    "note" : "An interdisciplinary educational MOO sponsored by the <A HREF= \"http://iml.umkc.edu/\">Instructional Materials Laboratory</A> (College of Arts & Sciences, <A HREF=\"http://www.umkc.edu/\">University of Missouri, Kansas City</A>).  It provides a real-time virtual campus for faculty, students, & staff to develop creative and innovative environments and tools for teaching, learning, and research, and to foster interdisciplinary collaboration.  It is modeled after the physical space of the campus. Faculty from other Higher Ed institutions are encouraged to join them and to bring students online to collaborate."
+},
+{
+    "name" : "RSmoo",
+    "host:port" : [
+        "RSmoo.cmoo.com:6666",
+    "216.37.163.9:6666"
+        ],
+    "theme" : "social",
+    "note" : "It is a social MOO for people who like to program.  They are seeking good coders.  It was created in July 1999."
+},
+{
+    "name" : "Rumba MOO",
+    "host:port" : "200.25.53.30:8888",
+    "url" : [
+        "telnet://calvin.univalle.edu.co:8888/",
+    "http://calvin.univalle.edu.co/~moomngr/"
+        ],
+    "theme" : "ESL social",
+    "note" : "A <B>Spanish</B> social MOO for the <A HREF=\"http://univalle.edu.co/\">Universidad del Valle - Cali, Colombia</A>."
+},
+{
+    "name" : "Rupert",
+    "host:port" : "rupert.twyst.org:9040",
+    "url" : "http://rupert.twyst.org/rupert",
+    "note" : "Based on Douglas Adams' <B> <A HREF=\"http://www.vogon.com/guide/\">The Hitchhiker's Guide to the Galaxy</A></B>."
+},
+{
+    "name" : "RuthMOO",
+    "host:port" : [
+        "ruthmoo.feldberg.brandeis.edu:7777",
+    "staff.feldberg.brandeis.edu:7777"
+        ],
+    "url" : "http://confabulation.com/~sam/ruthmoo.html",
+    "theme" : "educational",
+    "note" : "It \"is an experimental site for the exploration of educational technology and virtual community.\"  It is hosted by <A HREF= \"http://www.brandeis.edu\">Brandeis University</A> and has been open since January 1998."
+},
+{
+    "name" : "Ryksyll MOO",
+    "host:port" : "moo.ryksyll.com:8888",
+    "url" : [
+        "http://moo.ryksyll.com:8889/",
+    "http://www.ryksyll.com/~durpost/MW1/mycleInfo/mooInfo.html",
+    "http://moo.ryksyll.com:8889/request/",
+    "http://heuphonis.freeyellow.com/Ryksyll.htm"
+        ],
+    "theme" : "RPG",
+    "note" : "The world is based on the works of Peter Wright on <A HREF=\"http://ryksyll.com/~durpost/\">the land of Mycle</A>.  It is an adult-restricted game, though not necessarily adult oriented.  TS is allowed in most semi-public areas.  They are currently accepting more builders and more players so that anyone wanting to can come along and play.  They offer mutliple guilds and temples to join, as well as several different species."
+},
+{
+    "name" : "Science & Fiction MOO",
+    "host:port" : "moo.ufsm.br:7777",
+    "theme" : "ESL",
+    "note" : "Esse eh o ponto de partida da maioria dos players do nosso MOO. Sua grandiosidade e conforto propiciam enormes possibilidades para quem estah connect guest disposto a explorar nosso MOOndo. Nos seus extremos existem dois enormes portais, cujas pesadissimas portas de bronze exigem algum esforco para abri-las. Pode-se ler claramente os dizeres grafados em cada porta: Caminho da Ciencia e Caminho da Ficcao. Sim, aqui a Ciencia e a Ficcao sao levadas a serio..."
+},
+{
+    "name" : "schMOOze University",
+    "host:port" : [
+        "schmooze.hunter.cuny.edu:8888",
+    "146.95.128.7:8888"
+        ],
+    "port"  : "8888",
+    "url" : "http://schmooze.hunter.cuny.edu:8888/",
+    "theme" : "educational ESL",
+    "note" : "A small college known for its hospitality and the diversity of its student population. Established in July 1994 as a place where people studying English as a second or foreign language could practice English while sharing ideas and experiences with other learners and practicers of English. Students have opportunities for one-on-one and group conversations as well as access to language games, an on-line dictionary, USENET feed, and gopher access.  Housed by <A HREF=\"http://www.hunter.cuny.edu\">Hunter College</A>."
+},
+{
+    "name" : "ScienceMOO",
+    "url" : "http://flourish.mrl.nyu.edu:8000/",
+    "theme" : "educational",
+    "note" : "The only MOO I've ever seen that doesn't offer telnet access, ScienceMOO is dedicated to science education.  They hold online science competitions in the MOO, teacher workshops, classes for science educators, etc."
+},
+{
+    "name" : "SCU MOO",
+    "host:port" : [
+        "scumoo.moo.mud.org:7776",
+    "angus.scu.edu.au:7776"
+        ],
+    "url" : [
+        "http://www.bmu.net.au/~gdunn/sm/",
+    "http://angus.scu.edu.au/~zjohnsto/"
+        ],
+    "theme" : "educational social",
+    "note" : "It is a virtual version of <A HREF= \"http://www.scu.edu.au/main.html\">Southern Cross University</A>, located in Lismore NSW Australia with a sub-campus in Coffs Harbour NSW Australia.  It has no set theme, however they encourage using the MOO for interactive programming, developing an Australian theme (much of what is there is based on the real life version), developing original ideas, as a forum to voice your opinions, and as a place to meet people from around the globe."
+},
+{
+    "name" : "shadowed Realities: The Genesis",
+    "host:port" : "saeihr.com:9876",
+    "theme" : "RPG",
+    "note" : "The battle of good end evil is taking place.  There are several warring orgs.  It was created by merging <B>Space Conquest</B> and <B>Shadowed Realities</B>."
+},
+{
+    "name" : "ShadowRun MOO",
+    "host:port" : [
+        "entropy.ensemblestudios.com:9990",
+    "208.193.239.21:9990"
+        ],
+    "theme" : "RPG",
+    "note" : "It \"is a combination of two popular RPG themes, cyberpunk and magic.  The year is 2053. Magical traits long dormant and suppressed have become active in people and animals once again, causing them to mutate into their true forms. Creatures of myth and lengend once again walk the Earth.  The USA has collapsed and reformed into several splinter nations, such as the United Canadian/American States (UCAS).  Our setting is Seattle, a small  piece of the UCAS deep inside a native American nation; The Salish-Shidhe.\"  It is currently under construction, but you can request a character.  It was formally know as <B>ShadowMOO</B>."
+},
+{
+    "name" : "Sindome",
+    "host:port" : "sindome.cmoo.com:5555",
+    "url" : [
+        "http://sindome.org/",
+    "http://sindome.org/timeline.html"
+        ],
+    "theme" : "RPG",
+    "note" : "It has \"a cyberpunk theme. Set in a domed Withmore City, known as the 'dome' to the world, in the year 2080 in a post-apocalyptic world.\""
+},
+{
+    "name" : "Space Conquest II",
+    "host:port" : "whitestar.soark.net:6969",
+    "theme" : "RPG",
+    "note" : "It takes up where the original Space Conquest MOO left off. Due to a artifically created super blackhole, all human, Borth'a and Kzintiz races are forced to flee their worlds from the black destruction following them.  These survivors manage to crash land on one of the last habitable worlds left in the destroyed galaxy.  These three races have formed new unions to survive on this one world.  Its a rpg world with intentions to develope space later."
+},
+{
+    "name" : "The Spinward Marches",
+    "host:port" : "spinward.org:8888",
+    "url" : "http://spinward.org:8080/",
+    "theme" : "social",
+    "note" : "It has a sci-fi milieu which you do not have to adhere to."
+},
+{
+    "name" : "Springside",
+    "host:port" : "iberia.vassar.edu:7777",
+    "theme" : "educational",
+    "note" : "The MOO at <A HREF=\"http://www.vassar.edu/\">Vassar College</A>. It was formerly VassarMOO."
+},
+{
+    "name" : "Star Stones MOO",
+    "host:port" : [
+        "starstones.wolfpaw.net:9998",
+    "216.18.90.20:9998"
+        ],
+    "theme" : "RPG",
+    "note" : "Based on the <B>Dragonriders of Pern</B> series by Anne McCaffrey. Set in the Telgar/Crom regions of Pern, it includes a different range of crafts as well as unique RP opportunities."
+},
+{
+    "name" : "StrangeBrew MOO",
+    "theme" : "social",
+    "note" : "A social moo with a twist.  It has games, contests and events.  It is currently down and being worked on, and should be back up soon."
+},
+{
+    "name" : "Stormy Nights",
+    "host:port" : [
+        "stormynights.org:7777",
+    "bb5.betterbox.net:7777",
+    "mud.sector001.org:7777"
+        ],
+    "url" : [
+        "http://www.stormynights.org/",
+    "http://www.onelist.com/group/stormynights",
+    "http://members.aol.com/JradAZ/stormynights/emporium.html",
+    "http://members.aol.com/JradAZ/stormynights/newbies.htm"
+        ],
+    "theme" : "RPG",
+    "note" : "\"A modern/post-modern RPG where the rain never stops. Separate towns are provided with mass crime, luxury, and modern ammenities. Player vs. player combat is allowed.\"  It was created in March 1999."
+},
+{
+    "name" : "Syrinnia",
+    "host:port" : "syrinnia.o-r-g.org:7777",
+    "url" : [
+        "http://syrinnia.o-r-g.org:8000/",
+    "http://syrinnia.o-r-g.org:8000/login/"
+        ],
+    "theme" : "RPG",
+    "note" : "Formerly <B>Gondolin Station</B>, it is still in the coding phase if you'd like to help. It is not yet \"open to play, however progress is going well.  Guests or people wanting to help with development are welcome.\" It seeks to combine the best parts of Online Roleplaying, Risk, Tradable Card Games, and Microprose's Civilisation to creat a new type of RP/strategy game.  The setting is an original, but not totally unfamiliar, fantasy world. Players are leaders in large scale factions - governments, religious orders or magical colleges.  Each faction struggles against, or allies with, others to take control of the map.  Empires can be built and destroyed, armies trained and sent to attack, the terrain of the world changed with magical spells. Syrinnia features a graphical web based interface for commanding armies and building cities, not unlike Civilisation, using the latest in DHTML advances. Roleplaying is required, and the game systems have been designed to encourage and reward it."
+},
+{
+    "name" : "SyrinxMOO",
+    "host:port" : "syrinx.yeehaw.net:2112",
+    "theme" : "social",
+    "note" : "The theme is \"The Temples of Syrinx\", the fictional area as sung about in Rush's masterpiece \"2112\".  In this musical work, the hero lives in a land of opression and grim reality.  In this future society of the year 2112 AD, the leaders have taken away most of man's technology, art, etc.  Our hero, while walking to the temples one day, unearths a great new wonder.  He notes that it has \"wires that vibrate, and give music...\".  This \"strange device\", or a guitar as it is known to us, caused him to review his opressive existence and seek to break the bonds that held him... a fitting topic in today's networked world. SyrinxMOO is a story about the rediscovery of society, technology, and ourselves... a quest to expand and discover beyond the chains and fetters of authority."
+},
+{
+    "name" : "TecfaMOO",
+    "host:port" : [
+        "tecfamoo.unige.ch:7777",
+    "129.194.12.39:7777"
+        ],
+    "url" : [
+        "http://tecfa.unige.ch/tecfamoo.html",
+    "http://tecfa.unige.ch/tecfa/tecfa-research/CMC/tecfamoo/tecfamoo.html",
+    "http://tecfa.unige.ch/tecfa/tecfa-overview.html"
+        ],
+    "theme" : "research educational",
+    "note" : "A Virtual Space for Educational Technology, Education and Research at <A HREF=\"http://tecfa.unige.ch/\">TECFA (Technologies de Formation et Apprentissage)</A>, School of Psychology and Education (Faculte de Psychologie et des Sciences de l'Education), at the <A HREF=\"http://www.unige.ch/\">University of Geneva</A>, Switzerland. Its main purposes are research (in educational technology and CMC) and some education."
+},
+{
+    "name" : "The TechMOOseum",
+    "note" : "The MOO has been offline for quite some time, however, it is expected to come back online in the future. The <A HREF=\"http://www.thetech.org/\">Tech Museum</A> itself is going to be opening a <A HREF=\"http://www.thetech.org/newhome\">major new facility in downtown San Jose</A> in late 1998.  The TechMOOseum was a text-based virtual reality created by staff, volunteers, and visitors of The <A HREF=\"http://www.thetech.org/\">Tech Museum of Innovation</A> in San Jose, California."
+},
+{
+    "name" : "TFN MOO",
+    "host:port" : "moo.tfn.net:6666",
+    "url" : [
+        "http://moo.tfn.net/",
+    "http://moo.tfn.net:8080/455",
+    "http://moo.tfn.net:8080"
+        ],
+    "theme" : "social educational",
+    "note" : "It is the virtual environment of <A HREF=\"http://www.tfn.net/\">Tallahassee Freenet</A> (TFN), a Florida-based non-profit educational organization.  You do not have to be a registered TFN user to participate.  It has a near future sci-fi theme.  \"The moon  and several planets have been settled.\"  Coders are encouraged to get in  on the ground floor, as it has not been announced to TFN users yet."
+},
+{
+    "name" : "Titan Colony",
+    "host:port" : "bessie.englab.slcc.edu:8000",
+    "url" : [
+        "http://bessie.englab.slcc.edu:8000/",
+    "http://colony.home.ml.org"
+        ],
+    "theme" : "sci-fi",
+    "note" : "In 2599, a group of people launched from Luna Base and headed towards Titan, a moon of Saturn. Established on 2504, the Titan Colony was set up to study Saturn. Domes and transportation systems brought along from Earth were also set up. Realizing the potential of the moon, the Genisis II project was used on Titan to terraform its surface in 2510. Currently, the Titan Colony is being constructed again. This time for a better purpose: Interactive Fiction. Being inspired by Interactive Fiction, the colony's construction team will be creating intricate and well designed interactive room programs based on the InfoCom Empire of the 1980's to late 1990's."
+},
+{
+    "name" : "TWUMOO",
+    "host:port" : "205.165.53.14:8888",
+    "url" : [
+        "http://www.twu.edu/moo/",
+    "http://205.165.53.14:7000/62",
+    "http://moo.twu.edu:7000/"
+        ],
+    "theme" : "educational",
+    "note" : "TWU stands for <A HREF=\"http://www4.twu.edu/\">Texas Woman's University</A>. It is a virtual environment for teaching and learning that promotes women and women's writing and is designed to enhance TWU's distance learning initiative and supplement traditional classroom instruction."
+},
+{
+    "name" : "UltiMOO",
+    "host:port" : [
+        "129.78.64.1:2001",
+        "sydney.sensemedia.net:2001"
+            ],
+    "url" : "http://sensemedia.net/sydney",
+    "theme" : "sci-fi",
+    "note" : "SenseMedia/Sydney is the Australian Gateway to the virtual worlds of The Sprawl (ChibaMOO, Weyrmount, Snow, Galaxy, and UltiMOO).  It is a <A HREF=\"http://sensemedia.net/\">Sensemedia</A> WTP server based in Sydney, Australia. Set in Sydney circa early 21st century. UltiMOO is a collaborative vision of a city in the not-too distant future. Suggested influences: Blade Runner, Alien/Aliens, Max Headroom, the new Batman movies; uses a little retro in with the cyberpunk."
+},
+{
+    "name" : "University of MOO (U-MOO)",
+    "host:port" : "moo.cs.uwindsor.ca:7777",
+    "url" : "http://janus.lamf.uwindsor.ca:7777",
+    "theme" : "social",
+    "note" : "It is run by the School of Computer Science at <A HREF=\"http://www.uwindsor.ca/\">the University of Windsor</A> in Ontario, Canada.  Everyone automatically gets a programmer's bit.  It was first intended as a virtual university campus, and is still based on this.  You must comply with their <A HREF=\"http://server.uwindsor.ca:1101/acceptable.html\">Acceptable Use Policy</A>."
+},
+{
+    "name" : "Utopia",
+    "host:port" : [
+        "utopiamoo.net:1111",
+    "donald-duck.ele.tue.nl:1111"
+        ],
+    "url" : [
+        "http://donald-duck.ele.tue.nl/utopia/",
+    "http://www.utopiamoo.net/"
+        ],
+    "theme" : "ESL",
+    "note" : "Self-described as a \"Dutch MOO based on fairytales, stories and all kinds of fantastic creatures in a wonderful world of magic power combined with  fun. A RPG is under construction.\""
+},
+{
+    "name" : "Villa Diodati",
+    "host:port" : "www.rc.umd.edu:6060",
+    "url" : "http://www.rc.umd.edu:7000/",
+    "theme" : "educational",
+    "note" : "The Villa is the retreat of Byron and Shelley in the summer of 1816.  The space is used for discussions of British Romanticism and features (as of Feb. 2001) a Romanticist on call for teachers and students interested  in the Romantic movement.  The site is hosted by <A HREF=\"http://www.rc.umd.edu/\">Romantic Circles</A>."
+},
+{
+    "name" : "VirtualMOO",
+    "host:port" : "sunray.dyndns.com:8080",
+    "url" : [
+        "http://www.geocities.com/SiliconValley/Vista/7693/",
+    "http://sunray.dyndns.com:8081/"
+        ],
+    "theme" : "social",
+    "note" : "Virtual is a great social moo with a huge amount of rooms and, until a few months ago, a huge amount of players. It went downs for 2 or 3 months and alot of players thought it had died. Most of it is set in Sterling City, a fictional city in real life Maine, but there are extensive Medieval and Sci-Fi areas, and a few Adults Only areas, too. While it is a social moo, there is alot of coding and building."
+},
+{
+    "name" : "Virtual Online University (VOUMOO)",
+    "host:port" : "athena.edu:8888",
+    "url" : [
+        "http://www.athena.edu/",
+    "http://www.athena.edu/vou.html",
+    "http://www.athena.edu/surfturf/WebMOO.html",
+    "http://www.athena.edu/hotmud.html"
+        ],
+    "theme" : "educational",
+    "note" : "<A HREF=\"http://www.athena.edu/athena.html\">Athena University</A> and <A HREF=\"http://www.athena.edu/aa.html\">Athena Preparatory Academy</A> share this campus to offer both K-12 and higher education. It is VOU's GENII Laboratory School (GLS) and Athena University's Electronic Campus.  It offers Teacher Education/Training and online classroom instruction for pre-university and university level learners.  Hardware provided by <A HREF=\"http://www.iac.net\">Internet Access Cincinnati</A>."
+},
+{
+    "name" : "Virtual Park Hall",
+    "host:port" : "virtual.park.uga.edu:7777",
+    "url" : [
+        "http://parallel.park.uga.edu/distance/moo/",
+    "http://parallel.park.uga.edu/distance/moo/java-moo.html",
+    "http://virtual.park.uga.edu/woo/WebMOO.html"
+        ],
+    "theme" : "educational",
+    "note" : "Part of the <A HREF= \"http://parallel.park.uga.edu/distance/goti.html\">Georgia On-Line Teaching Initiative</A> (GOTI) at <A HREF=\"http://www.uga.edu/\">the University of Georgia, Athens</A>."
+},
+{
+    "name" : "Virtual Writing Center MOO (VWCMOO)",
+    "host:port" : "bessie.englab.slcc.edu:7777",
+    "theme" : "educational",
+    "note" : "It is an educational space where people come to talk and learn about writing."
+},
+{
+    "name" : "VirtuaPern",
+    "host:port" : [
+        "moo.virtuapern.com:9999",
+    "195.204.91.50:9999"
+        ],
+    "url" : [
+        "http://www.virtuapern.com/",
+    "http://www.geocities.com/Area51/Shire/7485/index.html"
+        ],
+    "theme" : "RPG",
+    "note" : "Based on the <B>Dragonriders of Pern</B> series by Anne McCaffrey.  It exists aproximatly 800+ turns after the Ninth Pass.  Currently there is no Thread on VirtuaPern."
+},
+{
+    "name" : "Voyages of the Space Barrel (VotSB)",
+    "host:port" : "forum2.org:7777",
+    "url" : [
+        "http://forum2.org:7000/",
+    "http://www.forum2.org/forumoo"
+        ],
+    "theme" : "social research",
+    "note" : "Light science-fiction theme. Welcomes builders and programmers.  English only. Newbie-friendly. Uses enCore MOO core, including WWW browsing, channels, and <A HREF=\"http://www.chaco.com/pueblo/\">PUEBLO</A> enhanced!"
+},
+{
+    "name" : "VROoM",
+    "host:port" : [
+        "moon.pepperdine.edu:1937",
+    "gsep.pepperdine.edu:1937"
+        ],
+    "url" : [
+        "http://moon.pepperdine.edu/server/html-bin/VRoOM.html",
+    "http://moon.pepperdine.edu/surfandturfv/",
+    "http://moon.pepperdine.edu/server/html-bin/map.html"
+        ],
+    "theme" : "educational",
+    "note" : "The acronym stands for Virtual Rooms Offices and Meetinghouse and it is run by the <A HREF=\"http://moon.pepperdine.edu/\">Pepperdine Graduate School</A>.  It is mostly used for real-time conferences and meetings.  A friendly bot named George will greet you when you enter."
+},
+{
+    "name" : "Walden3",
+    "host:port" : [
+        "walden3.mhpcc.edu:7777",
+    "walden3.mhpcc.edu:9999"
+        ],
+    "url" : [
+        "http://walden3.mhpcc.edu/",
+    "http://walden3.mhpcc.edu:7000/"
+        ],
+    "theme" : "educational",
+    "note" : "The map is centered around Walden Pond.  The MOO \"focuses on creating teaching and learning opportunities for people around the world to come together with a purpose, an interest, a challenge to make meaningful connections.  Presently, several educational projects use Walden3 as a virtual venue.\"  Guests are always welcome.  If you would like a character, send e-mail to <A HREF=\"mailto:watts@hawaii.edu\">watts@hawaii.edu</A>."
+},
+{
+    "name" : "Waterpoint",
+    "host:port" : "waterpoint.moo.mud.org:8301",
+    "url" : "http://waterpoint.moo.mud.org/",
+    "theme" : "social",
+    "note" : "It \"takes place on an island called \"Waterpoint\" somewhere off the eastern coast of North America far enough north to have cold winters and mildly hot summers. The island appears to be abandoned by its former owners.\"  Guest connections are not allowed, so you should start by <A HREF=\"http://waterpoint.moo.mud.org:8080/account/request\" >requesting a character</A>."
+},
+{
+    "name" : "Weyrmount II",
+    "host:port" : "moo.weyrmount.org:8000",
+    "url" : "http://www.egroups.com/group/UltimaDragons",
+    "theme" : "social",
+    "note" : "This is the second incarnation of Weyrmount, the first having been hosted by SenseMedia.  It is hosted by <A HREF= \"http://www.weyrmount.org/\">The Weyrmount</A>.  It is a social MOO for members and fans of <A HREF=\"http://www.udic.org/\">Ultima Dragons Internet Chapter (UDIC)</A> [see, also,<A HREF= \"http://www.uo.com/\">Ultima Online</A>\", . Previously, only members of the UDIC could request characters, but now membership is open to friends too, though they like to stay on theme. The time period is Britannian Year 0365."
+},
+{
+    "name" : "Where No One Has Gone Before",
+    "host:port" : [
+        "wnohgb.org:1701",
+    "205.252.241.100:1701"
+        ],
+    "url" : "http://www.wnohgb.org/",
+    "theme" : "RPG",
+    "note" : "Started in November 1998 and called 'wnohgb' for short, it \"is an online interactive role-playing experience for new or advanced gamers, or simply   enthusiasts in the star trek universe, featuring full character generation and a coded 3d space system (RealSpace).\"  It has nearly 600 players and averages 40+ a night."
+},
+{
+    "name" : "The Wiz Club MOO",
+    "host:port" : "daak.datafore.com:7777",
+    "url" : "http://wizclub.cjb.net/",
+    "theme" : "social",
+    "note" : "Formerly known as <B>KKMOO</B> and <B>Magic MOO</B>, it is about three years old.  It is a place for the Wizards of other MOOs and those who want to learn.  \"Share your ideas and have fun.  Join The Club.\""
+},
+{
+    "name" : "Writers of D'ni",
+    "host:port" : "dni.iflipout.com:7250",
+    "url" : "http://www.erithan.net/moo/",
+    "theme" : "RPG",
+    "note" : "It is based on the best-selling computer games of all time: <A HREF=\"http://www.amazon.com/exec/obidos/ASIN/B0000639O2/reinyday/\">Myst, Riven, and Myst III: Exile</A>.  It takes place in D'ni, around 7000 D.E.,  where the D'ni Council is yet new.  It is a roleplaying MOO based within the D'ni universe, where players have free reign to build Ages, explore, meet other dedicated Myst/Riven/D'ni/Cyan fans, and of course, roleplay."
+},
+{
+    "name" : "YibMOO",
+    "host:port" : "yibmoo.dyndns.org:7777",
+    "theme" : "social",
+    "note" : "The physical theme is a \"large sprawling mansion, the vacation house of the fabulously wealthy and famously eccentric founder of YibCo, Inc.\"  You are encouraged to add to the mansion.  \"The secret passageway system is rumored to be one of the finest in the world.  Practical infrastructure, though rarely interactive, has a place here.  Rooms may overlap one another in space (and often do).  Imaginative transitions to places that are 'out of theme' in a strict sense are welcome and encouraged.\""
+},
+{
+    "name" : "ZenMOO",
+    "host:port" : "zenmoo.zennet.com:7777",
+    "url" : [
+        "http://www.zennet.com/",
+    "ftp://ftp.zennet.com/html/zenmoo/index.html",
+    "ftp://pc4.math.oxy.edu/pub/moo/zenmoo/",
+    "http://www.zennet.com/pub/moo/zenmoo/zenguide.txt",
+    "http://www.zennet.com/pub/moo/zenmoo/html/zenmoo_faq.html",
+    "http://www.zennet.com/html/zenmoo.html",
+    "http://www.zennet.com/pub/moo/zenmoo/html/index.html"
+        ],
+    "note" : "A Zen MOO with strict Zen guidelines. No one is allowed to talk about non-Zen things.  Run by <A HREF=\"http://www.zennet.com/\">PC4</A>."
+},
+{
+    "name" : "ZooMOO",
+    "host:port" : "moo.missouri.edu:8888",
+    "url" : "http://www.missouri.edu/~moo/",
+    "theme" : "educational",
+    "note" : "MOO of the <A HREF=\"http://www.system.missouri.edu/\">University of Missouri</A>. Guests can logon."
+}
+]
