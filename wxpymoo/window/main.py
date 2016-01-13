@@ -53,12 +53,8 @@ class Main(wx.Frame):
 #        # TODO - don't connect until we ask for it.
 #        # TODO - probably want a tabbed interface for multiple connections
         self.connection = Connection(self)
-
-# post .Show stuff
-    def Initialize(self):
 #        # TODO - don't connect until we ask for it.
-#        $self.connection.connect('hayseed.net',7777)
-        pass
+        self.connection.connect('hayseed.net',7777)
 
     def buildMenu(self):
         WorldsMenu = wx.Menu()

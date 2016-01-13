@@ -10,8 +10,7 @@ class InputPane(wx.richtext.RichTextCtrl):
 
         self.parent = parent
         self.connection = None
-        self.cmd_history = None
-        #self.cmd_history = WxMOO.Window.InputPane.CommandHistory()
+        self.cmd_history = CommandHistory()
 
         #font = WxMOO.Prefs.prefs.input_font
         #self.SetFont(font)
@@ -52,19 +51,17 @@ class InputPane(wx.richtext.RichTextCtrl):
         #self.SetFont(WxMOO::Prefs.prefs.input_font)
         pass
 
-# HANDLERS
+    ### HANDLERS
     def send_to_connection(self, evt):
         if self.connection:
-            pass
-        else:
             stuff = self.GetValue()  #    =~ s/\n//g
             self.cmd_history.add(stuff)
-            self.connection.output("stuff\n")
+            self.connection.output(stuff)
+            self.connection.output("\n")
             self.Clear()
 
     def update_command_history(self, evt):
-        #self.cmd_history.update(self.GetValue)
-        pass
+        self.cmd_history.update(self.GetValue())
 
     def debug_key_code(self, evt):
         k = evt.GetKeyCode()
@@ -73,11 +70,11 @@ class InputPane(wx.richtext.RichTextCtrl):
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
 
-        if   k == WXK_UP:       self.SetValue(self.cmd_history.prev)
-        elif k == WXK_DOWN:     self.SetValue(self.cmd_history.next)
-        elif k == WXK_PAGEUP:   self.parent.output_pane.ScrollPages(-1)
-        elif k == WXK_PAGEDOWN: self.parent.output_pane.ScrollPages(1)
-        elif k == WXK_INSERT:
+        if   k == wx.WXK_UP:       self.SetValue(self.cmd_history.prev())
+        elif k == wx.WXK_DOWN:     self.SetValue(self.cmd_history.next())
+        elif k == wx.WXK_PAGEUP:   self.parent.output_pane.ScrollPages(-1)
+        elif k == wx.WXK_PAGEDOWN: self.parent.output_pane.ScrollPages(1)
+        elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.Paste
         elif k == 23:  # Ctrl-W
 #                end = self.GetInsertionPoint()
@@ -96,61 +93,42 @@ class InputPane(wx.richtext.RichTextCtrl):
             evt.Skip()
             return
         self.SetInsertionPointEnd()
-# 
-# ######################
-#     package WxMOO::Window::InputPane::CommandHistory
-#     use strict
-#     use warnings
-#     use v5.14
-# 
-# # Rolling our own simplified command history here b/c Term::Readline
-# # et al are differently-supported on different platforms.  We only
-# # need a small subset anyway.
-# 
-# # we keep a list of historical entries, and a 'cursor' so we can
-# # keep track of where we are looking in the list.  The last
-# # entry in the history gets twiddled as we go.  Once we are done
-# # with it and enter it into history, a fresh '' gets appended to
-# # the array, on and on, world without end.
-#     def new {
-#         my (class) = @_
-#         bless {
-#             'history' => [''],
-#             'current' => 0,
-#         }, class
-# 
-#     def end { #{shift.{'history'}} }
-# 
-# # which entry does our 'cursor' point to?
-#     def current_entry {
-#         my (self, new) = @_
-#         self.{'history'}.[self.{'current'}] = new if defined new
-#         self.{'history'}.[self.{'current'}]
-# 
-#     def prev {
-#         my (self) = @_
-#         self.{'current'}-- if self.{'current'} > 0
-#         self.current_entry
-# 
-#     def next {
-#         my (self) = @_
-#         self.{'current'}++ if self.{'current'} < self.end
-#         self.current_entry
-# 
-# # if we've actually changed anything, take the changed value
-# # and use it as the new "current" value, at the end of the array.
-#     def update {
-#         my (self, string) = @_
-#         if (self.current_entry ne string) {
-#             self.{'current'} = self.end
-#             self.current_entry(string)
-# 
-# # this is the final state of the thing we input.
-# # Make sure it's updated, then push a fresh '' onto the end
-#     def add {
-#         my (self, string) = @_
-#         return unless string;  # don't stick blank lines in there.
-#         @{self.{'history'}}[-1] = string
-# 
-#         push @{self.{'history'}}, ''
-#         self.{'current'} = self.end
+
+class CommandHistory:
+    # we keep a list of historical entries, and a 'cursor' so we can
+    # keep track of where we are looking in the list.  The last
+    # entry in the history gets twiddled as we go.  Once we are done
+    # with it and enter it into history, a fresh '' gets appended to
+    # the array, on and on, world without end.
+    def __init__(self):
+        self.history = ['']
+        self.current = 0
+
+    # which entry does our 'cursor' point to?
+    def current_entry(self, new=''):
+        if new != '': self.history[self.current] = new
+        return self.history[self.current]
+
+    def prev(self):
+        if self.current > 0: self.current -= 1
+        return self.current_entry()
+
+    def next(self):
+        if self.current < len(self.history)-1: self.current += 1
+        return self.current_entry()
+
+    # if we've actually changed anything, take the changed value
+    # and use it as the new "current" value, at the end of the array.
+    def update(self, string):
+        if (self.current_entry() != string):
+            self.current = len(self.history)-1
+            self.current_entry(string)
+
+    # this is the final state of the thing we input.
+    # Make sure it's updated, then push a fresh '' onto the end
+    def add(self, string=""):
+        if string == "": return # no blank lines pls
+        self.history[-1] = string
+
+        self.history.append('')
+        self.current = len(self.history)-1
