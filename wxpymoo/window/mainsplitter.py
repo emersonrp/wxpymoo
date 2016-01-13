@@ -1,42 +1,25 @@
-package WxMOO::Window::MainSplitter;
-use strict;
-use warnings;
-use v5.14;
+import wx
 
-use Wx qw( :misc :splitterwindow );
-use Wx::Event qw( EVT_SIZE EVT_SPLITTER_SASH_POS_CHANGED );
+#use WxMOO::Prefs;
 
-use WxMOO::Prefs;
+class MainSplitter(wx.SplitterWindow):
 
-use base "Wx::SplitterWindow";
+    def __init__(self, parent):
+        wx.SplitterWindow.__init__(self, parent, style = wx.SP_LIVE_UPDATE)
 
-sub new {
-    my ($class, $parent) = @_;
-    my $self = $class->SUPER::new($parent, -1,
-        wxDefaultPosition, wxDefaultSize,
-        wxSP_LIVE_UPDATE
-    );
-    EVT_SPLITTER_SASH_POS_CHANGED( $self, $self, \&saveSplitterSize );
-    EVT_SIZE( $self, \&HandleResize );
+        self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
+        self.Bind(wx.EVT_SIZE, self.HandleResize)
 
-    return $self;
-}
+    def output_pane(self): self.GetWindow1()
+    def input_pane(self):  self.GetWindow2()
 
-sub output_pane { shift->GetWindow1 }
-sub input_pane  { shift->GetWindow2 }
+    def saveSplitterSize(self, evt):
+        size = self.GetSize()
+        #WxMOO::Prefs->prefs->input_height( $h - $evt->GetSashPosition );
 
-sub saveSplitterSize {
-    my ($self, $evt) = @_;
-    my ($w, $h)  = $self->GetSizeWH;
-    WxMOO::Prefs->prefs->input_height( $h - $evt->GetSashPosition );
-}
-
-sub HandleResize {
-    my ($self, $evt) = @_;
-    my ($w, $h)  = $self->GetSizeWH;
-    my $InputHeight = WxMOO::Prefs->prefs->input_height || 25;
-    $self->SetSashPosition($h - $InputHeight, 'resize');
-    $self->GetWindow1->ScrollIfAppropriate;
-}
-
-1;
+    def HandleResize(self, evt):
+        size = self.GetSize()
+        #my $InputHeight = WxMOO::Prefs->prefs->input_height || 25;
+        InputHeight = 25
+        self.SetSashPosition(size.GetHeight() - InputHeight, True)
+        self.GetWindow1().ScrollIfAppropriate()

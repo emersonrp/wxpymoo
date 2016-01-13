@@ -1,5 +1,8 @@
 import wx
-from WxMOO.Connection import Connection
+from wxpymoo.connection import Connection
+from wxpymoo.window.mainsplitter import MainSplitter
+from wxpymoo.window.inputpane import InputPane
+from wxpymoo.window.outputpane import OutputPane
 class Main(wx.Frame):
     #use wx.Event qw( EVT_MENU EVT_SIZE )
 
@@ -19,7 +22,6 @@ class Main(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
 
-        # TODO - status bar is so biig but it would be nice to have it.
         self.status_bar = self.CreateStatusBar()
 
         self.buildMenu()
@@ -35,17 +37,17 @@ class Main(wx.Frame):
 #            $h = $prefs.window_height if $prefs.window_height
 #        }
         self.SetSize((w, h))
+
+        splitter = MainSplitter(self)
 #
-#        splitter = WxMOO::Window::MainSplitter($self)
+        self.input_pane  = InputPane(splitter)
+        self.output_pane = OutputPane(splitter)
 #
-#        $self.input_pane (WxMOO::Window::InputPane ($splitter))
-#        $self.output_pane(WxMOO::Window::OutputPane($splitter))
-#
-#        $splitter.SplitHorizontally($self.output_pane, $self.input_pane)
-#        $splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
+        splitter.SplitHorizontally(self.output_pane, self.input_pane)
+        splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
 
         self.sizer = wx.BoxSizer( wx.VERTICAL )
-        #self.sizer.Add($splitter, 1, wxALL|wxGROW)
+        self.sizer.Add(splitter, True, wx.ALL|wx.GROW)
         self.SetSizer(self.sizer)
 
 #        # TODO - don't connect until we ask for it.
@@ -79,7 +81,7 @@ class Main(wx.Frame):
         Window_debugmcp = WindowMenu.Append(-1, "&Debug MCP", "")
 
         HelpMenu = wx.Menu()
-        Help_help  = HelpMenu.Append(-1, "&Help Topics", "")
+        Help_help  = HelpMenu.Append(wx.ID_HELP)
         Help_about = HelpMenu.Append(wx.ID_ABOUT)
 
         MenuBar = wx.MenuBar()
@@ -92,26 +94,25 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        #EVT_MENU( $self, $Worlds_worlds,    \&showWorldsList      )
-        #EVT_MENU( $self, $Worlds_connect,   \&showConnectDialog   )
-        #EVT_MENU( $self, $Worlds_close,     \&closeConnection     )
-        #EVT_MENU( $self, $Worlds_reconnect, \&reconnectConnection )
-        #EVT_MENU( $self, $Worlds_quit,      \&quitApplication     )
+        self.Bind(wx.EVT_MENU, self.showWorldsList,      Worlds_worlds    )
+        self.Bind(wx.EVT_MENU, self.showConnectDialog,   Worlds_connect   )
+        self.Bind(wx.EVT_MENU, self.closeConnection,     Worlds_close     )
+        self.Bind(wx.EVT_MENU, self.reconnectConnection, Worlds_reconnect )
+        self.Bind(wx.EVT_MENU, self.quitApplication,     Worlds_quit      )
 
-        #EVT_MENU( $self, $Edit_cut,     \&handleCut   )
-        #EVT_MENU( $self, $Edit_copy,    \&handleCopy  )
-        #EVT_MENU( $self, $Edit_paste,   \&handlePaste )
+        self.Bind(wx.EVT_MENU, self.handleCut,   Edit_cut   )
+        self.Bind(wx.EVT_MENU, self.handleCopy,  Edit_copy  )
+        self.Bind(wx.EVT_MENU, self.handlePaste, Edit_paste )
 
-        #EVT_MENU( $self, $Prefs_prefs, \&showPrefsEditor )
+        self.Bind(wx.EVT_MENU, self.showPrefsEditor, Prefs_prefs )
 
-        #EVT_MENU( $self, $Window_debugmcp, \&showDebugMCP )
+        self.Bind(wx.EVT_MENU, self.showDebugMCP, Window_debugmcp )
 
-        #EVT_MENU( $self, $Help_help,  sub {1} )
-        #EVT_MENU( $self, $Help_about, \&showAboutBox )
-        pass
+        self.Bind(wx.EVT_MENU, self.showHelp,     Help_help  )
+        self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
 
     def addEvents(self):
-        #EVT_SIZE( $self, \&onSize )
+        #EVT_SIZE( $self, self.onSize )
         pass
 
     def closeConnection(self):
@@ -131,51 +132,55 @@ class Main(wx.Frame):
         #$evt.Skip
         pass
 
-    def handleCopy(self):
+    def handleCopy(self, evt):
         #if    ($self.output_pane.HasSelection) { $self.output_pane.Copy }
         #elsif ($self.input_pane .HasSelection) { $self.input_pane .Copy }
         pass
 
-    def handleCut(self):
+    def handleCut(self, evt):
         self.input_pane.Cut
 
-    def handlePaste(self):
+    def handlePaste(self, evt):
         self.input_pane.Paste
 
 ### DIALOGS AND SUBWINDOWS
 
-    def showWorldsList(self):
+    def showWorldsList(self, evt):
         #$self.{'worlds_list'} ||= WxMOO::Window::WorldsList($self)
         #$self.{'worlds_list'}.Show
         pass
 
-    def showConnectDialog(self):
+    def showConnectDialog(self, evt):
         #$self.{'connect_dialog'} ||= WxMOO::Window::ConnectDialog($self)
         #$self.{'connect_dialog'}.Show
         pass
 
-    def showPrefsEditor(self):
+    def showPrefsEditor(self, evt):
         #$self.{'prefs_editor'} ||= WxMOO::Window::PrefsEditor($self)
         #$self.{'prefs_editor'}.Show
         pass
 
-    def showDebugMCP(self):
+    def showDebugMCP(self, evt):
         #$self.{'debug_mcp'} ||= WxMOO::Window::DebugMCP($self)
         #$self.{'debug_mcp'}.toggle_visible
         pass
 
+    def showHelp(self, evt):
+        pass
+
 # TODO - WxMOO::Window::About
-    def showAboutBox(self):
+    def showAboutBox(self, evt):
         if self.about_info is None:
-             info = wx.AboutDialogInfo
+             info = wx.AboutDialogInfo()
              info.AddDeveloper('R Pickett (emerson@hayseed.net)')
-             info.SetCopyright('(c) 2013, 2014, 2015')
-             info.SetWebSite('http://github.com/emersonrp/WxMOO')
-             info.SetName('WxMOO')
-             info.SetVersion('0.0.1')
+             info.SetCopyright('(c) 2013-2016')
+             info.SetWebSite('http://github.com/emersonrp/wxpymoo')
+             info.SetName('wxpymoo')
+             info.SetVersion('0.1')
              self.about_info = info
         wx.AboutBox(self.about_info)
 
-    def quitApplication(self):
+    def quitApplication(self, evt):
         self.closeConnection
         self.Close(True)
+
