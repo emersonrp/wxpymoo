@@ -22,7 +22,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
 
         self.restyle_thyself()
 
-        #self.Bind(wx.EVT_SET_FOCUS, self.focus_input)
+        self.Bind(wx.EVT_SET_FOCUS, self.focus_input)
         self.Bind(wx.EVT_TEXT_URL,  self.process_url_click)
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
@@ -37,7 +37,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
         #system('xdg-open', url)
 
     def WriteText(self, rest):
-        self.SUPER.WriteText(rest)
+        super(OutputPane, self).WriteText(rest)
         self.ScrollIfAppropriate
 
     def is_at_bottom(): True
@@ -57,9 +57,15 @@ class OutputPane(wx.richtext.RichTextCtrl):
 
     def display(self, text):
 
-        range= self.GetSelectionRange()
-        self.SetInsertionPointEnd()
+        #range = self.GetSelectionRange()
 
+        self.WriteText(text)
+        self.WriteText("\n")
+
+        self.SetInsertionPointEnd()
+        return
+
+# TODO - ANSI parsing woo
         for line in text.split():
         #    if (WxMOO.Prefs.prefs.use_mcp) {
         #        next unless (line = WxMOO.MCP21.output_filter(line))

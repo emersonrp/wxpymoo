@@ -57,7 +57,6 @@ class InputPane(wx.richtext.RichTextCtrl):
             stuff = self.GetValue()  #    =~ s/\n//g
             self.cmd_history.add(stuff)
             self.connection.output(stuff)
-            self.connection.output("\n")
             self.Clear()
 
     def update_command_history(self, evt):
