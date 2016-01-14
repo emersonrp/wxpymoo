@@ -14,11 +14,12 @@ import wx.richtext
 
 class OutputPane(wx.richtext.RichTextCtrl):
 
-    def __init__(self, parent):
-        wx.richtext.RichTextCtrl.__init__(self, parent,
+    def __init__(self, connection):
+        self.parent = connection.splitter
+        wx.richtext.RichTextCtrl.__init__(self, self.parent,
             style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL
         )
-        self.input_pane = parent.input_pane()
+        self.input_pane = connection.input_pane
 
         self.restyle_thyself()
 

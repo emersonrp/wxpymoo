@@ -1,8 +1,5 @@
 import wx
 from wxpymoo.connection import Connection
-from wxpymoo.window.mainsplitter import MainSplitter
-from wxpymoo.window.inputpane import InputPane
-from wxpymoo.window.outputpane import OutputPane
 class Main(wx.Frame):
     #use wx.Event qw( EVT_MENU EVT_SIZE )
 
@@ -38,23 +35,22 @@ class Main(wx.Frame):
 #        }
         self.SetSize((w, h))
 
-        splitter = MainSplitter(self)
-#
-        self.input_pane  = InputPane(splitter)
-        self.output_pane = OutputPane(splitter)
-#
-        splitter.SplitHorizontally(self.output_pane, self.input_pane)
-        splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
+        # TODO - don't connect until we ask for it.
+        # TODO - probably want a tabbed interface for multiple connections
+        # TODO - "on attempted connect, create a new tab, and populate with connection poop"
+        self.tabs = wx.Notebook(self)
 
         self.sizer = wx.BoxSizer( wx.VERTICAL )
-        self.sizer.Add(splitter, True, wx.ALL|wx.GROW)
+        self.sizer.Add(self.tabs, True, wx.ALL|wx.GROW)
         self.SetSizer(self.sizer)
 
-#        # TODO - don't connect until we ask for it.
-#        # TODO - probably want a tabbed interface for multiple connections
         self.connection = Connection(self)
-#        # TODO - don't connect until we ask for it.
+        # TODO - don't connect until we ask for it.
         self.connection.connect('hayseed.net',7777)
+        splitter = self.connection.splitter
+
+        self.tabs.AddPage(splitter, 'Hayseed')
+
 
     def buildMenu(self):
         WorldsMenu = wx.Menu()

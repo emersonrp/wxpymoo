@@ -4,6 +4,10 @@ from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
 #use WxMOO::MCP21;  # this is icky
 
+from wxpymoo.window.mainsplitter import MainSplitter
+from wxpymoo.window.inputpane import InputPane
+from wxpymoo.window.outputpane import OutputPane
+
 # TODO - should an output_pane own a connection, or vice-versa?
 # This is related to the answer to "do we want multiple worlds to be
 # open in like tabs or something?"
@@ -38,11 +42,16 @@ class Connection:
     def __init__(self, mainwindow):
         self.host = ''
         self.post = ''
-        self.output_pane = mainwindow.output_pane
         self.keepalive = Keepalive()
-        self.splitter = None
         self.input_receiver = None
-        mainwindow.input_pane.connection = self
+
+        # the UI components for this connection
+        self.splitter    = MainSplitter(mainwindow.tabs)
+        self.input_pane  = InputPane(self)
+        self.output_pane = OutputPane(self)
+
+        self.splitter.SplitHorizontally(self.output_pane, self.input_pane)
+        self.splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
 
     def Close(self):
         #self.SUPER::Close;

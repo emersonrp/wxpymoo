@@ -3,13 +3,13 @@ import wx.richtext
 
 class InputPane(wx.richtext.RichTextCtrl):
 
-    def __init__(self, parent):
-        wx.richtext.RichTextCtrl.__init__(self, parent,
+    def __init__(self, connection):
+        self.parent = connection.splitter
+        wx.richtext.RichTextCtrl.__init__(self, self.parent,
             style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE
         )
 
-        self.parent = parent
-        self.connection = None
+        self.connection = connection
         self.cmd_history = CommandHistory()
 
         #font = WxMOO.Prefs.prefs.input_font
@@ -71,8 +71,8 @@ class InputPane(wx.richtext.RichTextCtrl):
 
         if   k == wx.WXK_UP:       self.SetValue(self.cmd_history.prev())
         elif k == wx.WXK_DOWN:     self.SetValue(self.cmd_history.next())
-        elif k == wx.WXK_PAGEUP:   self.parent.output_pane.ScrollPages(-1)
-        elif k == wx.WXK_PAGEDOWN: self.parent.output_pane.ScrollPages(1)
+        elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
+        elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.Paste
         elif k == 23:  # Ctrl-W
