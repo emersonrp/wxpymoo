@@ -1,18 +1,13 @@
 import wx
 from wxpymoo.connection import Connection
 from wxpymoo.window.connectdialog import ConnectDialog
+from wxpymoo.window.prefseditor import PrefsEditor
 
 class Main(wx.Frame):
-    #use wx.Event qw( EVT_MENU EVT_SIZE )
-
     #use WxMOO::Prefs
     #use WxMOO::Editor
 
     #use WxMOO::Window::DebugMCP
-    #use WxMOO::Window::InputPane
-    #use WxMOO::Window::MainSplitter
-    #use WxMOO::Window::OutputPane
-    #use WxMOO::Window::PrefsEditor
     #use WxMOO::Window::WorldsList
 
     #prefs = WxMOO::Prefs.prefs
@@ -28,6 +23,7 @@ class Main(wx.Frame):
 
         self.about_info = None
         self.connect_dialog = None
+        self.prefs_editor = None
 
         h = 600
         w = 800
@@ -149,8 +145,8 @@ class Main(wx.Frame):
         self.connect_dialog.Show()
 
     def showPrefsEditor(self, evt):
-        #$self.{'prefs_editor'} ||= WxMOO::Window::PrefsEditor($self)
-        #$self.{'prefs_editor'}.Show
+        if self.prefs_editor is None: self.prefs_editor = PrefsEditor(self)
+        self.prefs_editor.Show()
         pass
 
     def showDebugMCP(self, evt):
