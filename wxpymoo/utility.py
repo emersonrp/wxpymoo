@@ -1,23 +1,12 @@
-package WxMOO::Utility;
-use strict;
-use warnings;
-use v5.14;
-
-use parent 'Exporter';
-our @EXPORT_OK = qw( URL_REGEX );
-
-use Wx;
-
-# These adapted from Padre::Constant
-sub is_windows { !!( ( $^O eq 'MSWin32' ) or ( $^O eq 'cygwin' )) }
-sub is_macos   { !!( $^O eq 'darwin' ) }
-sub is_unix    { !( is_windows() or is_macos() ) }
+# coding: utf-8
+import re
 
 # This regex adapted from one found at
 # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-use constant URL_REGEX => qr'
+URL_REGEX = re.compile(r"""
+(?xi)
 \b
-(?:
+(
     (?:
         (?:https?|ftp|mailto):           # a few protocols we care about
         (?:
@@ -42,6 +31,5 @@ use constant URL_REGEX => qr'
         |                                # or
     [^\s`!()\[\]{};:\'".,<>?«»“”‘’]      # not a space or one of these punct chars
 )
-'xip;
+""", re.VERBOSE)
 
-"Yes.";

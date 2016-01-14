@@ -2,15 +2,13 @@ import wx
 import wx.richtext
 
 import wxpymoo.prefs as prefs
-#use Wx qw( :color :misc :textctrl :sizer )
-#use Wx.RichText
-#use Wx.Event qw( EVT_SET_FOCUS EVT_TEXT_URL EVT_SIZE )
-#
-#use WxMOO.Theme
-#use WxMOO.Utility qw( URL_REGEX )
+import wxpymoo.utility
+
+import re
 
 # TODO we need a better output_filter scheme, probably?
 #use WxMOO.MCP21
+#use WxMOO.Theme
 
 class OutputPane(wx.richtext.RichTextCtrl):
 
@@ -62,45 +60,46 @@ class OutputPane(wx.richtext.RichTextCtrl):
         self.SetFont(font)
 
     def display(self, text):
-        #range = self.GetSelectionRange()
+        range = self.GetSelectionRange()
 
-        self.WriteText(text)
-        self.WriteText("\n")
-
-        self.SetInsertionPointEnd()
-        self.ScrollIfAppropriate()
-        return
-
-# TODO - ANSI parsing woo
-        for line in text.split():
-        #    if (prefs.get('use_mcp')) {
-        #        next unless (line = WxMOO.MCP21.output_filter(line))
-        #    }
-            #if (True || prefs.get('use_ansi')):
+        # TODO - ANSI parsing woo
+        for line in text.split('\n'):
+            line = line + "\n"
+            #if (prefs.get('use_mcp')):
+                #next unless (line = WxMOO.MCP21.output_filter(line))
+            if (True or prefs.get('use_ansi')):
                 stuff = self.ansi_parse(line)
-                line = ''
                 for bit in stuff:
-                    if (bit):
-                        self.apply_ansi(bit)
-                    else:
-                        #if (prefs.get('highlight_urls') and bit =~ URL_REGEX):
-                        #        self.WriteText({^PREMATCH})
+                    #if (bit):
+                        #self.apply_ansi(bit)
+                    #else:
+                        # TODO - this might should be separate from use_ansi.
+                        # TODO - snip URLs first then ansi-parse pre and post?
+                        if prefs.get('highlight_urls'):
+                            matches = re.split(wxpymoo.utility.URL_REGEX, bit)
+                            if len(matches) > 1: # we found a URL and split on it
+                                print(matches)
+                                pre, url, post = matches
+                                self.WriteText(pre)
 
-                        #        self.BeginURL({^MATCH})
-                        #        self.BeginUnderline
-                        #        self.BeginTextColour( self.lookup_color('blue', 1) )
+                                self.BeginURL(url)
+                                self.BeginUnderline()
+                                #self.BeginTextColour( self.lookup_color('blue', True) )
+                                self.BeginTextColour( wx.BLUE )
 
-                        #        self.WriteText({^MATCH})
+                                self.WriteText(url)
 
-                        #        self.EndTextColour
-                        #        self.EndUnderline
-                        #        self.EndURL
+                                self.EndTextColour()
+                                self.EndUnderline()
+                                self.EndURL()
 
-                        #        self.WriteText({^POSTMATCH})
-                        #else:
+                                self.WriteText(post)
+                            else:
+                                self.WriteText(bit)
+                        else:
                             self.WriteText(bit)
-                #else:
-                #self.WriteText(line)
+            else:
+                self.WriteText(line)
 
 #        if (from != to) {
 #            self.SetSelection(from, to)
@@ -110,7 +109,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
 
     #theme = wxpymoo.theme.Theme()
 
-    def lookup_color(self, color):
+    def lookup_color(self, color, bright):
         #return theme.Colour(color, True if self.bright else False)
         pass
 
@@ -200,7 +199,6 @@ class OutputPane(wx.richtext.RichTextCtrl):
     }
 
     def ansi_parse(self, line):
-        return line
         #if (my beepcount = line =~ s/\007//g) {
         #    for (1..beepcount) {
         #        say STDERR "found a beep"
@@ -208,7 +206,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
         #    }
         #}
 
-        #my @bits = split /\e\[(\d+(?:;\d+)*)m/, line
+        bits = re.split('\e\[(\d+(?:;\d+)*)m', line)
 
         #my @styled_text
         #while (my (i, val) = each @bits) {
@@ -223,4 +221,5 @@ class OutputPane(wx.richtext.RichTextCtrl):
         #    }
         #}
         #return [@styled_text]
+        return [line]
 

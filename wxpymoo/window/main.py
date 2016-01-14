@@ -48,6 +48,7 @@ class Main(wx.Frame):
         splitter = self.connection.splitter
 
         self.tabs.AddPage(splitter, 'Hayseed')
+        self.connection.input_pane.SetFocus()
 
 
     def buildMenu(self):

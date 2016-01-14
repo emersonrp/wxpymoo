@@ -22,9 +22,7 @@ class InputPane(wx.richtext.RichTextCtrl):
             self.Bind(wx.EVT_MIDDLE_UP                  , self.paste_from_selection )
             self.Bind(wx.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
 
-        self.SetFocus()
         self.Clear()
-
         self.restyle_thyself()
 
     def paste_from_selection(self):
