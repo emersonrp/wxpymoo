@@ -1,11 +1,11 @@
 import wx
 import wx.richtext
 
+import wxpymoo.prefs as prefs
 #use Wx qw( :color :misc :textctrl :sizer )
 #use Wx.RichText
 #use Wx.Event qw( EVT_SET_FOCUS EVT_TEXT_URL EVT_SIZE )
 #
-#use WxMOO.Prefs
 #use WxMOO.Theme
 #use WxMOO.Utility qw( URL_REGEX )
 
@@ -44,41 +44,46 @@ class OutputPane(wx.richtext.RichTextCtrl):
     def is_at_bottom(): True
 
     def ScrollIfAppropriate(self):
-        #if (True || self.is_at_bottom() || WxMOO.Prefs.prefs.scroll_on_output()):
+        if (True or self.is_at_bottom() or prefs.get('scroll_on_output')):
             self.scroll_to_bottom(False)
 
     def restyle_thyself(self):
-        #basic_style = wx.RichTextAttr()
-        #basic_style.SetTextColour      (WxMOO.Prefs.prefs.output_fgcolour)
-        #basic_style.SetBackgroundColour(WxMOO.Prefs.prefs.output_bgcolour)
-        #self.SetBackgroundColour(WxMOO.Prefs.prefs.output_bgcolour)
-        #self.SetBasicStyle(basic_style)
-        #self.SetFont(WxMOO.Prefs.prefs.output_font)
-        pass
+        basic_style = wx.richtext.RichTextAttr()
+        basic_style.SetTextColour      (prefs.get('output_fgcolour'))
+        basic_style.SetBackgroundColour(prefs.get('output_bgcolour'))
+
+        self.SetBackgroundColour(prefs.get('output_bgcolour'))
+        self.SetBasicStyle(basic_style)
+
+        # is there a way to construct a font directly from an InfoString, instead of making
+        # a generic one and then overriding it like this?
+        font = wx.NullFont
+        font.SetNativeFontInfoFromString(prefs.get('output_font'))
+        self.SetFont(font)
 
     def display(self, text):
-
         #range = self.GetSelectionRange()
 
         self.WriteText(text)
         self.WriteText("\n")
 
         self.SetInsertionPointEnd()
+        self.ScrollIfAppropriate()
         return
 
 # TODO - ANSI parsing woo
         for line in text.split():
-        #    if (WxMOO.Prefs.prefs.use_mcp) {
+        #    if (prefs.get('use_mcp')) {
         #        next unless (line = WxMOO.MCP21.output_filter(line))
         #    }
-            #if (True || WxMOO.Prefs.prefs.use_ansi):
+            #if (True || prefs.get('use_ansi')):
                 stuff = self.ansi_parse(line)
                 line = ''
                 for bit in stuff:
                     if (bit):
                         self.apply_ansi(bit)
                     else:
-                        #if (WxMOO.Prefs.prefs.highlight_urls and bit =~ URL_REGEX):
+                        #if (prefs.get('highlight_urls') and bit =~ URL_REGEX):
                         #        self.WriteText({^PREMATCH})
 
                         #        self.BeginURL({^MATCH})
@@ -162,39 +167,37 @@ class OutputPane(wx.richtext.RichTextCtrl):
         self.inverse = False if self.inverse else True
         # self.SetDefaultStyle(current);  # commenting this out until bg color confusion is resolved
 
-    ansi_codes = ()
-#    ansi_codes = (
-#        0     => [ control => 'normal'        ],
-#        1     => [ control => 'bold'          ],
-#        2     => [ control => 'dim'           ],
-#        4     => [ control => 'underline'     ],
-#        5     => [ control => 'blink'         ],
-#        7     => [ control => 'inverse'       ],
-#        8     => [ control => 'hidden'        ],
-#        9     => [ control => 'strikethru'    ],
-#        22    => [ control => 'no_bold'       ], # normal font weight also cancels 'dim'
-#        24    => [ control => 'no_underline'  ],
-#        25    => [ control => 'no_blink'      ],
-#        29    => [ control => 'no_strikethru' ],
-#        30    => [ foreground => 'black'  ],
-#        31    => [ foreground => 'red'    ],
-#        32    => [ foreground => 'green'  ],
-#        33    => [ foreground => 'yellow' ],
-#        34    => [ foreground => 'blue'   ],
-#        35    => [ foreground => 'magenta'],
-#        36    => [ foreground => 'cyan'   ],
-#        37    => [ foreground => 'white'  ],
-#
-#        40    => [ background => 'black'  ],
-#        41    => [ background => 'red'    ],
-#        42    => [ background => 'green'  ],
-#        43    => [ background => 'yellow' ],
-#        44    => [ background => 'blue'   ],
-#        45    => [ background => 'magenta'],
-#        46    => [ background => 'cyan'   ],
-#        47    => [ background => 'white'  ],
-#    )
+    ansi_codes = {
+            0     : [ 'control' , 'normal'        ],
+            1     : [ 'control' , 'bold'          ],
+            2     : [ 'control' , 'dim'           ],
+            4     : [ 'control' , 'underline'     ],
+            5     : [ 'control' , 'blink'         ],
+            7     : [ 'control' , 'inverse'       ],
+            8     : [ 'control' , 'hidden'        ],
+            9     : [ 'control' , 'strikethru'    ],
+            22    : [ 'control' , 'no_bold'       ], # normal font weight also cancels 'dim'
+            24    : [ 'control' , 'no_underline'  ],
+            25    : [ 'control' , 'no_blink'      ],
+            29    : [ 'control' , 'no_strikethru' ],
+            30    : [ 'foreground' , 'black'  ],
+            31    : [ 'foreground' , 'red'    ],
+            32    : [ 'foreground' , 'green'  ],
+            33    : [ 'foreground' , 'yellow' ],
+            34    : [ 'foreground' , 'blue'   ],
+            35    : [ 'foreground' , 'magenta'],
+            36    : [ 'foreground' , 'cyan'   ],
+            37    : [ 'foreground' , 'white'  ],
 
+            40    : [ 'background' , 'black'  ],
+            41    : [ 'background' , 'red'    ],
+            42    : [ 'background' , 'green'  ],
+            43    : [ 'background' , 'yellow' ],
+            44    : [ 'background' , 'blue'   ],
+            45    : [ 'background' , 'magenta'],
+            46    : [ 'background' , 'cyan'   ],
+            47    : [ 'background' , 'white'  ],
+    }
 
     def ansi_parse(self, line):
         return line

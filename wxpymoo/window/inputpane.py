@@ -1,5 +1,6 @@
 import wx
 import wx.richtext
+import wxpymoo.prefs as prefs
 
 class InputPane(wx.richtext.RichTextCtrl):
 
@@ -12,17 +13,14 @@ class InputPane(wx.richtext.RichTextCtrl):
         self.connection = connection
         self.cmd_history = CommandHistory()
 
-        #font = WxMOO.Prefs.prefs.input_font
-        #self.SetFont(font)
-
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.update_command_history )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
 ##       EVT_CHAR      ( self,     \&debug_key_code )
 
-#        if (WxMOO::Prefs.prefs.use_x_copy_paste):
-#            EVT_MIDDLE_UP                  ( self, \&paste_from_selection )
-##        EVT_RICHTEXT_SELECTION_CHANGED ( self, \&copy_from_selection )
+        if (prefs.get('use_x_copy_paste') == 'True'):
+            self.Bind(wx.EVT_MIDDLE_UP                  , self.paste_from_selection )
+            self.Bind(wx.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
 
         self.SetFocus()
         self.Clear()
@@ -43,13 +41,16 @@ class InputPane(wx.richtext.RichTextCtrl):
         #if WxMOO.Utility.is_unix(): wxTheClipboard.UsePrimarySelection(False)
 
     def restyle_thyself(self):
-        #my basic_style = Wx::RichTextAttr.new
-        #basic_style.SetTextColour      (WxMOO::Prefs.prefs.input_fgcolour)
-        #basic_style.SetBackgroundColour(WxMOO::Prefs.prefs.input_bgcolour)
-        #self.SetBackgroundColour(WxMOO::Prefs.prefs.input_bgcolour)
-        #self.SetBasicStyle(basic_style)
-        #self.SetFont(WxMOO::Prefs.prefs.input_font)
-        pass
+        basic_style = wx.richtext.RichTextAttr()
+        basic_style.SetTextColour      (prefs.get('input_fgcolour'))
+        basic_style.SetBackgroundColour(prefs.get('input_bgcolour'))
+
+        self.SetBackgroundColour(prefs.get('input_bgcolour'))
+        self.SetBasicStyle(basic_style)
+
+        font = wx.NullFont
+        font.SetNativeFontInfoFromString(prefs.get('input_font'))
+        self.SetFont(font)
 
     ### HANDLERS
     def send_to_connection(self, evt):

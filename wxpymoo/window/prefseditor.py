@@ -1,5 +1,5 @@
 import wx
-
+import wxpymoo.prefs as prefs
 # use Wx qw( :dialog :sizer :id :misc :notebook :font :colour :textctrl
 #             wxFNTP_USEFONT_FOR_LABEL wxFNTP_FONTDESC_AS_LABEL
 #             wxCLRP_USE_TEXTCTRL wxCLRP_SHOW_LABEL
@@ -38,20 +38,22 @@ class PrefsEditor(wx.Dialog):
         self.Layout()
 
     def update_prefs(self, evt):
+        # This is doing some nasty GetAsString and GetNativeFontInfoDesc foo here,
+        # instead of encapsulated in prefs, which I think I'm OK with.
 
-        #WxMOO.Prefs.prefs.save_window_size( self.general_page.save_size_checkbox.GetValue() + 0 )
+        prefs.set('save_window_size', self.general_page.save_size_checkbox.GetValue() )
 
-        #WxMOO.Prefs.prefs.output_font(self.fonts_page.ofont_ctrl.GetSelectedFont())
-        #WxMOO.Prefs.prefs.input_font( self.fonts_page.ifont_ctrl.GetSelectedFont())
+        prefs.set('output_font',self.fonts_page.ofont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+        prefs.set('input_font', self.fonts_page.ifont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
 
-        #WxMOO.Prefs.prefs.output_fgcolour(self.fonts_page.o_fgcolour_ctrl.GetColour())
-        #WxMOO.Prefs.prefs.output_bgcolour(self.fonts_page.o_bgcolour_ctrl.GetColour())
-        #WxMOO.Prefs.prefs.input_fgcolour( self.fonts_page.i_fgcolour_ctrl.GetColour())
-        #WxMOO.Prefs.prefs.input_bgcolour( self.fonts_page.i_bgcolour_ctrl.GetColour())
+        prefs.set('output_fgcolour',self.fonts_page.o_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+        prefs.set('output_bgcolour',self.fonts_page.o_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+        prefs.set('input_fgcolour', self.fonts_page.i_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+        prefs.set('input_bgcolour', self.fonts_page.i_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
 
-        #WxMOO.Prefs.prefs.use_ansi( self.fonts_page.ansi_checkbox.GetValue() + 0 )
+        prefs.set('use_ansi', self.fonts_page.ansi_checkbox.GetValue() )
 
-        #WxMOO.Prefs.prefs.external_editor( self.paths_page.external_editor.GetValue() )
+        prefs.set('external_editor', self.paths_page.external_editor.GetValue() )
 
         self.parent.connection.output_pane.restyle_thyself()
         self.parent.connection.input_pane.restyle_thyself()
@@ -60,7 +62,7 @@ class PrefsEditor(wx.Dialog):
     def createGeneralPanel(self):
         gp = wx.Panel(self.book)
         gp.save_size_checkbox = wx.CheckBox(gp, -1, 'Save Window Size')
-        #gp.save_size_checkbox.SetValue( WxMOO.Prefs.prefs.save_window_size )
+        gp.save_size_checkbox.SetValue( True if prefs.get('save_window_size') == 'True' else False )
         #gp.save_size_checkbox.Fit()
 
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -71,22 +73,17 @@ class PrefsEditor(wx.Dialog):
 
     def createFontPanel(self):
         fcp = wx.Panel(self.book)
-        #ofont = WxMOO.Prefs.prefs.output_font || wxNullFont
-        #ifont = WxMOO.Prefs.prefs.input_font  || wxNullFont
-
-        #o_fgcolour = WxMOO.Prefs.prefs.output_fgcolour || wxBLACK
-        #o_bgcolour = WxMOO.Prefs.prefs.output_bgcolour || wxWHITE
-        #i_fgcolour = WxMOO.Prefs.prefs.input_fgcolour  || wxBLACK
-        #i_bgcolour = WxMOO.Prefs.prefs.input_bgcolour  || wxWHITE
 
         ofont = wx.NullFont
         ifont = wx.NullFont
+        ofont.SetNativeFontInfoFromString(prefs.get('output_font'))
+        ifont.SetNativeFontInfoFromString(prefs.get('input_font'))
 
-        o_fgcolour = wx.BLACK
-        o_bgcolour = wx.WHITE
-        i_fgcolour = wx.BLACK
-        i_bgcolour = wx.WHITE
 
+        o_fgcolour = prefs.get('output_fgcolour')
+        o_bgcolour = prefs.get('output_bgcolour')
+        i_fgcolour = prefs.get('input_fgcolour')
+        i_bgcolour = prefs.get('input_bgcolour')
 
         # output sample/controls
         fcp.o_sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
@@ -95,8 +92,8 @@ class PrefsEditor(wx.Dialog):
         bsize = fcp.ofont_ctrl.GetSize().GetHeight()
         button_size = [bsize, bsize]
 
-        fcp.o_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, -1, o_fgcolour, wx.DefaultPosition, button_size)
-        fcp.o_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, -1, o_bgcolour, wx.DefaultPosition, button_size)
+        fcp.o_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_fgcolour, size = button_size)
+        fcp.o_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_bgcolour, size = button_size)
 
         fcp.o_sample.SetFont(ofont)
         fcp.o_sample.SetBackgroundColour(o_bgcolour)
@@ -106,8 +103,8 @@ class PrefsEditor(wx.Dialog):
         # input sample/controls
         fcp.i_sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
         fcp.ifont_ctrl  = wx.FontPickerCtrl(fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL)
-        fcp.i_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, -1, i_fgcolour, wx.DefaultPosition, button_size)
-        fcp.i_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, -1, o_bgcolour, wx.DefaultPosition, button_size)
+        fcp.i_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = i_fgcolour, size = button_size)
+        fcp.i_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_bgcolour, size = button_size)
 
         fcp.i_sample.SetFont(ifont)
         fcp.i_sample.SetBackgroundColour(i_bgcolour)
@@ -115,7 +112,7 @@ class PrefsEditor(wx.Dialog):
         fcp.i_sample.SetValue('`Haakon Hello from the input window.')
 
         fcp.ansi_checkbox = wx.CheckBox(fcp, -1, 'Use ANSI colors')
-        #fcp.ansi_checkbox.SetValue( WxMOO.Prefs.prefs.use_ansi )
+        fcp.ansi_checkbox.SetValue( True if prefs.get('use_ansi') == "True" else False )
 
         output_sizer = wx.FlexGridSizer(1, 3, 5, 10)
         output_sizer.Add(fcp.ofont_ctrl     , 0, wx.EXPAND, 0)
@@ -160,7 +157,7 @@ class PrefsEditor(wx.Dialog):
 
         editor_label       = wx.StaticText(pp, -1, "External Editor")
         pp.external_editor = wx.TextCtrl(pp, -1, "")
-        #pp.external_editor.SetValue( WxMOO.Prefs.prefs.external_editor )
+        pp.external_editor.SetValue( prefs.get('external_editor') )
         #pp.external_editor.Fit()
 
         editor_sizer = wx.FlexGridSizer(1,2,5,10)
@@ -177,10 +174,10 @@ class PrefsEditor(wx.Dialog):
 
     def update_sample_text(self, evt):
         fcp = self.fonts_page
-        fcp.i_sample.SetFont(fcp.ifont_ctrl.GetSelectedFont())
+        fcp.i_sample.SetFont            (fcp.ifont_ctrl.GetSelectedFont())
         fcp.i_sample.SetForegroundColour(fcp.i_fgcolour_ctrl.GetColour())
         fcp.i_sample.SetBackgroundColour(fcp.i_bgcolour_ctrl.GetColour())
-        fcp.o_sample.SetFont(fcp.ofont_ctrl.GetSelectedFont())
+        fcp.o_sample.SetFont            (fcp.ofont_ctrl.GetSelectedFont())
         fcp.o_sample.SetForegroundColour(fcp.o_fgcolour_ctrl.GetColour())
         fcp.o_sample.SetBackgroundColour(fcp.o_bgcolour_ctrl.GetColour())
         evt.Skip()
