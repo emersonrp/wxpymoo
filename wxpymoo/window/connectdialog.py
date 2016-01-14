@@ -1,61 +1,45 @@
-package WxMOO::Window::ConnectDialog;
-use strict;
-use warnings;
-use v5.14;
+import wx
 
-use Wx qw( :id :misc :dialog :sizer );
-use Wx::Event qw( EVT_BUTTON );
-use base qw( Wx::Dialog Class::Accessor );
-WxMOO::Window::ConnectDialog->mk_accessors(qw( parent host port ));
+class ConnectDialog(wx.Dialog):
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, name = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
 
-sub new {
-    my ($class, $parent) = @_;
+        self.parent = parent
+        self.host = ''
+        self.port = ''
 
-    my $self = $class->SUPER::new( $parent, -1, "Connect to World",
-       wxDefaultPosition, wxDefaultSize,
-       wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP
-    );
+        host_label = wx.StaticText(self, label = "Host:")
+        port_label = wx.StaticText(self, label = "Port:")
+        self.host = wx.TextCtrl(self)
+        self.port = wx.TextCtrl(self)
 
-    $self->parent($parent);
-
-    my $host_label = Wx::StaticText->new($self, -1, "Host:");
-    my $port_label = Wx::StaticText->new($self, -1, "Port:");
-    $self->host(Wx::TextCtrl->new($self, -1, ""));
-    $self->port(Wx::TextCtrl->new($self, -1, ""));
-
-    my $input_sizer = Wx::FlexGridSizer->new(2, 2, 0, 0);
-    $input_sizer->AddGrowableCol( 1 );
-    $input_sizer->Add($host_label, 0, wxLEFT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, 10);
-    $input_sizer->Add($self->host, 0, wxEXPAND | wxALL, 5);
-    $input_sizer->Add($port_label, 0, wxLEFT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, 10);
-    $input_sizer->Add($self->port, 0, wxEXPAND | wxALL, 5);
+        input_sizer = wx.FlexGridSizer(2, 2, 0, 0)
+        input_sizer.AddGrowableCol( True )
+        input_sizer.Add(host_label, 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
+        input_sizer.Add(self.host,  0, wx.EXPAND | wx.ALL, 5)
+        input_sizer.Add(port_label, 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
+        input_sizer.Add(self.port, 0 , wx.EXPAND | wx.ALL, 5)
 
 
-    my $button_sizer = $self->CreateButtonSizer( wxOK | wxCANCEL );
+        button_sizer = self.CreateButtonSizer( wx.OK | wx.CANCEL )
 
-    my $sizer = Wx::BoxSizer->new(wxVERTICAL);
-    $sizer->Add($input_sizer,  1, wxALL | wxEXPAND, 10);
-    $sizer->Add($button_sizer, 0, wxALL, 10);
-    $self->SetSizer($sizer);
-    $sizer->Fit($self);
-    $self->Layout();
-    $self->Centre(wxBOTH);
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(input_sizer,  True,  wx.ALL | wx.EXPAND, 10)
+        sizer.Add(button_sizer, False, wx.ALL, 10)
+        self.SetSizer(sizer)
+        sizer.Fit(self)
+        self.Layout()
+        self.Centre(wx.BOTH)
 
-    EVT_BUTTON($self, wxID_OK, \&connect_please);
+        self.Bind(wx.EVT_BUTTON, self.connect_please, id=wx.ID_OK)
 
-    return $self;
-}
+    def connect_please(self, evt):
+        host = self.host.GetValue()
+        port = self.port.GetValue()
 
-sub connect_please {
-    my ($self, $evt) = @_;
-    my $host = $self->host->GetValue;
-    my $port = $self->port->GetValue;
+        if host and port:
+            self.host.Clear()
+            self.port.Clear()
+            self.parent.connection.connect(host, int(port))
 
-    $self->host->Clear;
-    $self->port->Clear;
-
-    $self->parent->connection->connect($host, $port);
-    $evt->Skip;
-}
-
-1;
+        self.Close()

@@ -1,12 +1,13 @@
 import wx
 from wxpymoo.connection import Connection
+from wxpymoo.window.connectdialog import ConnectDialog
+
 class Main(wx.Frame):
     #use wx.Event qw( EVT_MENU EVT_SIZE )
 
     #use WxMOO::Prefs
     #use WxMOO::Editor
 
-    #use WxMOO::Window::ConnectDialog
     #use WxMOO::Window::DebugMCP
     #use WxMOO::Window::InputPane
     #use WxMOO::Window::MainSplitter
@@ -26,6 +27,7 @@ class Main(wx.Frame):
         self.addEvents()
 
         self.about_info = None
+        self.connect_dialog = None
 
         h = 600
         w = 800
@@ -143,9 +145,8 @@ class Main(wx.Frame):
         pass
 
     def showConnectDialog(self, evt):
-        #$self.{'connect_dialog'} ||= WxMOO::Window::ConnectDialog($self)
-        #$self.{'connect_dialog'}.Show
-        pass
+        if self.connect_dialog is None: self.connect_dialog = ConnectDialog(self)
+        self.connect_dialog.Show()
 
     def showPrefsEditor(self, evt):
         #$self.{'prefs_editor'} ||= WxMOO::Window::PrefsEditor($self)
