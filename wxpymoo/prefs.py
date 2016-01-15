@@ -1,8 +1,8 @@
 import wx
 
-get         = None
-config      = None
-defaultFont = None
+_get         = None
+_config      = None
+_defaultFont = None
 _defaults   = {
     'output_fgcolour' : '#839496',
     'output_bgcolour' : '#002b36',
@@ -29,10 +29,10 @@ _defaults   = {
 }
 
 def Initialize():
-    global config, defaultFont, defaultFontString, get
+    global _config, _defaultFont, get
 
-    config                   = wx.Config()
-    get                      = config.Read
+    _config                  = wx.FileConfig()
+    _get                     = _config.Read
     _defaultFont             = wx.Font( 12, wx.TELETYPE, wx.NORMAL, wx.NORMAL )
     _defaults['input_font']  = _defaultFont.GetNativeFontInfoDesc()
     _defaults['output_font'] = _defaultFont.GetNativeFontInfoDesc()
@@ -42,9 +42,10 @@ def Initialize():
         if not get(key):
             set(key, str(def_val))
 
+def get(val): return _config.Read(val)
 def set(param, val):
-    global config
+    global _config
 
-    config.Write(param, str(val))
-    config.Flush()
+    _config.Write(param, str(val))
+    _config.Flush()
 

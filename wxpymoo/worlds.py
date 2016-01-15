@@ -1,127 +1,59 @@
-# This is a class that wraps Wx::Prefs for simpler access to
-# the worlds list and individual worlds
-package WxMOO::Worlds;
-use strict;
-use warnings;
-use v5.14;
+import wx
+import re
 
-use Carp;
-use File::Slurp 'read_file';
-use JSON;
-use WxMOO::Prefs;
-use base qw( Class::Accessor );
-WxMOO::Worlds->mk_accessors(qw( config ));
+class World(dict):
+    _fields = '''
+        name host port user pass note type
+        ssh_server ssh_user ssh_loc_host ssh_loc_port
+        ssh_rem_host ssh_rem_port
+    '''.split()
 
-sub init {
-    my ($class) = @_;
-    state $self;
-
-    unless ($self) {
-        $self = {
-            'prefs' => WxMOO::Prefs->prefs,
-        };
-        bless $self, $class;
-    };
-    return $self;
-}
-
-sub load_worlds {
-    my ($self) = @_;
-
-    my $prefs = $self->{'prefs'};
-
-    $prefs->config->SetPath('/worlds');
-    my $worlds = [];
-
-    if (my $groupcount = $prefs->config->GetNumberOfGroups) {
-        for my $i (1 .. $groupcount) {
-            my (undef, $worldname, undef) = $prefs->config->GetNextGroup($i-1);
-            $prefs->config->SetPath($worldname);
-            my $worlddata = {};
-            if (my $datacount = $prefs->config->GetNumberOfEntries) {
-                for my $j (1 .. $datacount) {
-                    my (undef, $dataname, undef) = $prefs->config->GetNextEntry($j-1);
-                    $worlddata->{$dataname} = $prefs->config->Read($dataname);
-                }
-                push @$worlds, WxMOO::World->new($worlddata);
-            }
-            $prefs->config->SetPath('/worlds');
-        }
-    } else {
-        # populate the worlds with the default list, and save it.
-        say STDERR "populating empty list";
-        my $init_worlds = initial_worlds();
-        for my $data (@$init_worlds) {
-            push @$worlds, WxMOO::World->new($data);
-use Data::Dumper;
-print STDERR Data::Dumper::Dumper $data unless $data->{'name'};
-            $prefs->config->SetPath($data->{'name'});
-            while (my ($k, $v) = each %$data) {
-                $prefs->config->Write($k, $v);
-            }
-            $prefs->config->SetPath('/worlds');
-        }
+    _defaults = {
+        'port' : 7777,
+        'type' : 0,   # Socket
     }
-    return $worlds;
-}
 
-sub worlds {
-    my $self = shift;
-    $self->{'worlds'} //= $self->load_worlds;
-}
+    def __init__(self, data):
+        data = data or World._defaults
+        for f in World._fields:
+            if data.get(f) is not None: self[f] = data.get(f)
 
-sub initial_worlds {
-    my $moolist = read_file('moolist.json');
-    return decode_json $moolist;
-}
+    def save(self):
+        global _config
+        worldname = re.sub(r'\W', '_', self.get('name'))
 
-#####################
-package WxMOO::World;
-use strict;
-use warnings;
-use v5.14;
-use Class::Accessor;
+        _config.SetPath(worldname)
 
-use base qw( Class::Accessor );
+        for f in World._fields:
+            if self.get(f) is not None: _config.Write(f, unicode(self.get(f)))
 
-my @fields = qw(
-    name host port user pass note type
-    ssh_server ssh_user ssh_loc_host ssh_loc_port
-    ssh_rem_host ssh_rem_port
-);
-WxMOO::World->mk_accessors(@fields);
+        _config.SetPath('/')
 
-### DEFAULTS -- this will set everything to a default value if it's not already set.
-#               This gives us both brand-new-file and add-new-params'-default-values
-my %defaults = (
-    port       => 7777,
-    type       => 0,   # Socket
-);
+worlds    = {}
+_defaults = { }
+_config = wx.FileConfig(localFilename = '.wxpymoo_worlds')
 
-sub new {
-    my ($class, $init) = @_;
-    unless (%$init) { $init = \%defaults; }
-    bless $init, $class;
+g_more, worldname, g_index = _config.GetFirstGroup()
+while g_more:
+    _config.SetPath(worldname)
 
-}
+    worlddata = {}
 
-sub save {
-    my $self = shift;
-    my $prefs = WxMOO::Prefs->prefs;
+    e_more, dataname, e_index = _config.GetFirstEntry()
+    while e_more:
+        worlddata[dataname] = _config.Read(dataname)
+        e_more, dataname, e_index = _config.GetNextEntry(e_index)
 
-    (my $keyname = $self->name) =~ s/\W/_/g;
-    $prefs->config->SetPath("/worlds/$keyname");
-    for my $f (@fields) {
-        $prefs->Write($f, $self->{$f});
-    }
-    return $self;
-}
+    worlds[worldname] = World(worlddata)
+    g_more, worldname, g_index = _config.GetNextGroup(g_index)
+    _config.SetPath('/')
 
-sub create {
-    my $self = shift;
-    my $newworld = $self->new;
-    $newworld->save;
-}
+else:
+    import json
+    init_worlds = json.load(open('moolist.json','r'))
 
-1;
+    for world_data in init_worlds:
+        world = World(world_data)
+        world.save()
+        worlds[world.get('name')] = world
 

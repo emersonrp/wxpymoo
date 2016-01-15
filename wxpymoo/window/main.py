@@ -2,15 +2,14 @@ import wx
 from wxpymoo.connection import Connection
 from wxpymoo.window.connectdialog import ConnectDialog
 from wxpymoo.window.prefseditor import PrefsEditor
+from wxpymoo.window.worldslist import WorldsList
 
+import wxpymoo.prefs as prefs
 class Main(wx.Frame):
     #use WxMOO::Prefs
     #use WxMOO::Editor
 
     #use WxMOO::Window::DebugMCP
-    #use WxMOO::Window::WorldsList
-
-    #prefs = WxMOO::Prefs.prefs
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
@@ -24,13 +23,13 @@ class Main(wx.Frame):
         self.about_info = None
         self.connect_dialog = None
         self.prefs_editor = None
+        self.worlds_list = None
 
         h = 600
         w = 800
-#        if ( $prefs.save_window_size) {
-#            $w = $prefs.window_width if $prefs.window_width
-#            $h = $prefs.window_height if $prefs.window_height
-#        }
+        if prefs.get('save_window_size'):
+            if prefs.get('window_width'):  w = int(prefs.get('window_width'))
+            if prefs.get('window_height'): h = int(prefs.get('window_height'))
         self.SetSize((w, h))
 
         # TODO - don't connect until we ask for it.
@@ -115,13 +114,10 @@ class Main(wx.Frame):
         pass
 
     def onSize(self, evt):
-        #if ($prefs.save_window_size) {
-        #    my ($w, $h) = $self.GetSizeWH
-        #    $prefs.window_width($w)
-        #    $prefs.window_height($h)
-        #}
-        #$evt.Skip
-        pass
+        if prefs.get('save_window_size'):
+            size = self.GetSize()
+            prefs.set('window_width',  str(size.GetWidth()))
+            prefs.set('window_height', str(size.GetHeight()))
 
     def handleCopy(self, evt):
         #if    ($self.output_pane.HasSelection) { $self.output_pane.Copy }
@@ -137,9 +133,8 @@ class Main(wx.Frame):
 ### DIALOGS AND SUBWINDOWS
 
     def showWorldsList(self, evt):
-        #$self.{'worlds_list'} ||= WxMOO::Window::WorldsList($self)
-        #$self.{'worlds_list'}.Show
-        pass
+        if self.worlds_list is None: self.worlds_list = WorldsList(self)
+        self.worlds_list.Show()
 
     def showConnectDialog(self, evt):
         if self.connect_dialog is None: self.connect_dialog = ConnectDialog(self)
