@@ -31,11 +31,11 @@ class WorldsList(wx.Dialog):
         # This is a hoop-jumping exercise to use the platform-specific locations
         # of "OK" and "Cancel" instead of the hoop-jumping exercise of making my
         # own buttons.  There's almost certainly a better way to do this.
-#        for b in button_sizer.GetChildren():
-#            bwin = b.GetWindow()
-#            if (bwin and (bwin.GetLabel() == '&OK')): continue
-#            bwin.SetLabel('&Connect')
-#            break
+        for b in button_sizer.GetChildren():
+            bwin = b.GetWindow()
+            if (not bwin) or (bwin.GetLabel() != '&OK'): continue
+            bwin.SetLabel('&Connect')
+            break
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         main_sizer.Add(world_picker_sizer, 0, wx.EXPAND | wx.ALL,            10)
@@ -62,10 +62,10 @@ class WorldsList(wx.Dialog):
 
     # TODO - make WxMOO.World have a notion of "connect to yourself"
     # Also therefore merge WxMOO.World and WxMOO.Window.WorldPanel
-    def on_connect(self):
+    def on_connect(self, evt):
         self.connection.connect(
-            self.world_details_panel.world.get("get")('host'),
-            self.world_details_panel.world.get("get")('port'))
+            self.world_details_panel.world.get('host'),
+            int(self.world_details_panel.world.get('port')))
         self.Hide()
 
 
