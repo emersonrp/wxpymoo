@@ -1,6 +1,7 @@
 import wx
 import wx.richtext
 
+import wxpymoo.mcp21.core as mcp21
 import wxpymoo.prefs as prefs
 import wxpymoo.utility
 from wxpymoo.theme import Theme
@@ -8,9 +9,6 @@ from wxpymoo.theme import Theme
 import webbrowser
 
 import re
-
-# TODO we need a better output_filter scheme, probably?
-#use WxMOO.MCP21
 
 class OutputPane(wx.richtext.RichTextCtrl):
 
@@ -75,8 +73,9 @@ class OutputPane(wx.richtext.RichTextCtrl):
         # TODO - ANSI parsing woo
         for line in text.split('\n'):
             line = line + "\n"
-            #if (prefs.get('use_mcp')):
-                #next unless (line = WxMOO.MCP21.output_filter(line))
+            if (prefs.get('use_mcp')):
+                line = mcp21.output_filter(line)
+                if not line: continue  # output_filter returns falsie if it handled it.
             if (True or prefs.get('use_ansi')):
                 stuff = self.ansi_parse(line)
                 for bit in stuff:
