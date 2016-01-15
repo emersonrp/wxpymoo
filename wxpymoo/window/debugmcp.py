@@ -1,117 +1,77 @@
-package WxMOO::Window::DebugMCP;
-use strict;
-use warnings;
-use v5.14;
+import wx
+import re
 
-use Wx qw( :misc :sizer );
-use Wx::Event qw( EVT_SIZE );
+import wxpymoo.prefs as prefs
+import wxpymoo.mcp21.core as mcp21
 
-use WxMOO::Prefs;
+class DebugMCP(wx.Frame):
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, title = "Debug MCP")
 
-use base qw( Wx::Frame Class::Accessor );
-WxMOO::Window::DebugMCP->mk_accessors(qw( active output_pane ));
+        self.active = False
+        self.output_pane = None
 
-sub new {
-    my ($class) = @_;
-    state $self;
-    unless ($self) {
-        $self = $class->SUPER::new( undef, -1, 'Debug MCP');
+        self.addEvents()
 
-        $self->addEvents;
+        if (True or prefs.get('save_mcp_window_size')):
+            w = prefs.get('mcp_window_width')  or 600
+            h = prefs.get('mcp_window_height') or 400
+            self.SetSize([int(w), int(h)])
 
-        if (1 || WxMOO::Prefs->prefs->save_mcp_window_size) {
-            my $w = WxMOO::Prefs->prefs->mcp_window_width  || 600;
-            my $h = WxMOO::Prefs->prefs->mcp_window_height || 400;
-            $self->SetSize([$w, $h]);
-        }
+        self.output_pane = DebugMCPPane(self)
+        sizer = wx.BoxSizer( wx.VERTICAL )
+        sizer.Add(self.output_pane, 1, wx.ALL|wx.GROW, 5)
+        self.SetSizer(sizer)
 
-        $self->output_pane(WxMOO::Window::DebugMCP::Pane->new($self));
-        my $sizer = Wx::BoxSizer->new( wxVERTICAL );
-        $sizer->Add($self->output_pane, 1, wxALL|wxGROW, 5);
-        $self->SetSizer($sizer);
-    }
+        # pre-stage monkey-patching
+        mcp21.orig_debug = mcp21.debug
 
-    return $self;
-}
+    def addEvents(self):
+        self.Bind(wx.EVT_SIZE, self.onSize)
 
-sub toggle_visible  {
-    my $self = shift;
-    if ($self->IsShown) {
-        $self->Hide->();
-        $self->active(0);
-    } else {
-        $self->Show->();
-        $self->active(1);
-    }
-}
-sub Close {
-    my $self = shift;
-    $self->SUPER::Close->();
-    $self->active(0);
-}
+    def toggle_visible(self):
+        if self.IsShown():
+            self.Hide()
+            self.active = False
+            # de-monkey-patch mcp21
+            mcp21.debug = mcp21.orig_debug
+        else:
+            self.Show()
+            self.active = True
+            # monkey-patch mcp21 so debug goes here
+            mcp21.debug = self.display
 
-SCOPE: {
-    my $serverMsgColour = Wx::Colour->new(128, 0, 0);
-    my $clientMsgColour = Wx::Colour->new(0,   0, 128);
-    sub display {
-        my ($self, @data) = @_;
-        return unless $self->active;
 
-        my $op = $self->output_pane;
+    def Close(self):
+        self.toggle_visible()
 
-        for my $line (@data) {
-            unless ($line =~ /\n$/) { $line = "$line\n"; }
+    def display(self, data):
+        if not self.active: return
 
-            if ($line =~ /^S->C/) {
-                $op->BeginTextColour($serverMsgColour);
-            } elsif ($line =~ /^C->S/) {
-                $op->BeginTextColour($clientMsgColour);
-            } else {
-                $op->BeginBold;
-            }
-            $op->WriteText($line);
-            $op->EndTextColour;
-            $op->EndBold;
-        }
-        $op->ShowPosition($op->GetCaretPosition);
-    }
-}
+        op = self.output_pane
 
-sub addEvents {
-    my ($self) = @_;
+        serverMsgColour = wx.Colour(128, 0, 0)
+        clientMsgColour = wx.Colour(0,   0, 128)
 
-    EVT_SIZE( $self, \&onSize );
-}
+        for line in re.split('\n', data):
+            if line == '': continue
 
-sub onSize {
-    my ($self, $evt) = @_;
+            if   re.match('S->C', line): op.BeginTextColour(serverMsgColour)
+            elif re.match('C->S', line): op.BeginTextColour(clientMsgColour)
 
-    if (1 || WxMOO::Prefs->prefs->save_mcp_window_size) {
-        my ($w, $h) = $self->GetSizeWH;
-        WxMOO::Prefs->prefs->mcp_window_width($w);
-        WxMOO::Prefs->prefs->mcp_window_height($h);
-    }
-    $evt->Skip;
-}
+            op.WriteText(line + "\n")
+            op.EndTextColour()
 
-package WxMOO::Window::DebugMCP::Pane;
-use strict;
-use warnings;
-use v5.14;
+        op.ShowPosition(op.GetCaretPosition())
 
-use Wx qw( :misc :textctrl );
-use Wx::RichText;
+    def onSize(self, evt):
+        if (True or prefs.get('save_mcp_window_size')):
+            size = self.GetSize()
+            prefs.set('mcp_window_width',  size.GetWidth())
+            prefs.set('mcp_window_height', size.GetHeight())
+        evt.Skip()
 
-use base 'Wx::RichTextCtrl';
+class DebugMCPPane(wx.richtext.RichTextCtrl):
 
-sub new {
-    my ($class, $parent) = @_;
-    my $self = $class->SUPER::new(
-        $parent, -1, "", wxDefaultPosition, wxDefaultSize,
-            wxTE_READONLY | wxTE_NOHIDESEL
-        );
-
-    return bless $self, $class;
-}
-
-1;
+    def __init__(self, parent):
+        wx.richtext.RichTextCtrl.__init__(self, parent, style = wx.TE_READONLY | wx.TE_NOHIDESEL)

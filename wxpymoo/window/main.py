@@ -3,13 +3,11 @@ from wxpymoo.connection import Connection
 from wxpymoo.window.connectdialog import ConnectDialog
 from wxpymoo.window.prefseditor import PrefsEditor
 from wxpymoo.window.worldslist import WorldsList
+from wxpymoo.window.debugmcp import DebugMCP
 
 import wxpymoo.prefs as prefs
 class Main(wx.Frame):
-    #use WxMOO::Prefs
     #use WxMOO::Editor
-
-    #use WxMOO::Window::DebugMCP
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
@@ -24,6 +22,7 @@ class Main(wx.Frame):
         self.connect_dialog = None
         self.prefs_editor = None
         self.worlds_list = None
+        self.debug_mcp = None
 
         h = 600
         w = 800
@@ -96,14 +95,15 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.showPrefsEditor, Prefs_prefs )
 
-        self.Bind(wx.EVT_MENU, self.showDebugMCP, Window_debugmcp )
+        self.Bind(wx.EVT_MENU, self.toggleDebugMCP, Window_debugmcp )
 
         self.Bind(wx.EVT_MENU, self.showHelp,     Help_help  )
         self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
 
     def addEvents(self):
-        #EVT_SIZE( $self, self.onSize )
-        pass
+        return
+        # TODO - this makes the output pane 1x1 upper left.  hrmn.
+        #self.Bind(wx.EVT_SIZE, self.onSize)
 
     def closeConnection(self):
         #$self.connection.Close
@@ -120,9 +120,8 @@ class Main(wx.Frame):
             prefs.set('window_height', str(size.GetHeight()))
 
     def handleCopy(self, evt):
-        #if    ($self.output_pane.HasSelection) { $self.output_pane.Copy }
-        #elsif ($self.input_pane .HasSelection) { $self.input_pane .Copy }
-        pass
+        if   (self.output_pane.HasSelection()): self.output_pane.Copy()
+        elif (self.input_pane .HasSelection()): self.input_pane .Copy()
 
     def handleCut(self, evt):
         self.input_pane.Cut
@@ -145,10 +144,9 @@ class Main(wx.Frame):
         self.prefs_editor.Show()
         pass
 
-    def showDebugMCP(self, evt):
-        #$self.{'debug_mcp'} ||= WxMOO::Window::DebugMCP($self)
-        #$self.{'debug_mcp'}.toggle_visible
-        pass
+    def toggleDebugMCP(self, evt):
+        if self.debug_mcp is None: self.debug_mcp = DebugMCP(self)
+        self.debug_mcp.toggle_visible()
 
     def showHelp(self, evt):
         pass

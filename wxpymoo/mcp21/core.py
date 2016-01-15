@@ -164,18 +164,18 @@ def server_notify(msg, args):
         else :
             out += k + ": " + v
 
-    debug("C->S: " + out)
-    connection.output(out + "\n")
+    server_send(out)
 
     if multiline:
         for k in multiline:
             l = multiline[k]
             for line in l:
-                out_line = "#$#* " + datatag + " " + k + ": " + line + "\n"
-                connection.output(out_line)
-                debug(out_line)
-            connection.output("#$#: " + datatag + "\n")
-            debug("#$#: " + datatag)
+                server_send("#$#* " + datatag + " " + k + ": " + line + "\n")
+            server_send("#$#: " + datatag + "\n")
+
+def server_send(out_line):
+    connection.output(out_line)
+    debug("C->S: " + out_line)
 
 def start_mcp():
     for p in registry.packages.values():
@@ -211,9 +211,9 @@ class MCP:
         # we both support 2.1 - ship the server a key and start haggling
         key = str(os.getpid())
         mcp21.mcp_auth_key = key
-        mcp21.connection.output("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1\n")
-        mcp21.debug("C->S: #\$#mcp authentication-key: "+key+" version: 2.1 to: 2.1")
+        mcp21.server_send("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1\n")
 
         mcp21.start_mcp()
 
     def Initialize(wuh): pass
+
