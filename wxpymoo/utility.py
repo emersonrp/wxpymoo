@@ -3,10 +3,10 @@ import re
 
 # This regex adapted from one found at
 # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-URL_REGEX = re.compile(r"""
+URL_REGEX = re.compile(r"""(
 (?xi)
 \b
-(
+(?:
     (?:
         (?:https?|ftp|mailto):           # a few protocols we care about
         (?:
@@ -31,5 +31,5 @@ URL_REGEX = re.compile(r"""
         |                                # or
     [^\s`!()\[\]{};:\'".,<>?«»“”‘’]      # not a space or one of these punct chars
 )
-""", re.VERBOSE)
+)""", re.VERBOSE)
 

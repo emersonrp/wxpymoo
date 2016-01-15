@@ -4,6 +4,8 @@ import wx.richtext
 import wxpymoo.prefs as prefs
 import wxpymoo.utility
 
+import webbrowser
+
 import re
 
 # TODO we need a better output_filter scheme, probably?
@@ -25,19 +27,20 @@ class OutputPane(wx.richtext.RichTextCtrl):
         self.Bind(wx.EVT_TEXT_URL,  self.process_url_click)
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
-        self.Bind(wx.EVT_SIZE,        self.scroll_to_bottom)
+        self.Bind(wx.EVT_SIZE,      self.scroll_to_bottom)
 
     def scroll_to_bottom(self, evt):
         self.ShowPosition(self.GetLastPosition())
 
     def process_url_click(self, evt):
-        url = evt.GetString
-        # TODO - make this whole notion into a platform-agnostic launchy bit
-        #system('xdg-open', url)
+        url = evt.GetString()
+        wx.BeginBusyCursor()
+        webbrowser.open(url)
+        wx.EndBusyCursor()
 
     def WriteText(self, rest):
         super(OutputPane, self).WriteText(rest)
-        self.ScrollIfAppropriate
+        self.ScrollIfAppropriate()
 
     def is_at_bottom(): True
 
@@ -77,25 +80,21 @@ class OutputPane(wx.richtext.RichTextCtrl):
                         # TODO - snip URLs first then ansi-parse pre and post?
                         if prefs.get('highlight_urls'):
                             matches = re.split(wxpymoo.utility.URL_REGEX, bit)
-                            if len(matches) > 1: # we found a URL and split on it
-                                print(matches)
-                                pre, url, post = matches
-                                self.WriteText(pre)
+                            for chunk in matches:
+                                if chunk is None: continue
+                                if re.match(wxpymoo.utility.URL_REGEX, chunk):
+                                    self.BeginURL(chunk)
+                                    self.BeginUnderline()
+                                    #self.BeginTextColour( self.lookup_color('blue', True) )
+                                    self.BeginTextColour( wx.BLUE )
 
-                                self.BeginURL(url)
-                                self.BeginUnderline()
-                                #self.BeginTextColour( self.lookup_color('blue', True) )
-                                self.BeginTextColour( wx.BLUE )
+                                    self.WriteText(chunk)
 
-                                self.WriteText(url)
-
-                                self.EndTextColour()
-                                self.EndUnderline()
-                                self.EndURL()
-
-                                self.WriteText(post)
-                            else:
-                                self.WriteText(bit)
+                                    self.EndTextColour()
+                                    self.EndUnderline()
+                                    self.EndURL()
+                                else:
+                                    self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
             else:
