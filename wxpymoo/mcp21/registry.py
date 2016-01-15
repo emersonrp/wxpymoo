@@ -1,3 +1,5 @@
+import re
+
 msg_registry = {}
 packages = {}
 

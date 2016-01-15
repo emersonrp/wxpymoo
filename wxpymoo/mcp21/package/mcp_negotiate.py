@@ -1,61 +1,43 @@
-package WxMOO::MCP21::Package::mcp_negotiate;
-use strict;
-use warnings;
-use v5.14;
+import re
+import wxpymoo.mcp21.core as mcp21
+import wxpymoo.mcp21.registry as registry
+from wxpymoo.mcp21.package import MCPPackageBase
 
-no if $] >= 5.018, warnings => "experimental::smartmatch";
+class MCPNegotiate(MCPPackageBase):
+    def __init__(self):
+        MCPPackageBase.__init__(self)
 
-use WxMOO::MCP21;
-use parent 'WxMOO::MCP21::Package';
+        self.package   = 'mcp-negotiate'
+        self.min       = '2.0'
+        self.max       = '2.0'
+        self.activated = '2.0'
 
-sub new {
-    my ($class) = @_;
-    my $self = $class->SUPER::new({
-        package   => 'mcp-negotiate',
-        min       => '2.0',
-        max       => '2.0',
-        activated => '2.0',
-    });
+        registry.register(self, ['mcp-negotiate-can','mcp-negotiate-end'])
 
-    $WxMOO::MCP21::registry->register($self, qw( mcp-negotiate-can mcp-negotiate-end ));
-    bless $self, $class;
-}
+    def Initialize(self):
+        for p in registry.packages.values():
 
-sub _init {
-    for my $p ($WxMOO::MCP21::registry->packages) {
-        next if $p->package eq 'mcp';
-        WxMOO::MCP21::server_notify("mcp-negotiate-can", {
-            'package'     => $p->package,
-            'min-version' => $p->min,
-            'max-version' => $p->max,
-        });
-    }
-    WxMOO::MCP21::server_notify('mcp-negotiation-end');
-}
+            if p.package == 'mcp': continue
+            mcp21.server_notify("mcp-negotiate-can", {
+                'package'     : p.package,
+                'min-version' : p.min,
+                'max-version' : p.max,
+            })
+        mcp21.server_notify('mcp-negotiation-end')
 
-sub dispatch {
-    my ($self, $message) = @_;
-    given ($message->{'message'}) {
-        when (/mcp-negotiate-can/) { $self->do_mcp_negotiate_can($message); }
-        when (/mcp-negotiate-end/) { $self->do_mcp_negotiate_end; }
-    }
-}
+    def dispatch(self, msg):
+        if re.match('mcp-negotiate-can', msg['message']): self.do_mcp_negotiate_can(msg)
+        if re.match('mcp-negotiate-end', msg['message']): self.do_mcp_negotiate_end()
 
+    def do_mcp_negotiate_can(self, msg):
+        data = msg['data']
+        min = data['min-version']
+        max = data['max-version']
+        pkg = data['package']
+        ver = registry.get_best_version(pkg, min, max)
+        if ver:
+            mcp21.debug("activating " + pkg)
+            registry.packages[pkg].activated = ver
 
-sub do_mcp_negotiate_can {
-    my ($self, $message) = @_;
-    my $data = $message->{'data'};
-    my $min = $data->{'min-version'};
-    my $max = $data->{'max-version'};
-    my $pkg = $data->{'package'};
-    if (my $ver = $WxMOO::MCP21::registry->get_best_version($pkg, $min, $max)) {
-        WxMOO::MCP21::debug("activating $pkg");
-        $WxMOO::MCP21::registry->get_package($pkg)->activated($ver);
-    }
-}
-
-sub do_mcp_negotiate_end {
     # TODO - do we need to do anything?  maybe like unregister packages that aren't activated?
-}
-
-1;
+    def do_mcp_negotiate_end(self): pass

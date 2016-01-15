@@ -1,65 +1,42 @@
-package WxMOO::MCP21::Package::dns_org_mud_moo_simpleedit;
-use strict;
-use warnings;
-use v5.14;
+import re
+import wxpymoo.mcp21.core as mcp21
+import wxpymoo.mcp21.registry as registry
+# import wxpymoo.editor as editor
+from wxpymoo.mcp21.package import MCPPackageBase
 
-use Carp;
-no if $] >= 5.018, warnings => "experimental::smartmatch";
+class DNSOrgMudMooSimpleEdit(MCPPackageBase):
+    def __init__(self):
+        MCPPackageBase.__init__(self)
 
-# this code is already in dire need of a rework, but it's starting work at all, at least.
+        self.package   = 'dns-org-mud-moo-simpleedit'
+        self.min       = '1.0'
+        self.max       = '1.0'
 
-use File::Temp;
-use Wx qw( :id :execute );
-use Wx::Event qw( EVT_END_PROCESS EVT_TIMER );
+        self.in_progress = {}
 
-use WxMOO::Editor;
+        registry.register(self, ['dns-org-mud-moo-simpleedit-content'])
 
-use parent 'WxMOO::MCP21::Package';
+    def dispatch(self, msg):
+        if msg['message'] == 'dns-org-mud-moo-simpleedit-content':
+                self.dns_org_mud_moo_simpleedit_content(msg)
 
-sub new {
-    my ($class) = @_;
-    my $self = $class->SUPER::new({
-        package => 'dns-org-mud-moo-simpleedit',
-        min     => '1.0',
-        max     => '1.0',
-    });
+    def dns_org_mud_moo_simpleedit_content(self, msg):
 
-    $self->{'in_progress'} = {};
+#        id = editor.launch_editor({
+#            'type'     : msg['data']['type'],
+#            'content'  : msg['data']['content'],
+#            'callback' : self._send_file_if_needed,
+#        });
+#        self.in_progress[id] = msg
+        pass
 
-    $WxMOO::MCP21::registry->register($self, qw( dns-org-mud-moo-simpleedit-content ));
-}
+    def _send_file_if_needed(send, id, content):
+        msg = self.in_progress[id]
+        mcp21.server_notify(
+            'dns-org-mud-moo-simpleedit-set', {
+                'reference' : msg['data']['reference'],
+                'type'      : msg['data']['type'],
+                'content'   : content,
+            }
+        )
 
-sub dispatch {
-    my ($self, $message) = @_;
-    given ($message->{'message'}) {
-        when ('dns-org-mud-moo-simpleedit-content') {
-            $self->dns_org_mud_moo_simpleedit_content($message);
-        }
-    }
-}
-
-sub dns_org_mud_moo_simpleedit_content {
-    my ($self, $mcp_msg) = @_;
-
-    my $id = WxMOO::Editor::launch_editor({
-        type     => $mcp_msg->{'data'}->{'type'},
-        content  => $mcp_msg->{'data'}->{'content'},
-        callback => sub { $self->_send_file_if_needed(@_) },
-    });
-    $self->{'in_progress'}->{$id} = $mcp_msg;
-}
-
-sub _send_file_if_needed {
-    my ($self, $id, $content) = @_;
-    # shipit!
-    my $mcp_msg = $self->{'in_progress'}->{$id};
-    WxMOO::MCP21::server_notify(
-        'dns-org-mud-moo-simpleedit-set', {
-            reference => $mcp_msg->{'data'}->{'reference'},
-            type      => $mcp_msg->{'data'}->{'type'},
-            content   => $content,
-        }
-    );
-}
-
-1;

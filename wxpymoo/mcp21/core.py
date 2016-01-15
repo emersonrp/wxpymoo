@@ -24,20 +24,24 @@ def Initialize(conn):
     global connection
     if conn: connection = conn
 
-    pkg_mcp = MCP() # initialize the 'mcp' core package
+    MCP() # initialize the 'mcp' core package
 
-#  # We'd like to enumerate this automatically.
-#  #use WxMOO::MCP21::Package::mcp_cord
-#  use WxMOO::MCP21::Package::mcp_negotiate
-#  use WxMOO::MCP21::Package::dns_org_mud_moo_simpleedit
-#  use WxMOO::MCP21::Package::dns_com_awns_status
-#  
-#  #my $pkg_mcp_cord       = WxMOO::MCP21::Package::mcp_cord     ->new
-#  my $pkg_mcp_negotiate  = WxMOO::MCP21::Package::mcp_negotiate->new
-#  my $pkg_mcp_simpleedit = WxMOO::MCP21::Package::dns_org_mud_moo_simpleedit->new
-#  my $pkg_mcp_status     = WxMOO::MCP21::Package::dns_com_awns_status->new
+    # TODO - we need to find all these packages and instantiate them automagially.
+    # TODO - they probable need some simple entry point that calls the constructor
+    from wxpymoo.mcp21.package.mcp_negotiate import MCPNegotiate
+    MCPNegotiate()
+
+    #from wxpymoo.mcp21.package.mcp_cord import MCPCord
+    #MCPCord()
+
+    from wxpymoo.mcp21.package.dns_com_awns_status import DNSComAwnsStatus
+    DNSComAwnsStatus()
+
+    from wxpymoo.mcp21.package.dns_org_mud_moo_simpleedit import DNSOrgMudMooSimpleEdit
+    DNSOrgMudMooSimpleEdit()
 
 def debug(info):
+    info = re.sub('\n$', '', info)
     # DebugMCP window monkey-patches this when it shows itself
     # TODO - we might want one debug window per-connection-window
     print(info)
@@ -149,9 +153,11 @@ def dispatch(message):
 
     if package.activated: package.dispatch(message)
 
-def server_notify(msg, args):
+def server_notify(msg, args = {}):
 
-    out = "#$#" + msg + " " + key
+    out = "#$#" + msg + " " + mcp_auth_key
+
+    multiline = {}
 
     for k in args:
         # TODO escape v if needed
@@ -160,9 +166,9 @@ def server_notify(msg, args):
         if type(v) is dict: # multiline!
             multiline[k] = v
             datatag = int(rand(1000000))
-            out += k + '*: "" _data-tag: ' + datatag
+            out += " " + k + '*: "" _data-tag: ' + datatag
         else :
-            out += k + ": " + v
+            out += " " + k + ": " + v
 
     server_send(out)
 
@@ -170,8 +176,8 @@ def server_notify(msg, args):
         for k in multiline:
             l = multiline[k]
             for line in l:
-                server_send("#$#* " + datatag + " " + k + ": " + line + "\n")
-            server_send("#$#: " + datatag + "\n")
+                server_send("#$#* " + datatag + " " + k + ": " + line)
+            server_send("#$#: " + datatag)
 
 def server_send(out_line):
     connection.output(out_line)
@@ -187,10 +193,10 @@ def start_mcp():
 
 class MCP:
     def __init__(self):
-        self.package = 'mcp'
-        self.min     = 2.1
-        self.max     = 2.1
-        self.activated = True
+        self.package   = 'mcp'
+        self.min       = 2.1
+        self.max       = 2.1
+        self.activated = 2.1
 
         registry.register(self, ['mcp'])
 
@@ -211,7 +217,7 @@ class MCP:
         # we both support 2.1 - ship the server a key and start haggling
         key = str(os.getpid())
         mcp21.mcp_auth_key = key
-        mcp21.server_send("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1\n")
+        mcp21.server_send("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1")
 
         mcp21.start_mcp()
 
