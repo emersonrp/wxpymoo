@@ -7,6 +7,7 @@ from twisted.protocols.basic import LineReceiver
 from wxpymoo.window.mainsplitter import MainSplitter
 from wxpymoo.window.inputpane import InputPane
 from wxpymoo.window.outputpane import OutputPane
+import wxpymoo.mcp21.core as mcp21
 
 # TODO - should an output_pane own a connection, or vice-versa?
 # This is related to the answer to "do we want multiple worlds to be
@@ -68,7 +69,7 @@ class Connection:
         reactor.connectTCP(self.host, self.port, ConnectionClientFactory(self))
 
         # Ugh.  I'm gonna have to build my own event dispatch system, aren't I
-        # WxMOO::MCP21::new_connection($self);
+        mcp21.Initialize(self)
 
         # TODO - 'if world.connection.keepalive'
         # self.keepalive.Start()

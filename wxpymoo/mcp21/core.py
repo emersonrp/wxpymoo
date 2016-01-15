@@ -14,19 +14,24 @@ QUOTE_PREFIX = re.compile('^#\$"')
 # later on.  tkmoo has the notion of a request object that it stashes them in.
 mcp_active = 0
 mcp_auth_key = ''
-connection = ''
+connection = None
 
 # This is probably the right place for this, though.
 multiline_messages = {}
 
+def Initialize(conn):
+
+    global connection
+    if conn: connection = conn
+
+    pkg_mcp = MCP() # initialize the 'mcp' core package
+
 #  # We'd like to enumerate this automatically.
-#  use WxMOO::MCP21::Package::mcp
 #  #use WxMOO::MCP21::Package::mcp_cord
 #  use WxMOO::MCP21::Package::mcp_negotiate
 #  use WxMOO::MCP21::Package::dns_org_mud_moo_simpleedit
 #  use WxMOO::MCP21::Package::dns_com_awns_status
 #  
-#  my $pkg_mcp            = WxMOO::MCP21::Package::mcp          ->new
 #  #my $pkg_mcp_cord       = WxMOO::MCP21::Package::mcp_cord     ->new
 #  my $pkg_mcp_negotiate  = WxMOO::MCP21::Package::mcp_negotiate->new
 #  my $pkg_mcp_simpleedit = WxMOO::MCP21::Package::dns_org_mud_moo_simpleedit->new
@@ -121,8 +126,8 @@ def parse(raw):
 
     if not re.search(r':$', first):
         message['auth_key'] = first
-        first_re = r"^" + re.escape(first) + r"\s+"
-        raw = first_re.sub('', raw)
+        first_re = '^' + re.escape(first) + '\s+'
+        raw = re.sub(first_re, '', raw)
 
     keyvals = re.findall(raw_re, raw)
 
@@ -160,22 +165,55 @@ def server_notify(msg, args):
             out += k + ": " + v
 
     debug("C->S: " + out)
-    connection.Write(out + "\n")
+    connection.output(out + "\n")
 
     if multiline:
         for k in multiline:
             l = multiline[k]
             for line in l:
                 out_line = "#$#* " + datatag + " " + k + ": " + line + "\n"
-                connection.Write(out_line)
+                connection.output(out_line)
                 debug(out_line)
-            connection.Write("#$#: " + datatag + "\n")
+            connection.output("#$#: " + datatag + "\n")
             debug("#$#: " + datatag)
 
-def new_connection(conn):
-    global connection
-    connection = conn
-
 def start_mcp():
-    for p in registry.packages:
-        p._init
+    for p in registry.packages.values():
+        p.Initialize()
+
+### "MCP" package to get MCP itself enfired
+### we put this here because it needs/provides special bootstrapping that the
+### other packages don't
+
+class MCP:
+    def __init__(self):
+        self.package = 'mcp'
+        self.min     = 2.1
+        self.max     = 2.1
+        self.activated = True
+
+        registry.register(self, ['mcp'])
+
+    def dispatch(self, message):
+        if re.search('mcp', message['message']): self.do_mcp(message)
+
+    ### handlers
+    def do_mcp(self, message):
+        import os
+        import wxpymoo.mcp21.core as mcp21
+
+        if message['data']['version'] == 2.1 or message['data']['to'] >= 2.1:
+            mcp21.mcp_active = True
+        else:
+            mcp21.debug("mcp version doesn't match, bailing")
+            return;
+
+        # we both support 2.1 - ship the server a key and start haggling
+        key = str(os.getpid())
+        mcp21.mcp_auth_key = key
+        mcp21.connection.output("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1\n")
+        mcp21.debug("C->S: #\$#mcp authentication-key: "+key+" version: 2.1 to: 2.1")
+
+        mcp21.start_mcp()
+
+    def Initialize(wuh): pass

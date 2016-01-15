@@ -1,15 +1,17 @@
 msg_registry = {}
 packages = {}
 
-def register(pkg, *messages):
-
+def register(pkg, messages):
+    print(messages)
     # unless ($pkg->isa('WxMOO::MCP21::Package')) {
     #     carp "something not a package tried to register with the mcp registry";
     #     return;
     # }
-    packages[pkg['package']] = pkg
+    packages[pkg.package] = pkg
     for message in messages:
         msg_registry[message] = pkg
+    print(packages)
+    print(msg_registry)
 
 # TODO these can be optimized away
 # def packages(): packages.values()
