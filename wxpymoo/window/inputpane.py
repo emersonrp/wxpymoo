@@ -75,15 +75,16 @@ class InputPane(wx.richtext.RichTextCtrl):
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.Paste
         elif k == 23:  # Ctrl-W
-#                end = self.GetInsertionPoint()
-#
-#                self.GetValue =~ /(\s*[[:graph:]]+\s*)/
-#
-#                return unless $1
-#
-#                my start = end - (length $1)
-#                self.Remove(start, end)
-            pass
+                # TODO - can't test this b/c Ctrl-W is currently auto-bound to Close
+                end = self.GetInsertionPoint()
+
+                m = re.search('(\s*[^\x21-\x7E]+\s*)$', self.GetValue())
+
+                word_to_remove = m.group(1)
+                if not word_to_remove: return
+
+                start = end - word_to_remove.len()
+                self.Remove(start, end)
         else:
 # if (self.GetValue =~ /^con?n?e?c?t? +\w+ +/) {
 #     # it's a connection attempt, style the passwd to come out as *****
