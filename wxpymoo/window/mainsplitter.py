@@ -1,6 +1,5 @@
 import wx
-
-#use WxMOO::Prefs;
+import wxpymoo.prefs as prefs
 
 class MainSplitter(wx.SplitterWindow):
 
@@ -12,11 +11,10 @@ class MainSplitter(wx.SplitterWindow):
 
     def saveSplitterSize(self, evt):
         size = self.GetSize()
-        #WxMOO::Prefs->prefs->input_height( $h - $evt->GetSashPosition );
+        prefs.set('input_height', size.GetHeight() - evt.GetSashPosition())
 
     def HandleResize(self, evt):
         size = self.GetSize()
-        #my $InputHeight = WxMOO::Prefs->prefs->input_height || 25;
-        InputHeight = 30
-        self.SetSashPosition(size.GetHeight() - InputHeight, True)
+        input_height = int(prefs.get('input_height')) or 25
+        self.SetSashPosition(size.GetHeight() - input_height, True)
         self.GetWindow1().ScrollIfAppropriate()
