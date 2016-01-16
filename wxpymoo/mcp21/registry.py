@@ -1,23 +1,16 @@
 import re
+from wxpymoo.mcp21.package import MCPPackageBase
 
 msg_registry = {}
 packages = {}
 
 def register(pkg, messages):
-    # unless ($pkg->isa('WxMOO::MCP21::Package')) {
-    #     carp "something not a package tried to register with the mcp registry";
-    #     return;
-    # }
+    if not isinstance(pkg, MCPPackageBase):
+        print("something that isn't an MCP package tried to register")
+        return
     packages[pkg.package] = pkg
     for message in messages:
         msg_registry[message] = pkg
-
-# TODO these can be optimized away
-# def packages(): packages.values()
-
-# def get_package(pkg): packages[pkg]
-
-# def package_for_message(msg): msg_registry[msg]
 
 # next two subs taken from MCP 2.1 specification, section 2.4.3
 def get_best_version(pkg, smin, smax):

@@ -1,6 +1,7 @@
 import re, random
 
 import wxpymoo.mcp21.registry as registry
+from wxpymoo.mcp21.package import MCPPackageBase
 
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
@@ -190,7 +191,7 @@ def start_mcp():
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
 
-class MCP:
+class MCP(MCPPackageBase):
     def __init__(self):
         self.package   = 'mcp'
         self.min       = 2.1
@@ -228,4 +229,3 @@ class Message:
         self._data_tag         = None
         self.message           = ''
         self.multi_in_progress = False
-
