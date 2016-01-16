@@ -105,13 +105,11 @@ class Main(wx.Frame):
         # TODO - this makes the output pane 1x1 upper left.  hrmn.
         #self.Bind(wx.EVT_SIZE, self.onSize)
 
-    def closeConnection(self):
-        #$self.connection.Close
-        pass
+    def closeConnection(self, evt):
+        self.connection.Close()
 
-    def reconnectConnection(self):
-        #$self.connection.reconnect
-        pass
+    def reconnectConnection(self, evt):
+        self.connection.reconnect()
 
     def onSize(self, evt):
         if prefs.get('save_window_size'):

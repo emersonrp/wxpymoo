@@ -2,16 +2,11 @@ import wx
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
-#use WxMOO::MCP21;  # this is icky
 
 from wxpymoo.window.mainsplitter import MainSplitter
 from wxpymoo.window.inputpane import InputPane
 from wxpymoo.window.outputpane import OutputPane
 import wxpymoo.mcp21.core as mcp21
-
-# TODO - should an output_pane own a connection, or vice-versa?
-# This is related to the answer to "do we want multiple worlds to be
-# open in like tabs or something?"
 
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
@@ -19,6 +14,12 @@ class ConnectionClient(LineReceiver):
 
     def output(self, line):
         self.sendLine(str(line))
+
+    def connectionMade(self):
+        self.connected = True
+
+    def connectionLost(self, reason):
+        self.connected = False
 
 class ConnectionClientFactory(ClientFactory):
     def __init__(self, connection):
@@ -42,9 +43,11 @@ class ConnectionClientFactory(ClientFactory):
 class Connection:
     def __init__(self, mainwindow):
         self.host = ''
-        self.post = ''
-        self.keepalive = Keepalive()
+        self.port = ''
+        self.keepalive = Keepalive(self)
         self.input_receiver = None
+
+        self.connector = None
 
         # the UI components for this connection
         self.splitter    = MainSplitter(mainwindow.tabs)
@@ -55,49 +58,52 @@ class Connection:
         self.splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
 
     def Close(self):
-        #self.SUPER::Close;
-        #self.output_pane.display("WxMOO: Connection closed.\n");
-        self.keepalive.Stop
+        if self.input_receiver.connected:
+            self.output_pane.display("WxMOO: Connection closed.\n");
+        # force it again just to be sure
+        self.keepalive.Stop()
+        self.connector.disconnect()
 
     # connection.connect ([host], [port])
     #
     # existing connections will remember their host and port if not supplied here,
     # for ease of reconnect etc.
     def connect(self, host, port):
-        if host: self.host = host
-        if port: self.port = port
-        reactor.connectTCP(self.host, self.port, ConnectionClientFactory(self))
+        self.host = host
+        self.port = port
+        self.connector = reactor.connectTCP(self.host, self.port, ConnectionClientFactory(self))
 
-        # Ugh.  I'm gonna have to build my own event dispatch system, aren't I
         mcp21.Initialize(self)
 
         # TODO - 'if world.connection.keepalive'
-        # self.keepalive.Start()
+        self.keepalive.Start()
 
     def output(self, stuff):
         self.input_receiver.output(stuff)
 
     def reconnect(self):
-        #self.Close if self.IsConnected()
-        self.connect()
+        if self.connector: self.Close()
+        self.connect(self.host, self.port)
 
-class Keepalive(wx.Timer):
+class Keepalive(wx.EvtHandler):
     ######################
     # This is a stupid brute-force keepalive that periodically tickles the
     # connection by sending a single space.  Not magical or brilliant.
-    KEEPALIVE_TIME = 60000  # 1 minute
-    def new(self, connection, timeout = KEEPALIVE_TIME):
-        wx.Timer.__init__(self)
+    def __init__(self, connection):
+        wx.EvtHandler.__init__(self)
         self.connection = connection
-        self.timeout    = timeout
+        self.timer = wx.Timer()
 
-        self.Bind(wx,EVT_TIMER, self.on_keepalive)
+        self.timer.Bind(wx.EVT_TIMER, self.on_keepalive)
 
     def Start(self):
-        wx.Timer.Start(self, self.timeout, False)
+        self.timer.Start(60000, False) # 1 minute TODO make this a pref?
 
-    def on_keepalive(self):
+    def Stop(self):
+        self.timer.Stop()
+
+    def on_keepalive(self, evt):
         # TODO - this is pretty brute-force, innit?
         # This'll likely break on worlds that actually
         # are character-based instead of line-based.
-        self.connection.Write(" ")
+        self.connection.output(" ")
