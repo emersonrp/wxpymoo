@@ -31,8 +31,8 @@ def Initialize(conn):
     from wxpymoo.mcp21.package.mcp_negotiate import MCPNegotiate
     MCPNegotiate()
 
-    #from wxpymoo.mcp21.package.mcp_cord import MCPCord
-    #MCPCord()
+    from wxpymoo.mcp21.package.mcp_cord import MCPCord
+    MCPCord()
 
     from wxpymoo.mcp21.package.dns_com_awns_status import DNSComAwnsStatus
     DNSComAwnsStatus()

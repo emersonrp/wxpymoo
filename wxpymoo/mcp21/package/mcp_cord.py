@@ -1,34 +1,23 @@
-package WxMOO::MCP21::Package::mcp_cord;
-use strict;
-use warnings;
-use v5.14;
+import re
+import wxpymoo.mcp21 as mcp21
+import wxpymoo.mcp21.registry as registry
+from wxpymoo.mcp21.package import MCPPackageBase
 
-no if $] >= 5.018, warnings => "experimental::smartmatch";
+class MCPCord(MCPPackageBase):
+    def __init__(self):
+        MCPPackageBase.__init__(self)
 
-use WxMOO::MCP21;
-use parent 'WxMOO::MCP21::Package';
+        self.package = 'mcp-cord'
+        self.min     = '1.0'
+        self.max     = '1.0'
 
-sub new {
-    my ($class) = @_;
-    my $self = $class->SUPER::new({
-        package => 'mcp-cord',
-        min     => '1.0',
-        max     => '1.0',
-    });
-    $WxMOO::MCP21::registry->register($self, qw( mcp-cord mcp_cord mcp-cord-open ));
-}
+        registry.register(self, ['mcp-cord','mcp-cord-open','mcp-cord-closed'])
 
-sub dispatch {
-    my ($self, $message) = @_;
-    given ($message->{'message'}) {
-        when ( /mcp-cord/ )        { $self->do_mcp_cord($message); }
-        when ( /mcp-cord-open/ )   { $self->do_mcp_cord_open($message); }
-        when ( /mcp-cord-closed/ ) { $self->do_mcp_cord_closed($message); }
-    }
-}
+    def dispatch(self, msg):
+        if re.match('mcp-cord',        msg.message): self.do_mcp_cord(msg)
+        if re.match('mcp-cord-open',   msg.message): self.do_mcp_cord_open(msg)
+        if re.match('mcp-cord-closed', msg.message): self.do_mcp_cord_closed(msg)
 
-sub do_mcp_cord        { WxMOO::MCP21::debug("do_mcp_cord called with @_"        ) }
-sub do_mcp_cord_open   { WxMOO::MCP21::debug("do_mcp_cord_open called with @_"   ) }
-sub do_mcp_cord_closed { WxMOO::MCP21::debug("do_mcp_cord_closed called with @_" ) }
-
-1;
+    def do_mcp_cord(self, msg):        mcp21.debug("do_mcp_cord called with "        + str(msg))
+    def do_mcp_cord_open(self, msg):   mcp21.debug("do_mcp_cord_open called with "   + str(msg))
+    def do_mcp_cord_closed(self, msg): mcp21.debug("do_mcp_cord_closed called with " + str(msg))
