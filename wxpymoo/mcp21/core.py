@@ -1,4 +1,4 @@
-import re
+import re, random
 
 import wxpymoo.mcp21.registry as registry
 
@@ -71,35 +71,36 @@ def output_filter(data):
     # if we haven't started yet, and the message isn't a startup negotiation...
     if (not mcp_active and message_name != 'mcp'): return
 
-    message = {};  # here's where we decode this
-
-    # multi-line message handling.  This is awful.
+    # multiline message handling.  This is awful.
     if message_name == '*':
         m = re.match(r'^(\S*) ([^:]*): (.*)', rest)
         tag, field, value = m.group(1,2,3)
 
         message = multiline_messages[tag]
-        message['_data-tag'] = tag
+        message._data_tag = tag
 
-        message['data'][field].append(value)
+        if not field in message.data: message.data[field] = []
+
+        message.data[field].append(value)
+
     elif message_name == ':':
         m = re.match(r'^(\S+)', rest)
         tag = m.group(1)
         message = multiline_messages[tag]
-        message.delete('multi_in_progress')
+        message.multi_in_progress = False
     else:
         message = parse(rest)
 
     # check auth
-    if (message_name != '*') and (message_name != 'mcp') and (message['auth_key'] != mcp_auth_key):
+    if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != mcp_auth_key):
         debug("mcp - auth failed")
         return
 
-    if not message.has_key('message'):
-        message['message'] = message_name
+    message.message = message.message or message_name
 
-    if message['multi_in_progress']:
-        multiline_messages[message['_data-tag']] = (multiline_messages[message['_data-tag']] or message)
+    if message.multi_in_progress:
+        if not multiline_messages.has_key(message._data_tag):
+            multiline_messages[message._data_tag] = message
     else:
         # don't dispatch multilines in progress
         dispatch(message)
@@ -123,13 +124,11 @@ def parse(raw):
     if not raw: return
 
     first = re.split('\s+', raw)[0]
-    message = {
-        'data': {},
-        'multi_in_progress' : False,
-    }
+
+    message = Message()
 
     if not re.search(r':$', first):
-        message['auth_key'] = first
+        message.auth_key = first
         first_re = '^' + re.escape(first) + '\s+'
         raw = re.sub(first_re, '', raw)
 
@@ -138,17 +137,17 @@ def parse(raw):
     for keyval in keyvals:
         keyword, value = keyval
         if re.search('\*$', keyword):
-            message['data'][keyword] = []
-            message['multi_in_progress'] = 1
+            message.data[keyword] = []
+            message.multi_in_progress = True
         elif keyword == '_data-tag':
-            message['_data-tag'] = value
+            message._data_tag = value
         else:
-            message['data'][keyword] = value
+            message.data[keyword] = value
 
     return message
 
 def dispatch(message):
-    package = registry.msg_registry.get(message['message'])
+    package = registry.msg_registry.get(message.message)
     if not package: return
 
     if package.activated: package.dispatch(message)
@@ -163,9 +162,9 @@ def server_notify(msg, args = {}):
         # TODO escape v if needed
         v = args[k] or ''
 
-        if type(v) is dict: # multiline!
+        if type(v) is list: # multiline!
             multiline[k] = v
-            datatag = int(rand(1000000))
+            datatag = str(random.randint(1,1000000))
             out += " " + k + '*: "" _data-tag: ' + datatag
         else :
             out += " " + k + ": " + v
@@ -201,14 +200,14 @@ class MCP:
         registry.register(self, ['mcp'])
 
     def dispatch(self, message):
-        if re.search('mcp', message['message']): self.do_mcp(message)
+        if re.search('mcp', message.message): self.do_mcp(message)
 
     ### handlers
     def do_mcp(self, message):
         import os
         import wxpymoo.mcp21.core as mcp21
 
-        if message['data']['version'] == 2.1 or message['data']['to'] >= 2.1:
+        if message.data['version'] == 2.1 or message.data['to'] >= 2.1:
             mcp21.mcp_active = True
         else:
             mcp21.debug("mcp version doesn't match, bailing")
@@ -222,4 +221,11 @@ class MCP:
         mcp21.start_mcp()
 
     def Initialize(wuh): pass
+
+class Message:
+    def __init__(self):
+        self.data              = {}
+        self._data_tag         = None
+        self.message           = ''
+        self.multi_in_progress = False
 

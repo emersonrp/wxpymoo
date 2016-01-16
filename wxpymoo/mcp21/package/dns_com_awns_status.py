@@ -14,7 +14,7 @@ class DNSComAwnsStatus(MCPPackageBase):
         registry.register(self, ['dns-com-awns-status'])
 
     def dispatch(self, msg):
-        if msg['message'] == 'dns-com-awns-status': self.do_status(msg)
+        if msg.message == 'dns-com-awns-status': self.do_status(msg)
 
     def do_status(self, msg):
         mcp21.debug("DEBUG: dns-com-awns-status got: " + str(msg))

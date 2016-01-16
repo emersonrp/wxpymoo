@@ -12,4 +12,4 @@ class MCPPackageBase(wx.EvtHandler):
         self.package = ''
 
     def Initialize(self):
-        print(self.package + " activating")
+        pass

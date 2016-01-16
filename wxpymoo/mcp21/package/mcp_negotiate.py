@@ -26,14 +26,13 @@ class MCPNegotiate(MCPPackageBase):
         mcp21.server_notify('mcp-negotiation-end')
 
     def dispatch(self, msg):
-        if re.match('mcp-negotiate-can', msg['message']): self.do_mcp_negotiate_can(msg)
-        if re.match('mcp-negotiate-end', msg['message']): self.do_mcp_negotiate_end()
+        if re.match('mcp-negotiate-can', msg.message): self.do_mcp_negotiate_can(msg)
+        if re.match('mcp-negotiate-end', msg.message): self.do_mcp_negotiate_end()
 
     def do_mcp_negotiate_can(self, msg):
-        data = msg['data']
-        min = data['min-version']
-        max = data['max-version']
-        pkg = data['package']
+        min = msg.data['min-version']
+        max = msg.data['max-version']
+        pkg = msg.data['package']
         ver = registry.get_best_version(pkg, min, max)
         if ver:
             mcp21.debug("activating " + pkg)
