@@ -16,12 +16,20 @@ class Editor(wx.EvtHandler):
         if self.filetype == "moo-code": extension = '.moo'
         else:                           extension = '.txt'
 
-        self.tempfile = tempfile.NamedTemporaryFile(prefix="wxpymoo_", suffix=extension)
+        # Create the tmpfile...
+        tempfd, self.tmpfilename = tempfile.mkstemp(prefix="wxpymoo_", suffix=extension)
+        tmpfile = open(self.tmpfilename, 'w')
 
-        for line in self.content: self.tempfile.write(line + "\n")
-        self.tempfile.flush()
-        self._last_sent = os.stat(self.tempfile.name).st_mtime
+        # ...write to it...
+        for line in self.content: tmpfile.write(line + "\n")
+        tmpfile.flush()
+        self._last_sent = os.stat(self.tmpfilename).st_mtime
 
+        # ... then let's get the os' hands off it so the editor can write to it.
+        tmpfile.close()
+        os.close(tempfd)
+
+        # hands are off now, start the editor
         thread = threading.Thread(target = self.runEditor)
         thread.start()
 
@@ -30,18 +38,22 @@ class Editor(wx.EvtHandler):
 
     def runEditor(self):
         cmd = re.split(' +', prefs.get('external_editor'))
-        cmd.append(self.tempfile.name)
+        cmd.append(self.tmpfilename)
         proc = subprocess.call(cmd)
-        # blocks the thread while the editor runs, then:
+        # blocks the thread while the editor runs, then send it:
         self._send_file_if_needed(None)
+        # ...and remove the temp file.
+        os.remove(self.tmpfilename)
+
         self.watchTimer.Stop()
 
     def _send_file_if_needed(self, evt):
-        mtime = os.stat(self.tempfile.name).st_mtime
+        mtime = os.stat(self.tmpfilename).st_mtime
         if not mtime: print "wtf is wrong with file?!?"
         if mtime > self._last_sent:
-            self.tempfile.seek(0)
-            self.callback(self._id, self.tempfile.readlines())
+            tmpfile = open(self.tmpfilename, 'r')
+            tmpfile.seek(0)
+            self.callback(self._id, tmpfile.readlines())
             self._last_sent = mtime
 
     ###################
