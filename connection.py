@@ -17,6 +17,10 @@ class ConnectionClient(LineReceiver):
 
     def connectionMade(self):
         self.connected = True
+        # turn on TCP keepalive if possible
+        try:
+            self.transport.setTcpKeepAlive(1)
+        except AttributeError: pass
 
     def connectionLost(self, reason):
         self.connected = False
@@ -44,7 +48,7 @@ class Connection:
     def __init__(self, mainwindow):
         self.host = ''
         self.port = ''
-        self.keepalive = Keepalive(self)
+        #self.keepalive = Keepalive(self)
         self.input_receiver = None
 
         self.connector = None
@@ -62,7 +66,7 @@ class Connection:
         if self.input_receiver.connected:
             self.output_pane.display("WxMOO: Connection closed.\n");
         # force it again just to be sure
-        self.keepalive.Stop()
+        #self.keepalive.Stop()
         self.connector.disconnect()
 
     # connection.connect ([host], [port])
@@ -77,7 +81,7 @@ class Connection:
         mcp21.Initialize(self)
 
         # TODO - 'if world.connection.keepalive'
-        self.keepalive.Start()
+        #self.keepalive.Start()
 
     def output(self, stuff):
         self.input_receiver.output(stuff)
