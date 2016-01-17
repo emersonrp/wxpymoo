@@ -48,6 +48,7 @@ class Connection:
         self.input_receiver = None
 
         self.connector = None
+        self.mainwindow = mainwindow
 
         # the UI components for this connection
         self.splitter    = MainSplitter(mainwindow.tabs)
