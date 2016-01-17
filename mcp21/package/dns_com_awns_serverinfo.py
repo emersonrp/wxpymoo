@@ -1,8 +1,8 @@
 import wx
 import re, webbrowser
-import wxpymoo.mcp21.core as mcp21
-import wxpymoo.mcp21.registry as registry
-from wxpymoo.mcp21.package import MCPPackageBase
+import mcp21.core as mcp21
+import mcp21.registry as registry
+from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):
     def __init__(self):

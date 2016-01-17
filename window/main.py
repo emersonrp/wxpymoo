@@ -1,11 +1,11 @@
 import wx
-from wxpymoo.connection import Connection
-from wxpymoo.window.connectdialog import ConnectDialog
-from wxpymoo.window.prefseditor import PrefsEditor
-from wxpymoo.window.worldslist import WorldsList
-from wxpymoo.window.debugmcp import DebugMCP
+from connection import Connection
+from window.connectdialog import ConnectDialog
+from window.prefseditor import PrefsEditor
+from window.worldslist import WorldsList
+from window.debugmcp import DebugMCP
 
-import wxpymoo.prefs as prefs
+import prefs
 class Main(wx.Frame):
     #use WxMOO::Editor
 
@@ -47,7 +47,6 @@ class Main(wx.Frame):
 
         self.tabs.AddPage(splitter, 'Hayseed')
         self.connection.input_pane.SetFocus()
-
 
     def buildMenu(self):
         WorldsMenu = wx.Menu()

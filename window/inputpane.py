@@ -1,6 +1,6 @@
 import wx
 import wx.richtext
-import wxpymoo.prefs as prefs
+import prefs
 
 class InputPane(wx.richtext.RichTextCtrl):
 

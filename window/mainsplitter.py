@@ -1,5 +1,5 @@
 import wx
-import wxpymoo.prefs as prefs
+import prefs
 
 class MainSplitter(wx.SplitterWindow):
 

@@ -1,6 +1,6 @@
 import re, random, os, importlib
 
-import wxpymoo.mcp21.registry as registry
+import mcp21.registry as registry
 
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
@@ -29,13 +29,13 @@ def Initialize(conn):
     # walk the packages directory, and instantiate everything we find there.
     # this relies on each package having a class called "MCPPackage" that's a
     # sane and correct subclass of MCPPackageBase.
-    for package_file in os.listdir("./wxpymoo/mcp21/package"):
+    for package_file in os.listdir("./mcp21/package"):
         package, ext = package_file.split('.')
 
         if package == '__init__' or ext != 'py' : continue
 
         # do the actual importing
-        mod = importlib.import_module('wxpymoo.mcp21.package.' + package)
+        mod = importlib.import_module('mcp21.package.' + package)
 
         # then go find the thing called "MCPPackage" (the subclass constructor) and call it
         getattr(mod, 'MCPPackage')()
@@ -193,7 +193,7 @@ def start_mcp():
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
 
-from wxpymoo.mcp21.package import MCPPackageBase
+from mcp21.package import MCPPackageBase
 class MCP(MCPPackageBase):
     def __init__(self):
         self.package   = 'mcp'
@@ -209,7 +209,7 @@ class MCP(MCPPackageBase):
     ### handlers
     def do_mcp(self, message):
         import os
-        import wxpymoo.mcp21.core as mcp21
+        import mcp21.core as mcp21
 
         if message.data['version'] == 2.1 or message.data['to'] >= 2.1:
             mcp21.mcp_active = True

@@ -1,5 +1,5 @@
 import wx
-import wxpymoo.prefs as prefs
+import prefs
 # use Wx qw( :dialog :sizer :id :misc :notebook :font :colour :textctrl
 #             wxFNTP_USEFONT_FOR_LABEL wxFNTP_FONTDESC_AS_LABEL
 #             wxCLRP_USE_TEXTCTRL wxCLRP_SHOW_LABEL

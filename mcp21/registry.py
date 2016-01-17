@@ -1,5 +1,5 @@
 import re
-from wxpymoo.mcp21.package import MCPPackageBase
+from mcp21.package import MCPPackageBase
 
 msg_registry = {}
 packages = {}

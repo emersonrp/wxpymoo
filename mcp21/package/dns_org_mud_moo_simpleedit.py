@@ -1,8 +1,8 @@
-import wxpymoo.mcp21.core as mcp21
-import wxpymoo.mcp21.registry as registry
-from wxpymoo.mcp21.package import MCPPackageBase
+import mcp21.core as mcp21
+import mcp21.registry as registry
+from mcp21.package import MCPPackageBase
 
-from wxpymoo.editor import Editor
+from editor import Editor
 class MCPPackage(MCPPackageBase):
     def __init__(self):
         MCPPackageBase.__init__(self)

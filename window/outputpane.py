@@ -1,10 +1,10 @@
 import wx
 import wx.richtext
 
-import wxpymoo.mcp21.core as mcp21
-import wxpymoo.prefs as prefs
-import wxpymoo.utility
-from wxpymoo.theme import Theme
+import mcp21.core as mcp21
+import prefs
+import utility
+from theme import Theme
 
 import webbrowser
 
@@ -68,9 +68,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
         self.SetFont(font)
 
     def display(self, text):
-        range = self.GetSelectionRange()
-
-        # TODO - ANSI parsing woo
+        self.SetInsertionPointEnd()
         for line in text.split('\n'):
             line = line + "\n"
             if (prefs.get('use_mcp')):
@@ -85,10 +83,10 @@ class OutputPane(wx.richtext.RichTextCtrl):
                         # TODO - this might should be separate from use_ansi.
                         # TODO - snip URLs first then ansi-parse pre and post?
                         if prefs.get('highlight_urls'):
-                            matches = re.split(wxpymoo.utility.URL_REGEX, bit)
+                            matches = re.split(utility.URL_REGEX, bit)
                             for chunk in matches:
                                 if chunk is None: continue
-                                if re.match(wxpymoo.utility.URL_REGEX, chunk):
+                                if re.match(utility.URL_REGEX, chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
                                     self.BeginTextColour( self.lookup_colour('blue', True) )
@@ -104,10 +102,6 @@ class OutputPane(wx.richtext.RichTextCtrl):
                             self.WriteText(bit)
             else:
                 self.WriteText(line)
-
-#        if (from != to) {
-#            self.SetSelection(from, to)
-#        }
 
     def focus_input(self,evt): self.input_pane.SetFocus()
 

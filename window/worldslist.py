@@ -1,8 +1,8 @@
 import wx
 import wx.html
 
-import wxpymoo.prefs as prefs
-from wxpymoo.worlds import worlds
+import prefs
+from worlds import worlds
 
 class WorldsList(wx.Dialog):
 
@@ -72,7 +72,7 @@ class WorldsList(wx.Dialog):
 
 class WorldPanel(wx.Panel):
 
-    import wxpymoo.prefs as prefs
+    import prefs
 
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)

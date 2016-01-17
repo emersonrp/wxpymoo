@@ -1,12 +1,12 @@
 import wx
 import re
 
-import wxpymoo.prefs as prefs
-import wxpymoo.mcp21.core as mcp21
+import prefs
+import mcp21.core as mcp21
 
-class DebugMCP(wx.Frame):
+class DebugMCP(wx.Dialog):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, title = "Debug MCP")
+        wx.Dialog.__init__(self, parent, name = "Debug MCP", style = wx.RESIZE_BORDER)
 
         self.active = False
         self.output_pane = None
@@ -52,12 +52,14 @@ class DebugMCP(wx.Frame):
 
         serverMsgColour = wx.Colour(128, 0, 0)
         clientMsgColour = wx.Colour(0,   0, 128)
+        plainMsgColour  = wx.Colour(0,   0, 0)
 
         for line in re.split('\n', data):
             if line == '': continue
 
             if   re.match('S->C', line): op.BeginTextColour(serverMsgColour)
             elif re.match('C->S', line): op.BeginTextColour(clientMsgColour)
+            else:                        op.BeginTextColour(plainMsgColour)
 
             op.WriteText(line + "\n")
             op.EndTextColour()

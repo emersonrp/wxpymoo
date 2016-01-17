@@ -1,5 +1,5 @@
 import wx
-import wxpymoo.prefs as prefs
+import prefs
 import threading, tempfile, subprocess, os, re
 
 class Editor(wx.EvtHandler):

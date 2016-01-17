@@ -9,8 +9,8 @@ from twisted.internet import reactor
 def run():
     app = wx.App(False)
 
-    from wxpymoo.window.main import Main
-    import wxpymoo.prefs as prefs
+    from window.main import Main
+    import prefs
 
     prefs.Initialize()
     frame = Main(None, "wxpymoo")

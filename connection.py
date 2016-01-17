@@ -3,10 +3,10 @@ from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
 
-from wxpymoo.window.mainsplitter import MainSplitter
-from wxpymoo.window.inputpane import InputPane
-from wxpymoo.window.outputpane import OutputPane
-import wxpymoo.mcp21.core as mcp21
+from window.mainsplitter import MainSplitter
+from window.inputpane import InputPane
+from window.outputpane import OutputPane
+import mcp21.core as mcp21
 
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
