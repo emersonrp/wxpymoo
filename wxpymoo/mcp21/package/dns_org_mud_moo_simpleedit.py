@@ -3,7 +3,7 @@ import wxpymoo.mcp21.registry as registry
 from wxpymoo.mcp21.package import MCPPackageBase
 
 from wxpymoo.editor import Editor
-class DNSOrgMudMooSimpleEdit(MCPPackageBase):
+class MCPPackage(MCPPackageBase):
     def __init__(self):
         MCPPackageBase.__init__(self)
 

@@ -1,7 +1,6 @@
-import re, random
+import re, random, os, importlib
 
 import wxpymoo.mcp21.registry as registry
-from wxpymoo.mcp21.package import MCPPackageBase
 
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
@@ -27,19 +26,19 @@ def Initialize(conn):
 
     MCP() # initialize the 'mcp' core package
 
-    # TODO - we need to find all these packages and instantiate them automagially.
-    # TODO - they probable need some simple entry point that calls the constructor
-    from wxpymoo.mcp21.package.mcp_negotiate import MCPNegotiate
-    MCPNegotiate()
+    # walk the packages directory, and instantiate everything we find there.
+    # this relies on each package having a class called "MCPPackage" that's a
+    # sane and correct subclass of MCPPackageBase.
+    for package_file in os.listdir("./wxpymoo/mcp21/package"):
+        package, ext = package_file.split('.')
 
-    from wxpymoo.mcp21.package.mcp_cord import MCPCord
-    MCPCord()
+        if package == '__init__' or ext != 'py' : continue
 
-    from wxpymoo.mcp21.package.dns_com_awns_status import DNSComAwnsStatus
-    DNSComAwnsStatus()
+        # do the actual importing
+        mod = importlib.import_module('wxpymoo.mcp21.package.' + package)
 
-    from wxpymoo.mcp21.package.dns_org_mud_moo_simpleedit import DNSOrgMudMooSimpleEdit
-    DNSOrgMudMooSimpleEdit()
+        # then go find the thing called "MCPPackage" (the subclass constructor) and call it
+        getattr(mod, 'MCPPackage')()
 
 def debug(info):
     info = re.sub('\n$', '', info)
@@ -191,6 +190,7 @@ def start_mcp():
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
 
+from wxpymoo.mcp21.package import MCPPackageBase
 class MCP(MCPPackageBase):
     def __init__(self):
         self.package   = 'mcp'
