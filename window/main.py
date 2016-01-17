@@ -7,7 +7,6 @@ from window.debugmcp import DebugMCP
 
 import prefs
 class Main(wx.Frame):
-    #use WxMOO::Editor
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
@@ -100,9 +99,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
 
     def addEvents(self):
-        return
-        # TODO - this makes the output pane 1x1 upper left.  hrmn.
-        #self.Bind(wx.EVT_SIZE, self.onSize)
+        self.Bind(wx.EVT_SIZE, self.onSize)
 
     def closeConnection(self, evt):
         self.connection.Close()
@@ -115,6 +112,7 @@ class Main(wx.Frame):
             size = self.GetSize()
             prefs.set('window_width',  str(size.GetWidth()))
             prefs.set('window_height', str(size.GetHeight()))
+        self.Layout()
 
     def handleCopy(self, evt):
         if   (self.output_pane.HasSelection()): self.output_pane.Copy()

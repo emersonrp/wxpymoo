@@ -4,9 +4,8 @@ import prefs
 
 class InputPane(wx.richtext.RichTextCtrl):
 
-    def __init__(self, connection):
-        self.parent = connection.splitter
-        wx.richtext.RichTextCtrl.__init__(self, self.parent,
+    def __init__(self, parent, connection):
+        wx.richtext.RichTextCtrl.__init__(self, parent,
             style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE
         )
 

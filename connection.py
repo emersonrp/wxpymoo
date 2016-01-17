@@ -55,9 +55,9 @@ class Connection:
         self.mainwindow = mainwindow
 
         # the UI components for this connection
-        self.splitter    = MainSplitter(mainwindow.tabs)
-        self.input_pane  = InputPane(self)
-        self.output_pane = OutputPane(self)
+        self.splitter    = MainSplitter(mainwindow.tabs, self)
+        self.input_pane  = InputPane(self.splitter, self)
+        self.output_pane = OutputPane(self.splitter, self)
 
         self.splitter.SplitHorizontally(self.output_pane, self.input_pane)
         self.splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"

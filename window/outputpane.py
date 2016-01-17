@@ -12,10 +12,9 @@ import re
 
 class OutputPane(wx.richtext.RichTextCtrl):
 
-    def __init__(self, connection):
-        self.parent = connection.splitter
-        wx.richtext.RichTextCtrl.__init__(self, self.parent,
-            style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL
+    def __init__(self, parent, connection):
+        wx.richtext.RichTextCtrl.__init__(self, parent,
+            style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
         )
         self.input_pane = connection.input_pane
 
@@ -27,7 +26,8 @@ class OutputPane(wx.richtext.RichTextCtrl):
 
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
-        self.Bind(wx.EVT_SIZE,      self.scroll_to_bottom)
+        # TODO 2 -- uncommenting this makes the output_pane be a 1x1 square in the upper left
+#        self.Bind(wx.EVT_SIZE,      self.scroll_to_bottom)
         self.Bind(wx.EVT_SET_FOCUS, self.focus_input)
         self.Bind(wx.EVT_TEXT_URL,  self.process_url_click)
 
