@@ -13,3 +13,6 @@ class MCPPackageBase(wx.EvtHandler):
 
     def Initialize(self):
         pass
+
+    def mcp_negotiate_end(self):
+        pass

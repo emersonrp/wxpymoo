@@ -38,5 +38,10 @@ class MCPPackage(MCPPackageBase):
             mcp21.debug("activating " + pkg)
             registry.packages[pkg].activated = ver
 
-    # TODO - do we need to do anything?  maybe like unregister packages that aren't activated?
-    def do_mcp_negotiate_end(self): pass
+    def do_mcp_negotiate_end(self):
+        for pkg_name in registry.packages:
+            pkg = registry.packages[pkg_name]
+            if pkg.activated:
+                pkg.mcp_negotiate_end()
+            else:
+                registry.packages.pop(pkg_name, None)

@@ -142,6 +142,9 @@ def parse(raw):
         elif keyword == '_data-tag':
             message._data_tag = value
         else:
+            # if we have a double-quoted string, strip the quotes
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
             message.data[keyword] = value
 
     return message
