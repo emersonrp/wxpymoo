@@ -1,4 +1,5 @@
 import wx
+import wx.html
 
 import wxpymoo.prefs as prefs
 from wxpymoo.worlds import worlds
@@ -6,7 +7,7 @@ from wxpymoo.worlds import worlds
 class WorldsList(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, name = 'Worlds List')
+        wx.Dialog.__init__(self, parent, name = 'Worlds List', style = wx.RESIZE_BORDER)
 
         self.connection = parent.connection
 
@@ -95,18 +96,8 @@ class WorldPanel(wx.Panel):
 
         self.ssh_username_label = wx.StaticText(self, label = "SSH Username:")
         self.ssh_loc_host_label = wx.StaticText(self, label = "SSH Host:")
-        self.ssh_loc_port_label = wx.StaticText(self, label = "Local Port:")
-        self.ssh_rem_host_label = wx.StaticText(self, label = "Remote Host:")
-        self.ssh_rem_port_label = wx.StaticText(self, label = "Remote Port:")
         self.ssh_username       = wx.TextCtrl(self)
         self.ssh_loc_host       = wx.TextCtrl(self)
-        self.ssh_loc_port       = wx.SpinCtrl(self)
-        self.ssh_loc_port.SetRange(0, 65535)
-        self.ssh_loc_port.SetValue(7777)
-        self.ssh_rem_host = wx.TextCtrl(self)
-        self.ssh_rem_port = wx.SpinCtrl(self)
-        self.ssh_rem_port.SetRange(0, 65535)
-        self.ssh_rem_port.SetValue(7777)
 
         field_sizer = wx.FlexGridSizer(cols = 2, hgap = 5, vgap = 10)
         field_sizer.Add(name_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -125,16 +116,15 @@ class WorldPanel(wx.Panel):
         field_sizer.Add(self.ssh_username, 0, wx.EXPAND, 0)
         field_sizer.Add(self.ssh_loc_host_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
         field_sizer.Add(self.ssh_loc_host, 0, wx.EXPAND, 0)
-        field_sizer.Add(self.ssh_loc_port_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
-        field_sizer.Add(self.ssh_loc_port, 0, wx.EXPAND, 0)
-        field_sizer.Add(self.ssh_rem_host_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
-        field_sizer.Add(self.ssh_rem_host, 0, wx.EXPAND, 0)
-        field_sizer.Add(self.ssh_rem_port_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
-        field_sizer.Add(self.ssh_rem_port, 0, wx.EXPAND, 0)
         field_sizer.AddGrowableCol(1)
 
-        note_box = wx.StaticBoxSizer(wx.StaticBox(self, label = "note"), wx.HORIZONTAL)
+        self.desc = wx.html.HtmlWindow(self)
+        self.desc.SetBorders(0)
+        desc_box = wx.StaticBoxSizer(wx.StaticBox(self, label = "description"), wx.HORIZONTAL)
+        desc_box.Add(self.desc, 1, wx.EXPAND, 0)
+
         self.note = wx.TextCtrl(self, style = wx.TE_MULTILINE)
+        note_box = wx.StaticBoxSizer(wx.StaticBox(self, label = "notes"), wx.HORIZONTAL)
         note_box.Add(self.note, 1, wx.EXPAND, 0)
 
         mcp_check          = wx.CheckBox(self, label = "MCP 2.1")
@@ -148,7 +138,7 @@ class WorldPanel(wx.Panel):
         new_button   = wx.Button(self, label = "New")
         reset_button = wx.Button(self, label = "Reset")
         save_button  = wx.Button(self, label = "Save")
-        button_sizer = wx.FlexGridSizer(cols = 1, rows = 3, hgap = 0, vgap = 0)
+        button_sizer = wx.FlexGridSizer(cols = 3, rows = 1, hgap = 0, vgap = 0)
         button_sizer.Add(new_button, 0, wx.ALL|wx.ALIGN_RIGHT, 5)
         button_sizer.Add(reset_button, 0, wx.ALL, 5)
         button_sizer.Add(save_button, 0, wx.ALL, 5)
@@ -156,66 +146,45 @@ class WorldPanel(wx.Panel):
 
         self.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         self.panel_sizer.Add(field_sizer, 0, wx.ALL|wx.EXPAND, 10)
+        self.panel_sizer.Add(desc_box, 1, wx.EXPAND, 0)
         self.panel_sizer.Add(note_box, 1, wx.EXPAND, 0)
         self.panel_sizer.Add(checkbox_sizer, 0, wx.EXPAND, 0)
         self.panel_sizer.Add(button_sizer, 0, wx.EXPAND, 0)
 
         self.SetSizerAndFit(self.panel_sizer)
 
-        self.Bind(wx.EVT_CHOICE, self.show_hide_ssh_controls, self.conntype)
+        self.Bind(wx.EVT_CHOICE, self.show_ssh_fields_if_appropriate)
 
-        self.ssh_username_label.Hide()
-        self.ssh_loc_host_label.Hide()
-        self.ssh_loc_port_label.Hide()
-        self.ssh_rem_host_label.Hide()
-        self.ssh_rem_port_label.Hide()
-        self.ssh_username.Hide()
-        self.ssh_loc_host.Hide()
-        self.ssh_loc_port.Hide()
-        self.ssh_rem_host.Hide()
-        self.ssh_rem_port.Hide()
+        self.show_ssh_fields_if_appropriate()
 
-    def on_save(): pass
+    def on_save(self, evt): pass
 
-    def on_reset(): pass
+    def on_reset(self, evt): pass
 
-    def on_new(): pass
+    def on_new(self, evt): pass
 
     def fill_thyself(self, world):
-        # unless (ref world) {
-        #     say STDERR "got a bad world in fill_thyself:"
-        #     say STDERR Data.Dumper.Dumper world
-        #     return
-        # }
-
         self.world = world
 
         self.name.SetValue(unicode(world.get("name")))
-        if world.get('host'): self.host.SetValue(unicode(world.get("host")))
-        if world.get('port'): self.port.SetValue(int(world.get("port")))
-        if world.get('username'): self.username.SetValue(world.get("username"))
-        if world.get('password'): self.password.SetValue(world.get("password"))
-        if world.get('note'):     self.note.SetValue(unicode(world.get("note")))
-        if world.get('conntype'): self.conntype.SetSelection(world.get("conntype"))
+        if world.get('host')        : self.host.SetValue(unicode(world.get("host")))
+        if world.get('port')        : self.port.SetValue(int(world.get("port")))
+        if world.get('username')    : self.username.SetValue(world.get("username"))
+        if world.get('password')    : self.password.SetValue(world.get("password"))
+        if world.get('description') : self.desc.SetPage(world.get('description'))
+        if world.get('note')        : self.note.SetValue(unicode(world.get("note")))
+        self.conntype.SetSelection(world.get("conntype") or 0)
+
         if world.get('ssh_username'): self.ssh_username.SetValue(world.get("ssh_username"))
         if world.get('ssh_loc_host'): self.ssh_loc_host.SetValue(world.get("ssh_loc_host"))
-        if world.get('ssh_loc_port'): self.ssh_loc_port.SetValue(world.get("ssh_loc_port"))
-        if world.get('ssh_rem_host'): self.ssh_rem_host.SetValue(world.get("ssh_rem_host"))
-        if world.get('ssh_rem_port'): self.ssh_rem_port.SetValue(world.get("ssh_rem_port"))
 
-        self.show_hide_ssh_controls(self.conntype.GetSelection == 2)
+        self.show_ssh_fields_if_appropriate()
 
-    def show_hide_ssh_controls(self, to_show):
-        to_show = to_show or self.conntype.GetSelection == 2
+    def show_ssh_fields_if_appropriate(self, evt = None):
+        to_show = self.conntype.GetSelection() == 2
         self.ssh_username_label.Show(to_show)
         self.ssh_loc_host_label.Show(to_show)
-        self.ssh_loc_port_label.Show(to_show)
-        self.ssh_rem_port_label.Show(to_show)
-        self.ssh_rem_host_label.Show(to_show)
         self.ssh_username.Show(to_show)
         self.ssh_loc_host.Show(to_show)
-        self.ssh_loc_port.Show(to_show)
-        self.ssh_rem_host.Show(to_show)
-        self.ssh_rem_port.Show(to_show)
 
         self.panel_sizer.Layout()

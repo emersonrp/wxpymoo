@@ -3,7 +3,7 @@ import re
 
 class World(dict):
     _fields = '''
-        name host port user pass note type
+        name host port user pass note type description
         ssh_server ssh_user ssh_loc_host ssh_loc_port
         ssh_rem_host ssh_rem_port
     '''.split()
@@ -50,9 +50,9 @@ while g_more:
 
 else:
     import json
-    init_worlds = json.load(open('moolist.json','r'))
+    initial_worlds = json.load(open('initial_worlds.json','r'))
 
-    for world_data in init_worlds:
+    for world_data in initial_worlds:
         world = World(world_data)
         world.save()
         worlds[world.get('name')] = world
