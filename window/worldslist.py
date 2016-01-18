@@ -43,9 +43,15 @@ class WorldsList(wx.Dialog):
         main_sizer.Add(world_details_box,  1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
         main_sizer.Add(button_sizer,       0, wx.EXPAND | wx.ALL,            10)
 
-        # TODO - this breaks if there's no client data
-        #self.world_picker.SetSelection(0)
-        #self.world_details_panel.fill_thyself(self.world_picker.GetClientData(0))
+        last_world_name = prefs.get('last_world')
+        last_world = self.world_picker.FindString(last_world_name)
+        # if we no longer have that world, go back to the top of the list
+        if last_world < 0:
+            last_world_name = self.world_picker.GetString(0)
+            last_world = self.world_picker.FindString(last_world_name)
+
+        self.world_picker.SetSelection(last_world)
+        self.world_details_panel.fill_thyself(worlds[last_world_name])
 
         self.SetSizer(main_sizer)
         main_sizer.Fit(self)
@@ -58,15 +64,13 @@ class WorldsList(wx.Dialog):
 
 
     def select_world(self, evt):
-        world = evt.GetString()
-        self.world_details_panel.fill_thyself(worlds[world])
+        world = worlds[self.world_picker.GetStringSelection()]
+        self.world_details_panel.fill_thyself(world)
 
     # TODO - make WxMOO.World have a notion of "connect to yourself"
     # Also therefore merge WxMOO.World and WxMOO.Window.WorldPanel
     def on_connect(self, evt):
-        self.connection.connect(
-            self.world_details_panel.world.get('host'),
-            int(self.world_details_panel.world.get('port')))
+        self.connection.connect(self.world_details_panel.world)
         self.Hide()
 
 

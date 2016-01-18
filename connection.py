@@ -7,6 +7,7 @@ from window.mainsplitter import MainSplitter
 from window.inputpane import InputPane
 from window.outputpane import OutputPane
 import mcp21.core as mcp21
+import prefs
 
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
@@ -21,6 +22,8 @@ class ConnectionClient(LineReceiver):
         try:
             self.transport.setTcpKeepAlive(1)
         except AttributeError: pass
+
+        prefs.set('last_world', self.factory.connection.world.get('name'))
 
     def connectionLost(self, reason):
         self.connected = False
@@ -46,8 +49,7 @@ class ConnectionClientFactory(ClientFactory):
 
 class Connection:
     def __init__(self, mainwindow):
-        self.host = ''
-        self.port = ''
+        self.world = None
         #self.keepalive = Keepalive(self)
         self.input_receiver = None
 
@@ -73,10 +75,11 @@ class Connection:
     #
     # existing connections will remember their host and port if not supplied here,
     # for ease of reconnect etc.
-    def connect(self, host, port):
-        self.host = host
-        self.port = port
-        self.connector = reactor.connectTCP(self.host, self.port, ConnectionClientFactory(self))
+    def connect(self, world):
+        self.world = world
+        host =     world.get('host')
+        port = int(world.get('port'))
+        self.connector = reactor.connectTCP(host, port, ConnectionClientFactory(self))
 
         mcp21.Initialize(self)
 
@@ -88,7 +91,7 @@ class Connection:
 
     def reconnect(self):
         if self.connector: self.Close()
-        self.connect(self.host, self.port)
+        self.connect(self.world)
 
 class Keepalive(wx.EvtHandler):
     ######################

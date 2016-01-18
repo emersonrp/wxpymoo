@@ -5,6 +5,8 @@ from window.prefseditor import PrefsEditor
 from window.worldslist import WorldsList
 from window.debugmcp import DebugMCP
 
+from worlds import worlds
+
 import prefs
 class Main(wx.Frame):
 
@@ -40,12 +42,13 @@ class Main(wx.Frame):
         self.SetSizer(self.sizer)
 
         self.connection = Connection(self)
-        # TODO - don't connect until we ask for it.
-        self.connection.connect('hayseed.net',7777)
-        splitter = self.connection.splitter
-
-        self.tabs.AddPage(splitter, 'Hayseed')
+        if prefs.get('autoconnect_last_world') == 'True':
+            world = worlds[prefs.get('last_world')]
+            if world: self.connection.connect(world)
+            splitter = self.connection.splitter
+            self.tabs.AddPage(splitter, world.get('name'))
         self.connection.input_pane.SetFocus()
+
 
     def buildMenu(self):
         WorldsMenu = wx.Menu()

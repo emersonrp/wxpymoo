@@ -20,6 +20,9 @@ _defaults   = {
     'use_mcp'              : True,
     'highlight_urls'       : True,
     'save_mcp_window_size' : True,
+    # TODO -- make this default to False, but currently having no connection
+    # at start-time breaks mainwindow
+    'autoconnect_to_last'  : True,
 
     'mcp_window_width'  : 600,
     'mcp_window_height' : 400,

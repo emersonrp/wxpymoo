@@ -42,6 +42,7 @@ class PrefsEditor(wx.Dialog):
         # instead of encapsulated in prefs, which I think I'm OK with.
 
         prefs.set('save_window_size', self.general_page.save_size_checkbox.GetValue() )
+        prefs.set('autoconnect_last_world', self.general_page.autoconnect_checkbox.GetValue() )
 
         prefs.set('output_font',self.fonts_page.ofont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
         prefs.set('input_font', self.fonts_page.ifont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
@@ -65,8 +66,12 @@ class PrefsEditor(wx.Dialog):
         gp.save_size_checkbox.SetValue( True if prefs.get('save_window_size') == 'True' else False )
         #gp.save_size_checkbox.Fit()
 
+        gp.autoconnect_checkbox = wx.CheckBox(gp, -1, 'Autoconnect to last world at startup')
+        gp.autoconnect_checkbox.SetValue( True if prefs.get('autoconnect_last_world') == 'True' else False )
+
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         gp.panel_sizer.Add(gp.save_size_checkbox, flag = wx.ALL, border = 10)
+        gp.panel_sizer.Add(gp.autoconnect_checkbox, flag = wx.ALL, border = 10)
 
         gp.SetSizer(gp.panel_sizer)
         return gp
