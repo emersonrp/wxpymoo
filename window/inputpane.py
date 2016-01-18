@@ -104,7 +104,8 @@ class CommandHistory:
 
     # which entry does our 'cursor' point to?
     def current_entry(self, new=''):
-        if new != '': self.history[self.current] = new
+        if new != '':
+                self.history[self.current] = new
         return self.history[self.current]
 
     def prev(self):
@@ -118,6 +119,7 @@ class CommandHistory:
     # if we've actually changed anything, take the changed value
     # and use it as the new "current" value, at the end of the array.
     def update(self, string):
+        string = string.rstrip()
         if (self.current_entry() != string):
             self.current = len(self.history)-1
             self.current_entry(string)
@@ -125,6 +127,7 @@ class CommandHistory:
     # this is the final state of the thing we input.
     # Make sure it's updated, then push a fresh '' onto the end
     def add(self, string=""):
+        string = string.rstrip()
         if string == "": return # no blank lines pls
         self.history[-1] = string
 
