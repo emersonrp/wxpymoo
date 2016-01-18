@@ -172,17 +172,18 @@ class OutputPane(wx.richtext.RichTextCtrl):
         bits = re.split('\x1b\[(\d+(?:;\d+)*)m', line)
 
         if len(bits) > 1:
-            it = iter(bits)
-            for text, ansi in zip(it, it):
-                if text != '': styled_text.append(text)
-                codes = ansi.split(';')
-                for code in codes:
-                    styled_text.append(ansi_codes[int(code)])
+            # We'll have a list that alternates text, ansicode, text, ansicode....
+            for idx, bit in enumerate(bits):
+                if bit == '': continue
+                # if it's ansi...
+                if (idx % 2):
+                    # ...split it up and add the style(s) to the styled_text list
+                    for code in bit.split(';'):
+                        styled_text.append(ansi_codes[int(code)])
+                # otherwise it's text, just mash it on there
+                else: styled_text.append(bit)
         else:
             styled_text.append(bits[0])
-
-        # split() done et our linefeed yo?
-        if len(styled_text) > 1: styled_text.append('\n')
 
         return styled_text
 
