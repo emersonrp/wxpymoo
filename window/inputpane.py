@@ -1,6 +1,7 @@
 import wx
 import wx.richtext
 import prefs
+import re
 
 class InputPane(wx.richtext.RichTextCtrl):
 
@@ -52,7 +53,8 @@ class InputPane(wx.richtext.RichTextCtrl):
     ### HANDLERS
     def send_to_connection(self, evt):
         if self.connection:
-            stuff = self.GetValue()  #    =~ s/\n//g
+            stuff = self.GetValue()
+            stuff = re.sub('\n', '', stuff)
             self.cmd_history.add(stuff)
             self.connection.output(stuff)
             self.Clear()
@@ -62,7 +64,7 @@ class InputPane(wx.richtext.RichTextCtrl):
 
     def debug_key_code(self, evt):
         k = evt.GetKeyCode()
-        # say STDERR "EVT_CHAR k"
+        # print("EVT_CHAR: " + str(k))
 
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
@@ -103,10 +105,11 @@ class CommandHistory:
         self.current = 0
 
     # which entry does our 'cursor' point to?
-    def current_entry(self, new=''):
-        if new != '':
-                self.history[self.current] = new
+    def current_entry(self):
         return self.history[self.current]
+
+    def set_current(self, string):
+        self.history[self.current] = string
 
     def prev(self):
         if self.current > 0: self.current -= 1
@@ -122,14 +125,29 @@ class CommandHistory:
         string = string.rstrip()
         if (self.current_entry() != string):
             self.current = len(self.history)-1
-            self.current_entry(string)
+            self.set_current(string)
 
     # this is the final state of the thing we input.
     # Make sure it's updated, then push a fresh '' onto the end
     def add(self, string=""):
         string = string.rstrip()
+
         if string == "": return # no blank lines pls
+
+        # some special cases
+        if len(self.history) > 1:
+            # if it's a repeat of the very previous one, don't add it
+            if string == self.history[-2]:
+                self.update('')
+                return
+        else:
+            # no history yet, is it "co username password"?  Don't add it.
+            if re.match('^co', string):
+                self.update('')
+                return
+
         self.history[-1] = string
 
+        self.current = len(self.history)
         self.history.append('')
-        self.current = len(self.history)-1
+        self.update('')
