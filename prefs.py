@@ -22,7 +22,7 @@ _defaults   = {
     'save_mcp_window_size' : True,
     # TODO -- make this default to False, but currently having no connection
     # at start-time breaks mainwindow
-    'autoconnect_to_last'  : True,
+    'autoconnect_last_world'  : True,
 
     'mcp_window_width'  : 600,
     'mcp_window_height' : 400,
