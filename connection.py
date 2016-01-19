@@ -14,7 +14,7 @@ class ConnectionClient(LineReceiver):
         self.factory.connection.output_pane.display(line)
 
     def output(self, line):
-        self.sendLine(str(line))
+        self.sendLine(line.encode('utf-8'))
 
     def connectionMade(self):
         self.connected = True
