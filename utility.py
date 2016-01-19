@@ -1,5 +1,14 @@
 # coding: utf-8
 import re
+from sys import platform as _platform
+
+
+if   _platform.startswith('linux'):
+    platform = 'linux'
+elif _platform == 'win32':
+    platform = 'windows'
+elif _platform == 'darwin':
+    platform = 'mac'
 
 # This regex adapted from one found at
 # http://daringfireball.net/2010/07/improved_regex_for_matching_urls

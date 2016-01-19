@@ -1,12 +1,13 @@
 import wx
-import wx.richtext
+import wx.richtext as rtc
 import prefs
 import re
+from utility import platform
 
-class InputPane(wx.richtext.RichTextCtrl):
+class InputPane(rtc.RichTextCtrl):
 
     def __init__(self, parent, connection):
-        wx.richtext.RichTextCtrl.__init__(self, parent,
+        rtc.RichTextCtrl.__init__(self, parent,
             style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE
         )
 
@@ -20,26 +21,27 @@ class InputPane(wx.richtext.RichTextCtrl):
 
         if (prefs.get('use_x_copy_paste') == 'True'):
             self.Bind(wx.EVT_MIDDLE_UP                  , self.paste_from_selection )
-            self.Bind(wx.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
+            self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED, self.copy_from_selection )
 
         self.Clear()
         self.restyle_thyself()
 
-    def paste_from_selection(self):
-        # we only get here if we have .prefs.use_x_copy paste set.
-        # We might have selected that option in a non-Unix context, though,
-        # so we want to check to decide which clipboard to paste from.
-        #if WxMOO.Utility.is_unix(): wxTheClipboard.UsePrimarySelection(True)
+    def paste_from_selection(self, evt = None):
+        print("pasting from selection")
+        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Paste()
-        #if WxMOO.Utility.is_unix(): wxTheClipboard.UsePrimarySelection(False)
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
-    def copy_from_selection(self):
-        #if WxMOO.Utility.is_unix(): wxTheClipboard.UsePrimarySelection(True)
+    def copy_from_selection(self, evt = None):
+        print("copying selection")
+        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
-        #if WxMOO.Utility.is_unix(): wxTheClipboard.UsePrimarySelection(False)
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
     def restyle_thyself(self):
-        basic_style = wx.richtext.RichTextAttr()
+        basic_style = rtc.RichTextAttr()
         basic_style.SetTextColour      (prefs.get('input_fgcolour'))
         basic_style.SetBackgroundColour(prefs.get('input_bgcolour'))
 
@@ -54,7 +56,6 @@ class InputPane(wx.richtext.RichTextCtrl):
     def send_to_connection(self, evt):
         if self.connection:
             stuff = self.GetValue()
-            stuff = re.sub('\n', '', stuff)
             self.cmd_history.add(stuff)
             self.connection.output(stuff)
             self.Clear()
@@ -74,22 +75,26 @@ class InputPane(wx.richtext.RichTextCtrl):
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_INSERT:
-            if evt.ShiftDown: self.Paste
+            print("here was an insert")
+            if evt.ShiftDown: self.paste_from_selection()
+        elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
+            self.send_to_connection(evt)
+# TODO: this next bit simply doesn't work, but 'home' is not acting right by default
+#        elif k == wx.WXK_HOME:
+#            print("HOME!")
+#            self.SetInsertionPoint(0)
         elif k == 23:  # Ctrl-W
-                # TODO - can't test this b/c Ctrl-W is currently auto-bound to Close
-                end = self.GetInsertionPoint()
+            # TODO - can't test this b/c Ctrl-W is currently auto-bound to Close
+            end = self.GetInsertionPoint()
 
-                m = re.search('(\s*[^\x21-\x7E]+\s*)$', self.GetValue())
+            m = re.search('(\s*[^\x21-\x7E]+\s*)$', self.GetValue())
 
-                word_to_remove = m.group(1)
-                if not word_to_remove: return
+            word_to_remove = m.group(1)
+            if not word_to_remove: return
 
-                start = end - word_to_remove.len()
-                self.Remove(start, end)
+            start = end - word_to_remove.len()
+            self.Remove(start, end)
         else:
-# if (self.GetValue =~ /^con?n?e?c?t? +\w+ +/) {
-#     # it's a connection attempt, style the passwd to come out as *****
-# }
             evt.Skip()
             return
         self.SetInsertionPointEnd()

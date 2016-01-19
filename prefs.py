@@ -1,4 +1,5 @@
 import wx
+import utility
 
 _get         = None
 _config      = None
@@ -28,7 +29,7 @@ _defaults   = {
     'mcp_window_height' : 400,
 
     'external_editor'  : 'gvim -f',
-    #'use_x_copy_paste' : WxMOO::Utility::is_unix,
+    'use_x_copy_paste' : utility.platform == 'linux',
 }
 
 def Initialize():

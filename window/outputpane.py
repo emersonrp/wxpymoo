@@ -1,5 +1,5 @@
 import wx
-import wx.richtext
+import wx.richtext as rtc
 
 import mcp21.core as mcp21
 import prefs
@@ -10,10 +10,10 @@ import webbrowser
 
 import re
 
-class OutputPane(wx.richtext.RichTextCtrl):
+class OutputPane(rtc.RichTextCtrl):
 
     def __init__(self, parent, connection):
-        wx.richtext.RichTextCtrl.__init__(self, parent,
+        rtc.RichTextCtrl.__init__(self, parent,
             style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
         )
         self.input_pane = connection.input_pane
@@ -27,11 +27,21 @@ class OutputPane(wx.richtext.RichTextCtrl):
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
         # TODO 2 -- uncommenting this makes the output_pane be a 1x1 square in the upper left
-#        self.Bind(wx.EVT_SIZE,      self.scroll_to_bottom)
-        self.Bind(wx.EVT_SET_FOCUS, self.focus_input)
-        self.Bind(wx.EVT_TEXT_URL,  self.process_url_click)
+#        self.Bind(wx.EVT_SIZE                       , self.scroll_to_bottom)
+        self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
+        self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
+        self.Bind(wx.EVT_MIDDLE_UP                   , self.input_pane.paste_from_selection )
+        self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
+
 
         self.restyle_thyself()
+
+    def copy_from_selection(self, evt = None):
+        print("copying selection")
+        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+        self.Copy()
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
 
     def scroll_to_bottom(self, evt):
@@ -54,7 +64,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
             self.scroll_to_bottom(False)
 
     def restyle_thyself(self):
-        basic_style = wx.richtext.RichTextAttr()
+        basic_style = rtc.RichTextAttr()
         basic_style.SetTextColour      (prefs.get('output_fgcolour'))
         basic_style.SetBackgroundColour(prefs.get('output_bgcolour'))
 
@@ -113,7 +123,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
         type, payload = bit
         if type == 'control':
             if payload == 'normal':
-                plain_style = wx.richtext.RichTextAttr()
+                plain_style = rtc.RichTextAttr()
                 if self.inverse: self.invert_colors()
                 self.SetDefaultStyle(plain_style)
             elif payload == 'bold':      self.BeginBold()
@@ -145,7 +155,7 @@ class OutputPane(wx.richtext.RichTextCtrl):
             print("unknown ANSI type:", type)
 
     def invert_colors(self):
-        current = wx.richtext.RichTextAttr()
+        current = rtc.RichTextAttr()
         self.GetStyle(self.GetInsertionPoint(), current)
         fg = current.GetTextColour()
         bg = current.GetBackgroundColour()
