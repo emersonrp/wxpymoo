@@ -70,6 +70,7 @@ class OutputPane(rtc.RichTextCtrl):
 
         self.SetBackgroundColour(prefs.get('output_bgcolour'))
         self.SetBasicStyle(basic_style)
+        self.basic_style = basic_style
 
         # is there a way to construct a font directly from an InfoString, instead of making
         # a generic one and then overriding it like this?
@@ -123,9 +124,7 @@ class OutputPane(rtc.RichTextCtrl):
         type, payload = bit
         if type == 'control':
             if payload == 'normal':
-                plain_style = rtc.RichTextAttr()
-                if self.inverse: self.invert_colors()
-                self.SetDefaultStyle(plain_style)
+                self.SetDefaultStyle(self.basic_style)
             elif payload == 'bold':      self.BeginBold()
             elif payload == 'dim':       self.EndBold()    # TODO - dim further than normal?
             elif payload == 'underline': self.BeginUnderline()
@@ -147,10 +146,10 @@ class OutputPane(rtc.RichTextCtrl):
         elif type == 'foreground':
             self.BeginTextColour(self.lookup_colour(payload))
         elif type == "background":
-            bg_attr = wx.TextAttr()
+            bg_attr = rtc.RichTextAttr()
+            self.GetStyle(-1, bg_attr) # '-1' == end position
             bg_attr.SetBackgroundColour(self.lookup_colour(payload))
             self.SetDefaultStyle(bg_attr)
-            self.BeginBackgroundColour(self.lookup_colour(payload))
         else:
             print("unknown ANSI type:", type)
 
