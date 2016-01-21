@@ -27,14 +27,12 @@ class InputPane(rtc.RichTextCtrl):
         self.restyle_thyself()
 
     def paste_from_selection(self, evt = None):
-        print("pasting from selection")
         uxcp = prefs.get('use_x_copy_paste') == 'True'
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Paste()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
     def copy_from_selection(self, evt = None):
-        print("copying selection")
         uxcp = prefs.get('use_x_copy_paste') == 'True'
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
@@ -75,7 +73,6 @@ class InputPane(rtc.RichTextCtrl):
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_INSERT:
-            print("here was an insert")
             if evt.ShiftDown: self.paste_from_selection()
         elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
             self.send_to_connection(evt)
