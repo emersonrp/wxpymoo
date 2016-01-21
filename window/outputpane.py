@@ -33,7 +33,6 @@ class OutputPane(rtc.RichTextCtrl):
         self.Bind(wx.EVT_MIDDLE_UP                   , self.input_pane.paste_from_selection )
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
 
-
         self.restyle_thyself()
 
     def copy_from_selection(self, evt = None):
@@ -42,7 +41,6 @@ class OutputPane(rtc.RichTextCtrl):
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
-
 
     def scroll_to_bottom(self, evt):
         self.ShowPosition(self.GetLastPosition())
@@ -125,8 +123,13 @@ class OutputPane(rtc.RichTextCtrl):
         if type == 'control':
             if payload == 'normal':
                 self.SetDefaultStyle(self.basic_style)
-            elif payload == 'bold':      self.BeginBold()
-            elif payload == 'dim':       self.EndBold()    # TODO - dim further than normal?
+                self.bright = False
+            elif payload == 'bold':
+                self.BeginBold()
+                self.bright = True
+            elif payload == 'dim':
+                self.EndBold()    # TODO - dim further than normal?
+                self.bright = False
             elif payload == 'underline': self.BeginUnderline()
             elif payload == 'blink':
                 pass
@@ -147,24 +150,28 @@ class OutputPane(rtc.RichTextCtrl):
             self.BeginTextColour(self.lookup_colour(payload))
         elif type == "background":
             bg_attr = rtc.RichTextAttr()
-            self.GetStyle(-1, bg_attr) # '-1' == end position
+            self.GetStyle(self.GetInsertionPoint(), bg_attr)
             bg_attr.SetBackgroundColour(self.lookup_colour(payload))
-            self.SetDefaultStyle(bg_attr)
+            bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
+            print(bg_attr)
+            self.BeginStyle(bg_attr)
         else:
             print("unknown ANSI type:", type)
 
     def invert_colors(self):
+        if self.inverse: return
+
         current = rtc.RichTextAttr()
         self.GetStyle(self.GetInsertionPoint(), current)
-        fg = current.GetTextColour()
-        bg = current.GetBackgroundColour()
-        # TODO - hrmn current bg color seems to be coming out wrong.
+        fg = wx.Colour(*current.GetTextColour())
+        bg = wx.Colour(*current.GetBackgroundColour())
 
-        current.SetTextColour(bg)
+        current.SetTextColour      (bg)
         current.SetBackgroundColour(fg)
 
-        self.inverse = False if self.inverse else True
-        self.SetDefaultStyle(current);  # commenting this out until bg color confusion is resolved
+        self.inverse = True
+
+        self.BeginStyle(current);  # commenting this out until bg color confusion is resolved
 
     def ansi_parse(self, line):
         global ansi_codes
@@ -173,7 +180,7 @@ class OutputPane(rtc.RichTextCtrl):
         if count:
             line = beep_cleaned
             for b in range(0, count):
-                print("found a beep")
+                print("DEBUG: found an ANSI beep")
                 wx.Bell();  # TODO -- "if beep is enabled in the prefs"
 
         styled_text = []
