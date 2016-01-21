@@ -170,7 +170,7 @@ def server_notify(msg, args = {}):
             datatag = str(random.randint(1,1000000))
             out += " " + k + '*: "" _data-tag: ' + datatag
         else :
-            out += " " + k + ": " + v
+            out += ' ' + k + ': "' + v + '"'
 
     server_send(out)
 

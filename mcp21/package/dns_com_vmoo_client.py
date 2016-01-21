@@ -21,17 +21,23 @@ class MCPPackage(MCPPackageBase):
 
     def mcp_negotiate_end(self):
         self.send_info()
-        self.send_screensize()
+        # TODO - see below
+        #self.send_screensize()
 
     def send_info(self):
+        # TODO - actual versioning please
         mcp21.server_notify(
             'dns-com-vmoo-client-info', {
-                'name' : 'wxpymoo',
-                'version' : 'pre-alpha',
+                'name'             : 'wxpymoo',
+                'text-version'     : 'pre-alpha',
+                'internal-version' : '1',
+
             }
         )
 
     def send_screensize(self):
+        # TODO - check output_pane for its actual size
+        # TODO - bind output_pane wx.EVT_SIZE to call this
         mcp21.server_notify(
             'dns-com-vmoo-client-screensize', {
                 'cols' : '100',
