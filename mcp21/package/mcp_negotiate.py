@@ -4,8 +4,8 @@ import mcp21.registry as registry
 from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):
-    def __init__(self):
-        MCPPackageBase.__init__(self)
+    def __init__(self, conn):
+        MCPPackageBase.__init__(self, conn)
 
         self.package   = 'mcp-negotiate'
         self.min       = '2.0'

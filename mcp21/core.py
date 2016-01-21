@@ -24,7 +24,7 @@ def Initialize(conn):
     global connection
     if conn: connection = conn
 
-    MCP() # initialize the 'mcp' core package
+    MCP(conn) # initialize the 'mcp' core package
 
     # walk the packages directory, and instantiate everything we find there.
     # this relies on each package having a class called "MCPPackage" that's a
@@ -38,7 +38,7 @@ def Initialize(conn):
         mod = importlib.import_module('mcp21.package.' + package)
 
         # then go find the thing called "MCPPackage" (the subclass constructor) and call it
-        getattr(mod, 'MCPPackage')()
+        getattr(mod, 'MCPPackage')(conn)
 
 def debug(info):
     info = re.sub('\n$', '', info)
@@ -105,7 +105,7 @@ def output_filter(data):
         # don't dispatch multilines in progress
         dispatch(message)
 
-    # always return undef so the output widget skips this line
+    # return void/falsy/None so the output widget skips this line
     return
 
 #    my $simpleChars = q|[-a-z0-9~`!@#$%^&*()=+{}[\]\|';?/><.,]|;
@@ -195,11 +195,12 @@ def start_mcp():
 
 from mcp21.package import MCPPackageBase
 class MCP(MCPPackageBase):
-    def __init__(self):
-        self.package   = 'mcp'
-        self.min       = 2.1
-        self.max       = 2.1
-        self.activated = 2.1
+    def __init__(self, conn):
+        self.package    = 'mcp'
+        self.min        = 2.1
+        self.max        = 2.1
+        self.activated  = 2.1
+        self.connection = conn
 
         registry.register(self, ['mcp'])
 
