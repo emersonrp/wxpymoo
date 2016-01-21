@@ -129,11 +129,9 @@ class OutputPane(rtc.RichTextCtrl):
                 self.BeginBold()
                 self.bright = True
             elif payload == 'dim':
-                self.EndBold()    # TODO - dim further than normal?
+                self.EndBold()    # TODO - dim further than normal
                 self.bright = False
-            elif payload == 'italic':
-                print('Got an ANSI "italic"')
-                #self.SetItalic(True)
+            elif payload == 'italic':    self.BeginItalic()
             elif payload == 'underline': self.BeginUnderline()
             elif payload == 'blink':
                 print('Got an ANSI "blink"')
@@ -141,21 +139,22 @@ class OutputPane(rtc.RichTextCtrl):
                 # apply style name
                 # periodically switch foreground color to background
             elif payload == 'inverse':      self.invert_colors()
-            elif payload == 'hidden':       print('Got an ANSI "hidden"')
+            elif payload == 'conceal':
+                print('Got an ANSI "conceal"')
             elif payload == 'strike':
                 font = self.GetFont()
                 font.SetStrikethrough(True)
                 self.BeginFont(font)
-            elif payload == 'no_bold':      self.EndBold()
-            elif payload == "no_italic":
-                print('Got an ANSI "unitalic"')
-                # self.SetItalic(False)
+            elif payload == 'normal_weight':
+                self.EndBold()
+                self.bright = False
+            elif payload == "no_italic":    self.EndItalic()
             elif payload == 'no_underline': self.EndUnderline()
             elif payload == 'no_blink':
                 print('Got an ANSI "no_blink"')
                 # TODO - remove blink-code-handles style
-            elif payload == "no_hidden":
-                print('Got an ANSI "no_hidden"')
+            elif payload == "no_conceal":
+                print('Got an ANSI "no_conceal"')
             elif payload == 'no_strike':
                 font = self.GetFont()
                 font.SetStrikethrough(False)
@@ -185,7 +184,7 @@ class OutputPane(rtc.RichTextCtrl):
 
         self.inverse = True
 
-        self.BeginStyle(current);  # commenting this out until bg color confusion is resolved
+        self.BeginStyle(current);
 
     def ansi_parse(self, line):
         global ansi_codes
@@ -225,13 +224,17 @@ ansi_codes = {
     4     : [ 'control' , 'underline'     ],
     5     : [ 'control' , 'blink'         ],
     7     : [ 'control' , 'inverse'       ],
-    8     : [ 'control' , 'hidden'        ],
+    8     : [ 'control' , 'conceal'       ],
     9     : [ 'control' , 'strike'        ],
-    22    : [ 'control' , 'no_bold'       ], # normal font weight also cancels 'dim'
+    # 10 - primary font
+    # 11 - 19 - alternate fonts
+    # 20 - fraktur
+    # 21 - bold_off or underline_double
+    22    : [ 'control' , 'normal_weight' ],
     23    : [ 'control' , 'no_italic'     ],
     24    : [ 'control' , 'no_underline'  ],
     25    : [ 'control' , 'no_blink'      ],
-    28    : [ 'control' , 'no_hidden'     ],
+    28    : [ 'control' , 'no_conceal'    ],
     29    : [ 'control' , 'no_strike'     ],
 
     30    : [ 'foreground' , 'black'  ],
@@ -242,6 +245,8 @@ ansi_codes = {
     35    : [ 'foreground' , 'magenta'],
     36    : [ 'foreground' , 'cyan'   ],
     37    : [ 'foreground' , 'white'  ],
+    # 38 - extended foreground colors
+    # 39 - default foreground color
 
     40    : [ 'background' , 'black'  ],
     41    : [ 'background' , 'red'    ],
@@ -251,5 +256,13 @@ ansi_codes = {
     45    : [ 'background' , 'magenta'],
     46    : [ 'background' , 'cyan'   ],
     47    : [ 'background' , 'white'  ],
+    # 48 - extended background colors
+    # 49 - default background color
+    # 50 - reserved
+    # 51 - framed
+    # 52 - encircled
+    # 53 - overlined
+    # 54 - no_framed + no_encircled
+    # 55 - no_overined
 }
 
