@@ -6,7 +6,9 @@ import mcp21.core as mcp21
 
 class DebugMCP(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, name = "Debug MCP", style = wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, parent, title = "Debug MCP",
+            style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
+        )
 
         self.active = False
         self.output_pane = None
