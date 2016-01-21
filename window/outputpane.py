@@ -124,27 +124,42 @@ class OutputPane(rtc.RichTextCtrl):
             if payload == 'normal':
                 self.SetDefaultStyle(self.basic_style)
                 self.bright = False
+                self.inverse = False
             elif payload == 'bold':
                 self.BeginBold()
                 self.bright = True
             elif payload == 'dim':
                 self.EndBold()    # TODO - dim further than normal?
                 self.bright = False
+            elif payload == 'italic':
+                print('Got an ANSI "italic"')
+                #self.SetItalic(True)
             elif payload == 'underline': self.BeginUnderline()
             elif payload == 'blink':
-                pass
+                print('Got an ANSI "blink"')
                 # TODO - create timer
                 # apply style name
                 # periodically switch foreground color to background
             elif payload == 'inverse':      self.invert_colors()
-            elif payload == 'hidden':       pass
-            elif payload == 'strikethru':   pass
+            elif payload == 'hidden':       print('Got an ANSI "hidden"')
+            elif payload == 'strike':
+                font = self.GetFont()
+                font.SetStrikethrough(True)
+                self.BeginFont(font)
             elif payload == 'no_bold':      self.EndBold()
+            elif payload == "no_italic":
+                print('Got an ANSI "unitalic"')
+                # self.SetItalic(False)
             elif payload == 'no_underline': self.EndUnderline()
             elif payload == 'no_blink':
-                pass
+                print('Got an ANSI "no_blink"')
                 # TODO - remove blink-code-handles style
-            elif payload == 'no_strikethru': pass
+            elif payload == "no_hidden":
+                print('Got an ANSI "no_hidden"')
+            elif payload == 'no_strike':
+                font = self.GetFont()
+                font.SetStrikethrough(False)
+                self.BeginFont(font)
 
         elif type == 'foreground':
             self.BeginTextColour(self.lookup_colour(payload))
@@ -153,7 +168,6 @@ class OutputPane(rtc.RichTextCtrl):
             self.GetStyle(self.GetInsertionPoint(), bg_attr)
             bg_attr.SetBackgroundColour(self.lookup_colour(payload))
             bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
-            print(bg_attr)
             self.BeginStyle(bg_attr)
         else:
             print("unknown ANSI type:", type)
@@ -207,15 +221,19 @@ ansi_codes = {
     0     : [ 'control' , 'normal'        ],
     1     : [ 'control' , 'bold'          ],
     2     : [ 'control' , 'dim'           ],
+    3     : [ 'control' , 'italic'        ],
     4     : [ 'control' , 'underline'     ],
     5     : [ 'control' , 'blink'         ],
     7     : [ 'control' , 'inverse'       ],
     8     : [ 'control' , 'hidden'        ],
-    9     : [ 'control' , 'strikethru'    ],
+    9     : [ 'control' , 'strike'        ],
     22    : [ 'control' , 'no_bold'       ], # normal font weight also cancels 'dim'
+    23    : [ 'control' , 'no_italic'     ],
     24    : [ 'control' , 'no_underline'  ],
     25    : [ 'control' , 'no_blink'      ],
-    29    : [ 'control' , 'no_strikethru' ],
+    28    : [ 'control' , 'no_hidden'     ],
+    29    : [ 'control' , 'no_strike'     ],
+
     30    : [ 'foreground' , 'black'  ],
     31    : [ 'foreground' , 'red'    ],
     32    : [ 'foreground' , 'green'  ],
