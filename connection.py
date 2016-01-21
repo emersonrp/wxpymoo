@@ -3,7 +3,6 @@ from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
 
-from window.mainsplitter import MainSplitter
 from window.inputpane import InputPane
 from window.outputpane import OutputPane
 import mcp21.core as mcp21
@@ -47,23 +46,34 @@ class ConnectionClientFactory(ClientFactory):
         #reactor.stop()
 
 
-class Connection:
+# the 'connection' contains both the network connection and the i/o ui
+class Connection(wx.SplitterWindow):
     def __init__(self, mainwindow):
-        self.world = None
-        #self.keepalive = Keepalive(self)
+        wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
+        self.world          = None
         self.input_receiver = None
+        self.mainwindow     = mainwindow
+        self.input_pane     = InputPane(self, self)
+        self.output_pane    = OutputPane(self, self)
 
+        #self.keepalive     = Keepalive(self)
         self.connector = None
-        self.mainwindow = mainwindow
 
-        # the UI components for this connection
-        self.splitter    = MainSplitter(mainwindow.tabs, self)
-        self.input_pane  = InputPane(self.splitter, self)
-        self.output_pane = OutputPane(self.splitter, self)
+        self.SplitHorizontally(self.output_pane, self.input_pane)
+        self.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
 
-        self.splitter.SplitHorizontally(self.output_pane, self.input_pane)
-        self.splitter.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
+        self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
+        self.Bind(wx.EVT_SIZE, self.HandleResize)
 
+    def saveSplitterSize(self, evt):
+        size = self.GetSize()
+        prefs.set('input_height', size.GetHeight() - evt.GetSashPosition())
+
+    def HandleResize(self, evt):
+        size = self.GetSize()
+        input_height = int(prefs.get('input_height')) or 25
+        self.SetSashPosition(size.GetHeight() - input_height, True)
+        self.output_pane.ScrollIfAppropriate()
     def Close(self):
         if self.input_receiver.connected:
             self.output_pane.display("WxMOO: Connection closed.\n");

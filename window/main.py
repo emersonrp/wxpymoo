@@ -45,8 +45,7 @@ class Main(wx.Frame):
         if prefs.get('autoconnect_last_world') == 'True':
             world = worlds[prefs.get('last_world')]
             if world: self.connection.connect(world)
-            splitter = self.connection.splitter
-            self.tabs.AddPage(splitter, world.get('name'))
+            self.tabs.AddPage(self.connection, world.get('name'))
         self.connection.input_pane.SetFocus()
 
 
