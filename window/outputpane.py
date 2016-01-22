@@ -1,17 +1,17 @@
 import wx
 import wx.richtext as rtc
+import wx.lib.newevent
 
 import mcp21.core as mcp21
 import prefs
 import utility
 from theme import Theme
 
-import webbrowser
+import webbrowser, re, math
 
-import re
+RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
 class OutputPane(rtc.RichTextCtrl):
-
     def __init__(self, parent, connection):
         rtc.RichTextCtrl.__init__(self, parent,
             style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
@@ -21,28 +21,37 @@ class OutputPane(rtc.RichTextCtrl):
         # state toggles for ANSI processing
         self.bright  = False
         self.inverse = False
+        self.cols = 0
+        self.rows = 0
 
         self.theme = Theme()
 
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
-        # TODO 2 -- uncommenting this makes the output_pane be a 1x1 square in the upper left
-#        self.Bind(wx.EVT_SIZE                       , self.scroll_to_bottom)
+        self.Bind(wx.EVT_SIZE                        , self.on_size)
         self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
         self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
         self.Bind(wx.EVT_MIDDLE_UP                   , self.input_pane.paste_from_selection )
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
+        self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 
         self.restyle_thyself()
 
+    def on_row_col_changed(self, evt):
+        pass
+        # TODO - "if preferences dictate, send @linelength to self.connection"
+
+    def on_size(self, evt):
+        self.scroll_to_bottom()
+        self.update_size()
+
     def copy_from_selection(self, evt = None):
-        print("copying selection")
         uxcp = prefs.get('use_x_copy_paste') == 'True'
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
-    def scroll_to_bottom(self, evt):
+    def scroll_to_bottom(self):
         self.ShowPosition(self.GetLastPosition())
 
     def process_url_click(self, evt):
@@ -59,7 +68,7 @@ class OutputPane(rtc.RichTextCtrl):
 
     def ScrollIfAppropriate(self):
         if (True or self.is_at_bottom() or prefs.get('scroll_on_output')):
-            self.scroll_to_bottom(False)
+            self.scroll_to_bottom()
 
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()
@@ -75,6 +84,28 @@ class OutputPane(rtc.RichTextCtrl):
         font = wx.NullFont
         font.SetNativeFontInfoFromString(prefs.get('output_font'))
         self.SetFont(font)
+
+        self.update_size();
+
+    # This updates the widget's internal notion of "how big" it is in characters
+    # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
+    def update_size(self, evt = None):
+        font = self.GetFont()
+
+        # suss out how big we are in characters, for @linelength et al
+        dc = wx.ScreenDC()
+        dc.SetFont(font)
+        font_width, font_height = dc.GetTextExtent('M')
+        self_width, self_height = self.GetSizeTuple()
+
+        new_cols = math.floor(self_width  / font_width)
+        new_rows = math.floor(self_height / font_height)
+
+        if (new_cols != self.cols) or (new_rows != self.rows):
+            self.cols = new_cols
+            self.rows = new_rows
+            rc_evt = RowColChangeEvent()
+            wx.PostEvent(self, rc_evt)
 
     def display(self, text):
         self.SetInsertionPointEnd()
