@@ -58,9 +58,9 @@ Guiding thoughts:
 Dependencies
 ------------
 
-[Python](http://www.python.org) 2.7
-[wxPython](http://www.wxpython.org) 3.0+
-[twisted](https://twistedmatrix.com/trac/)
+* [Python](http://www.python.org) 2.7
+* [wxPython](http://www.wxpython.org) 3.0+
+* [twisted](https://twistedmatrix.com/trac/)
 
 Fedora users:
     sudo dnf install python wxPython python-twisted
