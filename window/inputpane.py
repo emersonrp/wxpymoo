@@ -12,7 +12,8 @@ class InputPane(rtc.RichTextCtrl):
         )
 
         self.connection = connection
-        self.cmd_history = CommandHistory()
+        self.cmd_history    = CommandHistory()
+        self.tab_completion = TabCompletion()
 
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.update_command_history )
@@ -72,6 +73,7 @@ class InputPane(rtc.RichTextCtrl):
         elif k == wx.WXK_DOWN:     self.SetValue(self.cmd_history.next())
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
+        elif k == wx.WXK_TAB:      self.offer_completion()
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.paste_from_selection()
         elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
@@ -95,6 +97,17 @@ class InputPane(rtc.RichTextCtrl):
             evt.Skip()
             return
         self.SetInsertionPointEnd()
+
+    def offer_completion(self):
+        current_value = self.GetValue()
+        if not current_value: return
+        if current_value.endswith(' '):
+            to_complete = ''
+        else:
+            to_complete = current_value.split()[-1] # rightmost word/fragment
+        completions = self.tab_completion.complete(to_complete)
+        if not completions: return
+        self.connection.output_pane.display(' '.join(completions))
 
 class CommandHistory:
     # we keep a list of historical entries, and a 'cursor' so we can
@@ -153,3 +166,37 @@ class CommandHistory:
         self.current = len(self.history)
         self.history.append('')
         self.update('')
+
+class TabCompletion:
+    def __init__(self):
+        self.verbs = []
+        self.names = []
+
+    def set_verbs(self, verbs):
+        self.verbs = list(set(verbs))
+        self.verbs.sort(key = lambda word: word.replace('*', ''))
+
+    def set_names(self, names):
+        self.names = list(set(names))
+        self.names.sort()
+
+    def add_verbs(self, verbs):
+        self.set_verbs( self.verbs.append(verbs) )
+
+    def add_names(self, names):
+        self.set_names( self.names.append(names) )
+
+    def remove_verbs(self, verbs):
+        self.set_verbs( self.verbs.remove(verbs) )
+
+    def remove_names(self, names):
+        self.set_names( self.names.remove(names) )
+
+    def complete(self, to_complete):
+        print("going to complete " + to_complete)
+        completions = []
+        for word in self.verbs:
+            if word.startswith(to_complete):
+                completions.append(word)
+        return completions
+

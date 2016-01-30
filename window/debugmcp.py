@@ -15,7 +15,7 @@ class DebugMCP(wx.Dialog):
 
         self.addEvents()
 
-        if (True or prefs.get('save_mcp_window_size')):
+        if (prefs.get('save_mcp_window_size')):
             w = prefs.get('mcp_window_width')  or 600
             h = prefs.get('mcp_window_height') or 400
             self.SetSize([int(w), int(h)])
@@ -43,7 +43,6 @@ class DebugMCP(wx.Dialog):
             # monkey-patch mcp21 so debug goes here
             mcp21.debug = self.display
 
-
     def Close(self):
         self.toggle_visible()
 
@@ -69,7 +68,7 @@ class DebugMCP(wx.Dialog):
         op.ShowPosition(op.GetCaretPosition())
 
     def onSize(self, evt):
-        if (True or prefs.get('save_mcp_window_size')):
+        if (prefs.get('save_mcp_window_size')):
             size = self.GetSize()
             prefs.set('mcp_window_width',  size.GetWidth())
             prefs.set('mcp_window_height', size.GetHeight())
