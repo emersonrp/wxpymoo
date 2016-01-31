@@ -173,12 +173,15 @@ class TabCompletion(wx.PopupWindow):
         self.names = []
         self.parent = parent
         self.completion_list = None
+        self.last_completed = None
 
     def set_verbs(self, verbs):
+        if not verbs: return
         self.verbs = list(set(verbs))
         self.verbs.sort(key = lambda word: word.replace('*', ''))
 
     def set_names(self, names):
+        if not names: return
         self.names = list(set(names))
         self.names.sort()
 
@@ -195,32 +198,69 @@ class TabCompletion(wx.PopupWindow):
         self.set_names( self.names.remove(names) )
 
     def complete(self, to_complete):
-        print("going to complete " + to_complete)
+        # if we've just hit <tab> again without making any changes...
+        if to_complete == self.last_completed:
+            if not self.IsShown(): return
+            # ... move the selection 'down' by one...
+            clist = self.completion_list
+            current = clist.GetFirstSelected()
+
+            if current == clist.GetItemCount()-1:
+                current = 0
+            else:
+                current +=1
+
+            clist.Select(current)
+
+            # ...and do nothing else...
+            return
+
+        #... otherwise, carry on
         completions = []
         for word in self.verbs:
             if word.startswith(to_complete):
                 completions.append(word)
+        self.last_completed = to_complete
         if completions:
             # clear the listbox
             if self.completion_list: self.completion_list.Destroy()
 
-            self.completion_list = wx.ListBox(self, style = wx.LB_SINGLE,)
-            self.completion_list.SetForegroundColour(prefs.get('input_fgcolour'))
-            self.completion_list.SetBackgroundColour(prefs.get('input_bgcolour'))
+            self.completion_list = CompletionList(self, completions)
 
-            font = wx.NullFont
-            font.SetNativeFontInfoFromString(prefs.get('input_font'))
-            self.completion_list.SetFont(font)
+            self.SetSize(self.completion_list.GetSize())
 
-            self.completion_list.InsertItems(items = completions, pos = 0)
-            size = self.completion_list.GetBestSize()
-            self.SetSize(size)
-            self.completion_list.SetSize(size)
-
-            pos = self.parent.ClientToScreen((0,0))
+            pos = self.parent.ClientToScreen((5,-5))
             self.Position(pos, (0, self.GetSize()[1]))
             self.Show(True)
 
         else:
             # pressing tab but no completions
             self.Hide()
+
+class CompletionList(wx.ListCtrl):
+    def __init__(self, parent, completions):
+        wx.ListCtrl.__init__(self, parent,
+            style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
+        )
+
+        self.SetTextColour(prefs.get('input_fgcolour'))
+        self.SetBackgroundColour(prefs.get('input_bgcolour'))
+
+        font = wx.NullFont
+        font.SetNativeFontInfoFromString(prefs.get('input_font'))
+        self.SetFont(font)
+
+        self.InsertColumn(0, '')
+
+        for i,c in enumerate(completions):
+            self.InsertStringItem(i,c)
+
+        # hoops to jump through to shrink-wrap the list
+        height = 0
+        for idx in xrange(self.GetItemCount()):
+            height += self.GetItemRect(idx).height
+
+        self.SetColumnWidth(0,-1)
+        self.SetSize((self.GetColumnWidth(0), height))
+
+        self.Select(0)
