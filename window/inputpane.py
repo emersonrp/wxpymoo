@@ -12,8 +12,8 @@ class InputPane(rtc.RichTextCtrl):
         )
 
         self.connection = connection
-        self.cmd_history    = CommandHistory()
-        self.tab_completion = TabCompletion()
+        self.cmd_history    = CommandHistory(self)
+        self.tab_completion = TabCompletion(self)
 
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.update_command_history )
@@ -105,9 +105,7 @@ class InputPane(rtc.RichTextCtrl):
             to_complete = ''
         else:
             to_complete = current_value.split()[-1] # rightmost word/fragment
-        completions = self.tab_completion.complete(to_complete)
-        if not completions: return
-        self.connection.output_pane.display(' '.join(completions))
+        have_completions = self.tab_completion.complete(to_complete)
 
 class CommandHistory:
     # we keep a list of historical entries, and a 'cursor' so we can
@@ -115,9 +113,10 @@ class CommandHistory:
     # entry in the history gets twiddled as we go.  Once we are done
     # with it and enter it into history, a fresh '' gets appended to
     # the array, on and on, world without end.
-    def __init__(self):
+    def __init__(self, parent):
         self.history = ['']
         self.current = 0
+        self.parent = parent
 
     # which entry does our 'cursor' point to?
     def current_entry(self):
@@ -167,10 +166,13 @@ class CommandHistory:
         self.history.append('')
         self.update('')
 
-class TabCompletion:
-    def __init__(self):
+class TabCompletion(wx.PopupWindow):
+    def __init__(self, parent):
+        wx.PopupWindow.__init__(self, parent)
         self.verbs = []
         self.names = []
+        self.parent = parent
+        self.completion_list = None
 
     def set_verbs(self, verbs):
         self.verbs = list(set(verbs))
@@ -198,5 +200,27 @@ class TabCompletion:
         for word in self.verbs:
             if word.startswith(to_complete):
                 completions.append(word)
-        return completions
+        if completions:
+            # clear the listbox
+            if self.completion_list: self.completion_list.Destroy()
 
+            self.completion_list = wx.ListBox(self, style = wx.LB_SINGLE,)
+            self.completion_list.SetForegroundColour(prefs.get('input_fgcolour'))
+            self.completion_list.SetBackgroundColour(prefs.get('input_bgcolour'))
+
+            font = wx.NullFont
+            font.SetNativeFontInfoFromString(prefs.get('input_font'))
+            self.completion_list.SetFont(font)
+
+            self.completion_list.InsertItems(items = completions, pos = 0)
+            size = self.completion_list.GetBestSize()
+            self.SetSize(size)
+            self.completion_list.SetSize(size)
+
+            pos = self.parent.ClientToScreen((0,0))
+            self.Position(pos, (0, self.GetSize()[1]))
+            self.Show(True)
+
+        else:
+            # pressing tab but no completions
+            self.Hide()
