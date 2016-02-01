@@ -1,6 +1,12 @@
 import re
 from mcp21.package import MCPPackageBase
 
+def _version_cmp(v1, v2):
+    v1_maj, v1_min = re.split('\.', v1)
+    v2_maj, v2_min = re.split('\.', v2)
+
+    return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min));
+
 class MCPRegistry:
     def __init__(self):
 
@@ -30,8 +36,3 @@ class MCPRegistry:
         else:
             return undef
 
-    def _version_cmp(self, v1, v2):
-        v1_maj, v1_min = re.split('\.', v1)
-        v2_maj, v2_min = re.split('\.', v2)
-
-        return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min));

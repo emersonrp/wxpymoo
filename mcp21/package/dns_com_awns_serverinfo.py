@@ -13,6 +13,11 @@ class MCPPackage(MCPPackageBase):
         self.home_url = ''
         self.help_url = ''
 
+        # TODO - need to get this to understand hacking the menu 
+        # per-connection instead of globally.
+        return
+
+
         mcp.registry.register(self, ['dns-com-awns-serverinfo'])
 
     def dispatch(self, msg):

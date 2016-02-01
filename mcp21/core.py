@@ -10,6 +10,17 @@ from mcp21.registry import MCPRegistry
 OOB_PREFIX   = re.compile('^#\$#')
 QUOTE_PREFIX = re.compile('^#\$"')
 
+#    my $simpleChars = q|[-a-z0-9~`!@#$%^&*()=+{}[\]\|';?/><.,]|;
+#    while ($raw =~ /([-_*a-z0-9]+)              # keyword
+#                        :                       # followed by colon
+#                        \s+                     # some space
+#                        (                       # and either
+#                            (?:"[^"]*")         # a quoted string - TODO - the grammar is more picky than [^"]
+#                            |                   # or
+#                            (?:$simpleChars)+   # a value
+#                        )/igx)
+raw_re = re.compile(r'([-_*a-z0-9]+):\s+((?:"[^"]*")|(?:[-a-z0-9~`!@#$%^&*()=+{}[\]\|\';?/><.,])+)')
+
 class MCPCore:
     def __init__(self, conn):
 
@@ -40,7 +51,7 @@ class MCPCore:
         info = re.sub('\n$', '', info)
         # DebugMCP window monkey-patches this when it shows itself
         # TODO - we might want one debug window per-connection-window
-        print(info)
+        print(self.connection.world.get('name') + ": " + info)
 
     def output_filter(self, data):
         # MCP spec, 2.1:
@@ -58,7 +69,7 @@ class MCPCore:
         if matches == 0: return data              # we did not, so return the line and bail
 
         # now we have only lines that started with OOB_PREFIX, which has been trimmed
-        debug("S->C: #$#" + data)
+        self.debug("S->C: #$#" + data)
 
         m = re.match(r'(\S+)\s*(.*)', data)
 
@@ -85,11 +96,11 @@ class MCPCore:
             message = self.multiline_messages[tag]
             message.multi_in_progress = False
         else:
-            message = parse(rest)
+            message = self.parse(rest)
 
         # check auth
         if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != self.mcp_auth_key):
-            debug("mcp - auth failed")
+            self.debug("mcp - auth failed")
             return
 
         message.message = message.message or message_name
@@ -104,18 +115,7 @@ class MCPCore:
         # return void/falsy/None so the output widget skips this line
         return
 
-#    my $simpleChars = q|[-a-z0-9~`!@#$%^&*()=+{}[\]\|';?/><.,]|;
-#    while ($raw =~ /([-_*a-z0-9]+)              # keyword
-#                        :                       # followed by colon
-#                        \s+                     # some space
-#                        (                       # and either
-#                            (?:"[^"]*")         # a quoted string - TODO - the grammar is more picky than [^"]
-#                            |                   # or
-#                            (?:$simpleChars)+   # a value
-#                        )/igx)
-    raw_re = re.compile(r'([-_*a-z0-9]+):\s+((?:"[^"]*")|(?:[-a-z0-9~`!@#$%^&*()=+{}[\]\|\';?/><.,])+)')
-
-    def parse(raw):
+    def parse(self, raw):
 
         if not raw: return
 
@@ -151,7 +151,7 @@ class MCPCore:
 
         if package.activated: package.dispatch(message)
 
-    def server_notify(msg, args = {}):
+    def server_notify(self, msg, args = {}):
 
         out = "#$#" + msg + " " + self.mcp_auth_key
 
@@ -179,9 +179,9 @@ class MCPCore:
 
     def server_send(self, out_line):
         self.connection.output(out_line)
-        debug("C->S: " + out_line)
+        self.debug("C->S: " + out_line)
 
-    def start_mcp():
+    def start_mcp(self):
         for p in self.registry.packages.values():
             p.Initialize()
 
@@ -192,10 +192,11 @@ class MCPCore:
 from mcp21.package import MCPPackageBase
 class MCP(MCPPackageBase):
     def __init__(self, mcp):
-        self.package    = 'mcp'
-        self.min        = 2.1
-        self.max        = 2.1
-        self.activated  = 2.1
+        self.package   = 'mcp'
+        self.min       = 2.1
+        self.max       = 2.1
+        self.activated = 2.1
+        self.mcp       = mcp
 
         mcp.registry.register(self, ['mcp'])
 

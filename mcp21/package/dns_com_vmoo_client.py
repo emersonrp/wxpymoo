@@ -38,7 +38,7 @@ class MCPPackage(MCPPackageBase):
     def send_screensize(self, msg = None):
         self.mcp.server_notify(
             'dns-com-vmoo-client-screensize', {
-                'cols' : str(self.connection.output_pane.cols),
-                'rows' : str(self.connection.output_pane.rows),
+                'cols' : str(self.mcp.connection.output_pane.cols),
+                'rows' : str(self.mcp.connection.output_pane.rows),
             }
         )
