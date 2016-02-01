@@ -3,6 +3,7 @@ import wx.html
 
 import prefs
 from worlds import worlds
+from connection import Connection
 
 import webbrowser
 
@@ -17,7 +18,7 @@ class WorldsList(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, name = 'Worlds List', style = wx.RESIZE_BORDER)
 
-        self.connection = parent.connection
+        self.parent = parent
 
         worlds_label      = wx.StaticText(self, label = "World:")
         self.world_picker = wx.Choice(self, style     = wx.CB_SORT )
@@ -136,7 +137,6 @@ class WorldsList(wx.Dialog):
             last_world = self.world_picker.FindString(last_world_name)
 
         self.world_picker.SetSelection(last_world)
-        self.world = worlds[last_world_name]
         self.fill_thyself()
 
         self.SetSizerAndFit(main_sizer)
@@ -152,17 +152,17 @@ class WorldsList(wx.Dialog):
 
 
     def select_world(self, evt):
-        self.world = worlds[self.world_picker.GetStringSelection()]
         self.fill_thyself()
 
     # TODO - make wxpymoo.World have a notion of "connect to yourself"
     # Also therefore merge wxpymoo.world and wxpymoo.window.world
     def on_connect(self, evt):
-        self.connection.connect(self.world)
+        world = worlds[self.world_picker.GetStringSelection()]
+        self.parent.openWorld(world)
         self.Hide()
 
     def on_save (self, evt):
-        world = self.world
+        world = worlds[self.world_picker.GetStringSelection()]
 
         world['host'] = self.host.GetValue()
         world['port'] = self.port.GetValue()
@@ -189,8 +189,7 @@ class WorldsList(wx.Dialog):
         print("TODO: got a 'new' button click")
 
     def fill_thyself(self):
-
-        world = self.world
+        world = worlds[self.world_picker.GetStringSelection()]
 
         self.host.SetValue(unicode(world.get("host")   ) or "")
         self.port.SetValue(    int(world.get("port")   ) or "")

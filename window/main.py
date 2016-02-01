@@ -41,13 +41,16 @@ class Main(wx.Frame):
         self.sizer.Add(self.tabs, True, wx.ALL|wx.GROW)
         self.SetSizer(self.sizer)
 
-        self.connection = Connection(self)
         if prefs.get('autoconnect_last_world') == 'True':
-            world = worlds[prefs.get('last_world')]
-            if world: self.connection.connect(world)
-            self.tabs.AddPage(self.connection, world.get('name'))
-        self.connection.input_pane.SetFocus()
+            world = worlds.get(prefs.get('last_world'))
+            if world:
+                self.openWorld(world)
 
+    def openWorld(self, world):
+        conn = Connection(self)
+        conn.connect(world)
+        self.tabs.AddPage(conn, world.get('name'))
+        conn.input_pane.SetFocus()
 
     def buildMenu(self):
         WorldsMenu = wx.Menu()
@@ -104,10 +107,12 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.onSize)
 
     def closeConnection(self, evt):
-        self.connection.Close()
+        conn = self.tabs.GetPage(self.tabs.GetSelection())
+        conn.Close()
 
     def reconnectConnection(self, evt):
-        self.connection.reconnect()
+        conn = self.tabs.GetPage(self.tabs.GetSelection())
+        conn.reconnect()
 
     def onSize(self, evt):
         if prefs.get('save_window_size'):
@@ -148,7 +153,7 @@ class Main(wx.Frame):
     def showHelp(self, evt):
         pass
 
-# TODO - WxMOO::Window::About
+    # TODO - window.about
     def showAboutBox(self, evt):
         if self.about_info is None:
              info = wx.AboutDialogInfo()
@@ -163,4 +168,3 @@ class Main(wx.Frame):
     def quitApplication(self, evt):
         self.closeConnection
         self.Close(True)
-

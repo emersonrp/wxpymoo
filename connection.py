@@ -52,7 +52,6 @@ class Connection(wx.SplitterWindow):
         wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
         self.world          = None
         self.input_receiver = None
-        self.mainwindow     = mainwindow
         self.input_pane     = InputPane(self, self)
         self.output_pane    = OutputPane(self, self)
 
