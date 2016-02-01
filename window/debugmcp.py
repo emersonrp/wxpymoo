@@ -2,16 +2,17 @@ import wx
 import re
 
 import prefs
-import mcp21.core as mcp21
 
 class DebugMCP(wx.Dialog):
-    def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title = "Debug MCP",
+    def __init__(self, parent, conn):
+        worldname = conn.world.get('name')
+        wx.Dialog.__init__(self, parent, title = "Debug MCP: " + worldname,
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 
         self.active = False
         self.output_pane = None
+        self.connection = conn
 
         self.addEvents()
 
@@ -26,7 +27,7 @@ class DebugMCP(wx.Dialog):
         self.SetSizer(sizer)
 
         # pre-stage monkey-patching
-        mcp21.orig_debug = mcp21.debug
+        self.connection.mcp.orig_debug = self.connection.mcp.debug
 
     def addEvents(self):
         self.Bind(wx.EVT_SIZE, self.onSize)
@@ -35,13 +36,13 @@ class DebugMCP(wx.Dialog):
         if self.IsShown():
             self.Hide()
             self.active = False
-            # de-monkey-patch mcp21
-            mcp21.debug = mcp21.orig_debug
+            # de-monkey-patch mcp
+            self.connection.mcp.debug = self.connection.mcp.orig_debug
         else:
             self.Show()
             self.active = True
-            # monkey-patch mcp21 so debug goes here
-            mcp21.debug = self.display
+            # monkey-patch mcp so debug goes here
+            self.connection.mcp.debug = self.display
 
     def Close(self):
         self.toggle_visible()

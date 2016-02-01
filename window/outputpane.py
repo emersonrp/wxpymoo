@@ -2,12 +2,11 @@ import wx
 import wx.richtext as rtc
 import wx.lib.newevent
 
-import mcp21.core as mcp21
 import prefs
 import utility
 from theme import Theme
 
-import webbrowser, re, math
+import webbrowser, re, math, emoji
 
 RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
@@ -16,7 +15,7 @@ class OutputPane(rtc.RichTextCtrl):
         rtc.RichTextCtrl.__init__(self, parent,
             style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
         )
-        self.input_pane = connection.input_pane
+        self.connection = connection
 
         # state toggles for ANSI processing
         self.bright  = False
@@ -31,7 +30,7 @@ class OutputPane(rtc.RichTextCtrl):
         self.Bind(wx.EVT_SIZE                        , self.on_size)
         self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
         self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
-        self.Bind(wx.EVT_MIDDLE_UP                   , self.input_pane.paste_from_selection )
+        self.Bind(wx.EVT_MIDDLE_UP                   , self.connection.input_pane.paste_from_selection )
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 
@@ -112,9 +111,13 @@ class OutputPane(rtc.RichTextCtrl):
         for line in text.split('\n'):
             line = line + "\n"
             if (prefs.get('use_mcp')):
-                line = mcp21.output_filter(line)
+                line = self.connection.mcp.output_filter(line)
                 if not line: continue  # output_filter returns falsie if it handled it.
-            if (True or prefs.get('use_ansi')):
+
+                # TODO - preference?  "if (we detect an emoji)?"
+                line = emoji.emojize(line, use_aliases = True)
+
+            if (prefs.get('use_ansi')):
                 stuff = self.ansi_parse(line)
                 for bit in stuff:
                     if type(bit) is list:
@@ -143,7 +146,7 @@ class OutputPane(rtc.RichTextCtrl):
             else:
                 self.WriteText(line)
 
-    def focus_input(self,evt): self.input_pane.SetFocus()
+    def focus_input(self,evt): self.connection.input_pane.SetFocus()
 
     def lookup_colour(self, color, *bright):
         return self.theme.Colour(color,

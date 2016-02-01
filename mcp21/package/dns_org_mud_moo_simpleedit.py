@@ -1,11 +1,9 @@
-import mcp21.core as mcp21
-import mcp21.registry as registry
 from mcp21.package import MCPPackageBase
 
 from editor import Editor
 class MCPPackage(MCPPackageBase):
-    def __init__(self, conn):
-        MCPPackageBase.__init__(self, conn)
+    def __init__(self, mcp):
+        MCPPackageBase.__init__(self, mcp)
 
         self.package = 'dns-org-mud-moo-simpleedit'
         self.min     = '1.0'
@@ -13,7 +11,7 @@ class MCPPackage(MCPPackageBase):
 
         self.in_progress = {}
 
-        registry.register(self, ['dns-org-mud-moo-simpleedit-content'])
+        mcp.registry.register(self, ['dns-org-mud-moo-simpleedit-content'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-org-mud-moo-simpleedit-content':
@@ -29,7 +27,7 @@ class MCPPackage(MCPPackageBase):
 
     def _send_file(self, id, content):
         msg = self.in_progress[id]
-        mcp21.server_notify(
+        self.mcp.server_notify(
             'dns-org-mud-moo-simpleedit-set', {
                 'reference' : msg.data['reference'],
                 'type'      : msg.data['type'],

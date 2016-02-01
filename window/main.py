@@ -23,7 +23,6 @@ class Main(wx.Frame):
         self.connect_dialog = None
         self.prefs_editor = None
         self.worlds_list = None
-        self.debug_mcp = None
 
         h = 600
         w = 800
@@ -32,9 +31,6 @@ class Main(wx.Frame):
             if prefs.get('window_height'): h = int(prefs.get('window_height'))
         self.SetSize((w, h))
 
-        # TODO - don't connect until we ask for it.
-        # TODO - probably want a tabbed interface for multiple connections
-        # TODO - "on attempted connect, create a new tab, and populate with connection poop"
         self.tabs = wx.Notebook(self)
 
         self.sizer = wx.BoxSizer( wx.VERTICAL )
@@ -49,7 +45,7 @@ class Main(wx.Frame):
     def openWorld(self, world):
         conn = Connection(self)
         conn.connect(world)
-        self.tabs.AddPage(conn, world.get('name'))
+        self.tabs.AddPage(conn, world.get('name'), select = True)
         conn.input_pane.SetFocus()
 
     def buildMenu(self):
@@ -107,12 +103,14 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.onSize)
 
     def closeConnection(self, evt):
-        conn = self.tabs.GetPage(self.tabs.GetSelection())
-        conn.Close()
+        self.currentConnection().Close()
+        self.tabs.DeletePage(self.tabs.GetSelection())
 
     def reconnectConnection(self, evt):
-        conn = self.tabs.GetPage(self.tabs.GetSelection())
-        conn.reconnect()
+        self.currentConnection().reconnect()
+
+    def currentConnection(self):
+        return self.tabs.GetPage(self.tabs.GetSelection())
 
     def onSize(self, evt):
         if prefs.get('save_window_size'):
@@ -147,8 +145,9 @@ class Main(wx.Frame):
         pass
 
     def toggleDebugMCP(self, evt):
-        if self.debug_mcp is None: self.debug_mcp = DebugMCP(self)
-        self.debug_mcp.toggle_visible()
+        conn = self.currentConnection()
+        if conn.debug_mcp is None: conn.debug_mcp = DebugMCP(self, conn)
+        conn.debug_mcp.toggle_visible()
 
     def showHelp(self, evt):
         pass

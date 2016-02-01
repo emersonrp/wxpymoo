@@ -5,7 +5,7 @@ from twisted.protocols.basic import LineReceiver
 
 from window.inputpane import InputPane
 from window.outputpane import OutputPane
-import mcp21.core as mcp21
+from mcp21.core import MCPCore
 import prefs
 
 class ConnectionClient(LineReceiver):
@@ -52,6 +52,7 @@ class Connection(wx.SplitterWindow):
         wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
         self.world          = None
         self.input_receiver = None
+        self.debug_mcp      = None
         self.input_pane     = InputPane(self, self)
         self.output_pane    = OutputPane(self, self)
 
@@ -73,9 +74,10 @@ class Connection(wx.SplitterWindow):
         input_height = int(prefs.get('input_height')) or 25
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
+
     def Close(self):
         if self.input_receiver.connected:
-            self.output_pane.display("WxMOO: Connection closed.\n");
+            self.output_pane.display("wxpymoo: Connection closed.\n");
         # force it again just to be sure
         #self.keepalive.Stop()
         self.connector.disconnect()
@@ -90,7 +92,7 @@ class Connection(wx.SplitterWindow):
         port = int(world.get('port'))
         self.connector = reactor.connectTCP(host, port, ConnectionClientFactory(self))
 
-        mcp21.Initialize(self)
+        self.mcp = MCPCore(self)
 
         # TODO - 'if world.connection.keepalive'
         #self.keepalive.Start()

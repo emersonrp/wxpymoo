@@ -1,12 +1,10 @@
 import wx
 import re, webbrowser
-import mcp21.core as mcp21
-import mcp21.registry as registry
 from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):
-    def __init__(self, conn):
-        MCPPackageBase.__init__(self, conn)
+    def __init__(self, mcp):
+        MCPPackageBase.__init__(self, mcp)
 
         self.package = 'dns-com-awns-serverinfo'
         self.min     = '1.0'
@@ -15,14 +13,14 @@ class MCPPackage(MCPPackageBase):
         self.home_url = ''
         self.help_url = ''
 
-        registry.register(self, ['dns-com-awns-serverinfo'])
+        mcp.registry.register(self, ['dns-com-awns-serverinfo'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-awns-serverinfo': self.do_serverinfo(msg)
 
     # when we're all settled in, ask the server for the URLs
     def mcp_negotiate_end(self):
-        mcp21.server_notify('dns-com-awns-serverinfo-get')
+        self.mcp.server_notify('dns-com-awns-serverinfo-get')
 
     # When we get new URLs from the server, install/activate the "Help" menu entries
     def do_serverinfo(self, msg):
@@ -30,7 +28,7 @@ class MCPPackage(MCPPackageBase):
         self.help_url = msg.data['help_url']
         if not (self.home_url or self.help_url): return
 
-        menubar = mcp21.connection.mainwindow.GetMenuBar()
+        menubar = self.mcp.connection.mainwindow.GetMenuBar()
         if not menubar: return
 
         help_menu = menubar.GetMenu(menubar.FindMenu('Help'))

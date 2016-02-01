@@ -1,7 +1,7 @@
 import wx
 
 class MCPPackageBase(wx.EvtHandler):
-    def __init__(self, conn):
+    def __init__(self, mcp):
         wx.EvtHandler.__init__(self)
 
         self.activated = None
@@ -10,7 +10,7 @@ class MCPPackageBase(wx.EvtHandler):
         self.min = 0.0
         self.message = ''
         self.package = ''
-        self.connection = conn
+        self.mcp = mcp
 
     def Initialize(self):
         pass
