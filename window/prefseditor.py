@@ -1,10 +1,5 @@
 import wx
 import prefs
-# use Wx qw( :dialog :sizer :id :misc :notebook :font :colour :textctrl
-#             wxFNTP_USEFONT_FOR_LABEL wxFNTP_FONTDESC_AS_LABEL
-#             wxCLRP_USE_TEXTCTRL wxCLRP_SHOW_LABEL
-# )
-# use wx.Event qw( EVT_BUTTON EVT_FONTPICKER_CHANGED EVT_COLOURPICKER_CHANGED )
 
 class PrefsEditor(wx.Dialog):
     def __init__(self, parent):
@@ -38,33 +33,13 @@ class PrefsEditor(wx.Dialog):
         self.Layout()
 
     def update_prefs(self, evt):
-        # This is doing some nasty GetAsString and GetNativeFontInfoDesc foo here,
-        # instead of encapsulated in prefs, which I think I'm OK with.
-
-        prefs.set('save_window_size', self.general_page.save_size_checkbox.GetValue() )
-        prefs.set('autoconnect_last_world', self.general_page.autoconnect_checkbox.GetValue() )
-
-        prefs.set('output_font',self.fonts_page.ofont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-        prefs.set('input_font', self.fonts_page.ifont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-
-        prefs.set('output_fgcolour',self.fonts_page.o_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-        prefs.set('output_bgcolour',self.fonts_page.o_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-        prefs.set('input_fgcolour', self.fonts_page.i_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-        prefs.set('input_bgcolour', self.fonts_page.i_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-
-        prefs.set('use_ansi', self.fonts_page.ansi_checkbox.GetValue() )
-
-        prefs.set('external_editor', self.paths_page.external_editor.GetValue() )
-
-        self.parent.connection.output_pane.restyle_thyself()
-        self.parent.connection.input_pane.restyle_thyself()
+        prefs.update(self)
         evt.Skip()
 
     def createGeneralPanel(self):
         gp = wx.Panel(self.book)
         gp.save_size_checkbox = wx.CheckBox(gp, -1, 'Save Window Size')
         gp.save_size_checkbox.SetValue( True if prefs.get('save_window_size') == 'True' else False )
-        #gp.save_size_checkbox.Fit()
 
         gp.autoconnect_checkbox = wx.CheckBox(gp, -1, 'Autoconnect to last world at startup')
         gp.autoconnect_checkbox.SetValue( True if prefs.get('autoconnect_last_world') == 'True' else False )

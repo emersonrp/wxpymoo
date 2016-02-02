@@ -7,6 +7,7 @@ from window.inputpane import InputPane
 from window.outputpane import OutputPane
 from mcp21.core import MCPCore
 import prefs
+from prefs import EVT_PREFS_CHANGED
 
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
@@ -64,6 +65,13 @@ class Connection(wx.SplitterWindow):
 
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
         self.Bind(wx.EVT_SIZE, self.HandleResize)
+
+        mainwindow.Bind(EVT_PREFS_CHANGED, self.doPrefsChanged)
+
+    def doPrefsChanged(self, evt):
+        self.input_pane.restyle_thyself()
+        self.output_pane.restyle_thyself()
+        evt.Skip()
 
     def saveSplitterSize(self, evt):
         size = self.GetSize()
