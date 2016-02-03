@@ -30,10 +30,9 @@ class MCPPackage(MCPPackageBase):
     def do_result(self, msg):
         request_id = msg.data['id']
         callback = self.callbacks.pop(request_id, None)
-        # TODO - maybe do more honoring of the msg.data['startpos'] etc returns
         if callback:
             options = msg.data.get('options')
             if options:
                 options = list(set(options))
                 options.sort()
-                callback(options)
+                callback(msg.data.get('startpos'), options)

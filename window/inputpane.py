@@ -69,7 +69,7 @@ class InputPane(rtc.RichTextCtrl):
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
 
-        if   k == wx.WXK_UP:
+        if k == wx.WXK_UP:
             if self.tab_completion.IsShown():
                 self.tab_completion.prev_item()
             else:
@@ -81,16 +81,14 @@ class InputPane(rtc.RichTextCtrl):
                 self.SetValue(self.cmd_history.next())
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
-        elif k == wx.WXK_TAB:      self.offer_completion()
+        elif k == wx.WXK_TAB:      self.fetch_completions()
         elif k == wx.WXK_ESCAPE:   self.tab_completion.Hide()
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.paste_from_selection()
 
         elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
             if self.tab_completion.IsShown():
-                completion = self.tab_completion.pick_completion()
-                if completion:
-                    self.change_last_word_to(completion)
+                self.do_completion(*self.tab_completion.pick_completion())
             else:
                 self.send_to_connection(evt)
 
@@ -125,8 +123,13 @@ class InputPane(rtc.RichTextCtrl):
 
         return last_word
 
-    def offer_completion(self):
-        self.tab_completion.complete(self.last_word())
+    def fetch_completions(self):
+        self.tab_completion.complete(self.GetValue())
+
+    def do_completion(self, begin_pos, completion):
+        if completion:
+            self.SetValue(self.GetValue()[:int(begin_pos)] + completion)
+            self.SetInsertionPointEnd()
 
 class CommandHistory:
     # we keep a list of historical entries, and a 'cursor' so we can
@@ -220,7 +223,7 @@ class TabCompletion(wx.PopupWindow):
 
     def pick_completion(self):
         current = self.completion_list.GetFirstSelected()
-        return self.completion_list.GetItemText(current)
+        return self.begin_pos, self.completion_list.GetItemText(current)
 
     def next_item(self):
         clist = self.completion_list
@@ -260,19 +263,25 @@ class TabCompletion(wx.PopupWindow):
         # TODO -- prolly the mcp package should .Initialize and install itself into TabCompletion
         self.parent.connection.mcp.registry.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
 
-    def popup_completions(self, completions):
+    def popup_completions(self, begin_pos, completions):
         # do we have one or more completions?
         if completions:
-            # clear the listbox
-            if self.completion_list: self.completion_list.Destroy()
 
-            self.completion_list = CompletionList(self, completions)
+            if len(completions) == 1:
+                # we have just the one completion, we should use it
+                self.parent.do_completion(begin_pos, completions[0])
+            else:
+                # there are multiple, clear the listbox, repop it, and show it
+                if self.completion_list: self.completion_list.Destroy()
 
-            self.SetSize(self.completion_list.GetSize())
+                self.completion_list = CompletionList(self, completions)
+                self.begin_pos  = begin_pos
 
-            pos = self.parent.ClientToScreen((5,-5))
-            self.Position(pos, (0, self.GetSize()[1]))
-            self.Show(True)
+                self.SetSize(self.completion_list.GetSize())
+
+                pos = self.parent.ClientToScreen((5,-5))
+                self.Position(pos, (0, self.GetSize()[1]))
+                self.Show(True)
 
         # pressing tab but no completions
         else:
