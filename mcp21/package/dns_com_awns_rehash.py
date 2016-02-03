@@ -1,6 +1,9 @@
 import re
 from mcp21.package import MCPPackageBase
 
+# This has been pulled from the tab-completion scheme in favor of
+# dns-com-vmoo-smartcompletion.  Now this package maintains its own
+# list of rehashed thingies, with which it does nothing.
 class MCPPackage(MCPPackageBase):
     def __init__(self, mcp):
         MCPPackageBase.__init__(self, mcp)
@@ -8,6 +11,8 @@ class MCPPackage(MCPPackageBase):
         self.package = 'dns-com-awns-rehash'
         self.min     = '1.0'
         self.max     = '1.1'
+
+        self.hashes = []
 
         mcp.registry.register(self, ['dns-com-awns-rehash-commands'])
         mcp.registry.register(self, ['dns-com-awns-rehash-add'])
@@ -19,13 +24,10 @@ class MCPPackage(MCPPackageBase):
         if msg.message == 'dns-com-awns-rehash-remove':   self.do_remove(msg)
 
     def do_commands(self, msg):
-        self.mcp.connection.input_pane.tab_completion.set_verbs(msg.data['list'].split(' '))
-        self.mcp.connection.input_pane.tab_completion.set_names([])
+        self.hashes = msg.data['list'].split(' ')
 
     def do_add(self, msg):
-        self.mcp.connection.input_pane.tab_completion.add_verbs(msg.data['list'].split(' '))
-        self.mcp.connection.input_pane.tab_completion.add_names([])
+        self.hashes.append(msg.data['list'].split(' '))
 
     def do_remove(self, msg):
-        self.mcp.connection.input_pane.tab_completion.remove_verbs(msg.data['list'].split(' '))
-        self.mcp.connection.input_pane.tab_completion.remove_names([])
+        self.hashes.remove(msg.data['list'].split(' '))

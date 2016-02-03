@@ -69,8 +69,16 @@ class InputPane(rtc.RichTextCtrl):
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
 
-        if   k == wx.WXK_UP:       self.SetValue(self.cmd_history.prev())
-        elif k == wx.WXK_DOWN:     self.SetValue(self.cmd_history.next())
+        if   k == wx.WXK_UP:
+            if self.tab_completion.IsShown():
+                self.tab_completion.prev_item()
+            else:
+                self.SetValue(self.cmd_history.prev())
+        elif k == wx.WXK_DOWN:
+            if self.tab_completion.IsShown():
+                self.tab_completion.next_item()
+            else:
+                self.SetValue(self.cmd_history.next())
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_TAB:      self.offer_completion()
@@ -214,33 +222,45 @@ class TabCompletion(wx.PopupWindow):
         current = self.completion_list.GetFirstSelected()
         return self.completion_list.GetItemText(current)
 
+    def next_item(self):
+        clist = self.completion_list
+        current = clist.GetFirstSelected()
+        if current == clist.GetItemCount()-1:
+            current = 0
+        else:
+            current +=1
+        clist.Select(current)
+
+    def prev_item(self):
+        clist = self.completion_list
+        current = clist.GetFirstSelected()
+        if current == 0:
+            current = clist.GetItemCount()-1
+        else:
+            current -=1
+        clist.Select(current)
+
     def complete(self, to_complete):
         if not to_complete: return
 
         # if we've just hit <tab> again without making any changes...
         if to_complete == self.last_completed:
-            if not self.IsShown(): return
+            if not self.IsShown():
+                self.Show()
+                return
             # ... move the selection 'down' by one...
-            clist = self.completion_list
-            current = clist.GetFirstSelected()
-
-            if current == clist.GetItemCount()-1:
-                current = 0
-            else:
-                current +=1
-
-            clist.Select(current)
+            self.next_item()
 
             # ...and do nothing else...
             return
 
         #... otherwise, carry on
-        completions = []
-        for word in self.verbs:
-            if bool(re.match('^' + to_complete, word, re.I)):
-                completions.append(word)
         self.last_completed = to_complete
+        # really this is totally.ridiculous.indirection.into.other.modules.innards
+        # TODO -- prolly the mcp package should .Initialize and install itself into TabCompletion
+        self.parent.connection.mcp.registry.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
 
+    def popup_completions(self, completions):
         # do we have one or more completions?
         if completions:
             # clear the listbox
