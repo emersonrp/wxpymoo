@@ -43,6 +43,7 @@ class OutputPane(rtc.RichTextCtrl):
     def on_size(self, evt):
         self.scroll_to_bottom()
         self.update_size()
+        evt.Skip()
 
     def copy_from_selection(self, evt = None):
         uxcp = prefs.get('use_x_copy_paste') == 'True'
