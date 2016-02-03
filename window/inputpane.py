@@ -74,38 +74,51 @@ class InputPane(rtc.RichTextCtrl):
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_TAB:      self.offer_completion()
+        elif k == wx.WXK_ESCAPE:   self.tab_completion.Hide()
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown: self.paste_from_selection()
+
         elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
-            self.send_to_connection(evt)
+            if self.tab_completion.IsShown():
+                completion = self.tab_completion.pick_completion()
+                if completion:
+                    self.change_last_word_to(completion)
+            else:
+                self.send_to_connection(evt)
+
+            # either way:
+            self.tab_completion.Hide()
+
 # TODO: this next bit simply doesn't work, but 'home' is not acting right by default
 #        elif k == wx.WXK_HOME:
 #            print("HOME!")
 #            self.SetInsertionPoint(0)
+
         elif k == 23:  # Ctrl-W
             # TODO - can't test this b/c Ctrl-W is currently auto-bound to Close
-            end = self.GetInsertionPoint()
-
-            m = re.search('(\s*[^\x21-\x7E]+\s*)$', self.GetValue())
-
-            word_to_remove = m.group(1)
-            if not word_to_remove: return
-
-            start = end - word_to_remove.len()
-            self.Remove(start, end)
+            self.change_last_word_to('')
         else:
+            self.tab_completion.Hide()
             evt.Skip()
             return
         self.SetInsertionPointEnd()
 
-    def offer_completion(self):
+    def change_last_word_to(self, word):
+        new_value = re.sub(self.last_word() + "$", word, self.GetValue());
+        self.SetValue(new_value)
+
+    def last_word(self):
         current_value = self.GetValue()
         if not current_value: return
         if current_value.endswith(' '):
-            to_complete = ''
+            last_word = ''
         else:
-            to_complete = current_value.split()[-1] # rightmost word/fragment
-        have_completions = self.tab_completion.complete(to_complete)
+            last_word = current_value.split()[-1] # rightmost word/fragment
+
+        return last_word
+
+    def offer_completion(self):
+        self.tab_completion.complete(self.last_word())
 
 class CommandHistory:
     # we keep a list of historical entries, and a 'cursor' so we can
@@ -197,7 +210,13 @@ class TabCompletion(wx.PopupWindow):
     def remove_names(self, names):
         self.set_names( self.names.remove(names) )
 
+    def pick_completion(self):
+        current = self.completion_list.GetFirstSelected()
+        return self.completion_list.GetItemText(current)
+
     def complete(self, to_complete):
+        if not to_complete: return
+
         # if we've just hit <tab> again without making any changes...
         if to_complete == self.last_completed:
             if not self.IsShown(): return
@@ -218,9 +237,11 @@ class TabCompletion(wx.PopupWindow):
         #... otherwise, carry on
         completions = []
         for word in self.verbs:
-            if word.startswith(to_complete):
+            if bool(re.match('^' + to_complete, word, re.I)):
                 completions.append(word)
         self.last_completed = to_complete
+
+        # do we have one or more completions?
         if completions:
             # clear the listbox
             if self.completion_list: self.completion_list.Destroy()
@@ -233,8 +254,8 @@ class TabCompletion(wx.PopupWindow):
             self.Position(pos, (0, self.GetSize()[1]))
             self.Show(True)
 
+        # pressing tab but no completions
         else:
-            # pressing tab but no completions
             self.Hide()
 
 class CompletionList(wx.ListCtrl):
