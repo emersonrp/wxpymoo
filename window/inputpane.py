@@ -199,28 +199,6 @@ class TabCompletion(wx.PopupWindow):
         self.completion_list = None
         self.last_completed = None
 
-    def set_verbs(self, verbs):
-        if not verbs: return
-        self.verbs = list(set(verbs))
-        self.verbs.sort(key = lambda word: word.replace('*', ''))
-
-    def set_names(self, names):
-        if not names: return
-        self.names = list(set(names))
-        self.names.sort()
-
-    def add_verbs(self, verbs):
-        self.set_verbs( self.verbs.append(verbs) )
-
-    def add_names(self, names):
-        self.set_names( self.names.append(names) )
-
-    def remove_verbs(self, verbs):
-        self.set_verbs( self.verbs.remove(verbs) )
-
-    def remove_names(self, names):
-        self.set_names( self.names.remove(names) )
-
     def pick_completion(self):
         current = self.completion_list.GetFirstSelected()
         return self.begin_pos, self.completion_list.GetItemText(current)
@@ -285,6 +263,7 @@ class TabCompletion(wx.PopupWindow):
 
         # pressing tab but no completions
         else:
+            self.last_completed = None
             self.Hide()
 
 class CompletionList(wx.ListCtrl):
