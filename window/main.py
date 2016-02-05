@@ -13,16 +13,16 @@ class Main(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
 
-        self.status_bar = self.CreateStatusBar()
+        # self.status_bar = self.CreateStatusBar()
 
         self.buildMenu()
 
         self.addEvents()
 
-        self.about_info = None
+        self.about_info     = None
         self.connect_dialog = None
-        self.prefs_editor = None
-        self.worlds_list = None
+        self.prefs_editor   = None
+        self.worlds_list    = None
 
         h = 600
         w = 800
@@ -155,13 +155,13 @@ class Main(wx.Frame):
     # TODO - window.about
     def showAboutBox(self, evt):
         if self.about_info is None:
-             info = wx.AboutDialogInfo()
-             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
-             info.SetCopyright('(c) 2013-2016')
-             info.SetWebSite('http://github.com/emersonrp/wxpymoo')
-             info.SetName('wxpymoo')
-             info.SetVersion('0.1')
-             self.about_info = info
+            info = wx.AboutDialogInfo()
+            info.AddDeveloper('R Pickett (emerson@hayseed.net)')
+            info.SetCopyright('(c) 2013-2016')
+            info.SetWebSite('http://github.com/emersonrp/wxpymoo')
+            info.SetName('wxpymoo')
+            info.SetVersion('0.1')
+            self.about_info = info
         wx.AboutBox(self.about_info)
 
     def quitApplication(self, evt):
