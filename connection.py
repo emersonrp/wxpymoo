@@ -9,6 +9,13 @@ from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
 
+try:
+    from agw import toasterbox as TB
+    bitmapDir = 'bitmaps/'
+except ImportError:
+    import wx.lib.agw.toasterbox as TB
+    bitmapDir = 'agw/bitmaps/'
+
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
         self.factory.connection.output_pane.display(line)
@@ -82,6 +89,19 @@ class Connection(wx.SplitterWindow):
         input_height = int(prefs.get('input_height')) or 25
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
+
+    def CreateNotice(self, message):
+        notice = TB.ToasterBox(self,
+                tbstyle = TB.TB_COMPLEX, windowstyle = TB.TB_DEFAULT_STYLE,
+                closingstyle = TB.TB_ONCLICK)
+        notice.SetPopupPositionByInt(1)
+        panel = wx.Panel(notice.GetToasterBoxWindow(), -1)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(wx.StaticText(panel, label = message))
+        panel.SetSizer(sizer)
+        panel.Layout()
+        notice.AddPanel(panel)
+        notice.Play()
 
     def Close(self):
         if self.input_receiver.connected:
