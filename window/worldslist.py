@@ -32,7 +32,7 @@ class WorldsList(wx.Dialog):
 
         # stick port + type into their own boxsizer
         self.port = wx.SpinCtrl(self)
-        self.port.SetRange(0, 65535)
+        self.port.SetRange(1, 65535)
         self.port.SetValue(7777)
         self.conntype = wx.Choice(self, choices = conntypes )
         port_sizer = wx.BoxSizer(wx.HORIZONTAL)
