@@ -85,17 +85,24 @@ class OutputPane(rtc.RichTextCtrl):
         font.SetNativeFontInfoFromString(prefs.get('output_font'))
         self.SetFont(font)
 
+        # set one character's worth of left margin
+        font_width, font_height = self.font_size()
+        self.SetMargins((font_width, -1))
+
         self.update_size();
 
-    # This updates the widget's internal notion of "how big" it is in characters
-    # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
-    def update_size(self, evt = None):
+    def font_size(self):
         font = self.GetFont()
 
         # suss out how big we are in characters, for @linelength et al
         dc = wx.ScreenDC()
         dc.SetFont(font)
-        font_width, font_height = dc.GetTextExtent('M')
+        return dc.GetTextExtent('M')
+
+    # This updates the widget's internal notion of "how big" it is in characters
+    # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
+    def update_size(self, evt = None):
+        font_width, font_height = self.font_size()
         self_width, self_height = self.GetSizeTuple()
 
         new_cols = math.floor(self_width  / font_width)
