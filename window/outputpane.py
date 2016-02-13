@@ -5,23 +5,21 @@ import wx.lib.newevent
 import prefs
 import utility
 from theme import Theme
+from window.basepane import BasePane
 
 import webbrowser, re, math, emoji
 
 RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
-class OutputPane(rtc.RichTextCtrl):
+class OutputPane(BasePane):
     def __init__(self, parent, connection):
-        rtc.RichTextCtrl.__init__(self, parent,
+        BasePane.__init__(self, parent, connection,
             style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
         )
-        self.connection = connection
 
         # state toggles for ANSI processing
-        self.bright  = False
+        self.weight  = None
         self.inverse = False
-        self.cols = 0
-        self.rows = 0
 
         self.theme = Theme()
 
@@ -34,8 +32,7 @@ class OutputPane(rtc.RichTextCtrl):
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 
-        self.restyle_thyself()
-
+    # EVENT HANDLERS #######################
     def on_row_col_changed(self, evt):
         pass
         # TODO - "if preferences dictate, send @linelength to self.connection"
@@ -51,53 +48,28 @@ class OutputPane(rtc.RichTextCtrl):
         self.Copy()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
-    def scroll_to_bottom(self):
-        self.ShowPosition(self.GetLastPosition())
-
     def process_url_click(self, evt):
         url = evt.GetString()
         wx.BeginBusyCursor()
         webbrowser.open(url)
         wx.EndBusyCursor()
 
+    def focus_input(self,evt): self.connection.input_pane.SetFocus()
+
+    ######################################
     def WriteText(self, rest):
         super(OutputPane, self).WriteText(rest)
         self.ScrollIfAppropriate()
 
-    def is_at_bottom(): True
+    def scroll_to_bottom(self):
+        self.ShowPosition(self.GetLastPosition())
+
+    def is_at_bottom(self): return True
 
     def ScrollIfAppropriate(self):
-        if (True or self.is_at_bottom() or prefs.get('scroll_on_output')):
+        if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
             self.scroll_to_bottom()
 
-    def restyle_thyself(self):
-        basic_style = rtc.RichTextAttr()
-        basic_style.SetTextColour      (prefs.get('output_fgcolour'))
-        basic_style.SetBackgroundColour(prefs.get('output_bgcolour'))
-
-        self.SetBackgroundColour(prefs.get('output_bgcolour'))
-        self.SetBasicStyle(basic_style)
-        self.basic_style = basic_style
-
-        # is there a way to construct a font directly from an InfoString, instead of making
-        # a generic one and then overriding it like this?
-        font = wx.NullFont
-        font.SetNativeFontInfoFromString(prefs.get('output_font'))
-        self.SetFont(font)
-
-        # set one character's worth of left margin
-        font_width, font_height = self.font_size()
-        self.SetMargins((font_width, -1))
-
-        self.update_size();
-
-    def font_size(self):
-        font = self.GetFont()
-
-        # suss out how big we are in characters, for @linelength et al
-        dc = wx.ScreenDC()
-        dc.SetFont(font)
-        return dc.GetTextExtent('M')
 
     # This updates the widget's internal notion of "how big" it is in characters
     # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
@@ -105,7 +77,7 @@ class OutputPane(rtc.RichTextCtrl):
         font_width, font_height = self.font_size()
         self_width, self_height = self.GetSizeTuple()
 
-        new_cols = math.floor(self_width  / font_width)
+        new_cols = math.floor(self_width  / font_width) - 2  # "-2" to allow for margins
         new_rows = math.floor(self_height / font_height)
 
         if (new_cols != self.cols) or (new_rows != self.rows):
@@ -118,14 +90,15 @@ class OutputPane(rtc.RichTextCtrl):
         self.SetInsertionPointEnd()
         for line in text.split('\n'):
             line = line + "\n"
-            if (prefs.get('use_mcp')):
+            if prefs.get('use_mcp') == 'True':
                 line = self.connection.mcp.output_filter(line)
                 if not line: continue  # output_filter returns falsie if it handled it.
 
+            if (True or prefs.get('render_emoji') == 'True'):
                 # TODO - preference?  "if (we detect an emoji)?"
                 line = emoji.emojize(line, use_aliases = True)
 
-            if (prefs.get('use_ansi')):
+            if prefs.get('use_ansi') == 'True':
                 stuff = self.ansi_parse(line)
                 for bit in stuff:
                     if type(bit) is list:
@@ -133,14 +106,17 @@ class OutputPane(rtc.RichTextCtrl):
                     else:
                         # TODO - this might should be separate from use_ansi.
                         # TODO - snip URLs first then ansi-parse pre and post?
-                        if prefs.get('highlight_urls'):
+                        if prefs.get('highlight_urls') == 'True':
                             matches = re.split(utility.URL_REGEX, bit)
                             for chunk in matches:
                                 if chunk is None: continue
                                 if re.match(utility.URL_REGEX, chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
+                                    tmp_weight = self.weight
+                                    self.weight = 'bright'
                                     self.BeginTextColour( self.lookup_colour('blue', True) )
+                                    self.weight = tmp_weight
 
                                     self.WriteText(chunk)
 
@@ -153,8 +129,6 @@ class OutputPane(rtc.RichTextCtrl):
                             self.WriteText(bit)
             else:
                 self.WriteText(line)
-
-    def focus_input(self,evt): self.connection.input_pane.SetFocus()
 
     def lookup_colour(self, color, *bright):
         return self.theme.Colour(color,
@@ -169,9 +143,11 @@ class OutputPane(rtc.RichTextCtrl):
                 self.inverse = False
             elif payload == 'bold':
                 self.BeginBold()
+                self.end_dim()
                 self.bright = True
             elif payload == 'dim':
-                self.EndBold()    # TODO - dim further than normal
+                self.EndBold()
+                self.start_dim()
                 self.bright = False
             elif payload == 'italic':    self.BeginItalic()
             elif payload == 'underline': self.BeginUnderline()
@@ -189,6 +165,7 @@ class OutputPane(rtc.RichTextCtrl):
                 self.BeginFont(font)
             elif payload == 'normal_weight':
                 self.EndBold()
+                self.end_dim()
                 self.bright = False
             elif payload == "no_italic":    self.EndItalic()
             elif payload == 'no_underline': self.EndUnderline()
@@ -212,6 +189,12 @@ class OutputPane(rtc.RichTextCtrl):
             self.BeginStyle(bg_attr)
         else:
             print("unknown ANSI type:", type)
+
+    def start_dim(self):
+        pass
+
+    def end_dim(self):
+        pass
 
     def invert_colors(self):
         if self.inverse: return
@@ -260,7 +243,7 @@ class OutputPane(rtc.RichTextCtrl):
 
 ansi_codes = {
     0     : [ 'control' , 'normal'        ],
-    1     : [ 'control' , 'bold'          ],
+    1     : [ 'control' , 'bright'        ],
     2     : [ 'control' , 'dim'           ],
     3     : [ 'control' , 'italic'        ],
     4     : [ 'control' , 'underline'     ],
@@ -271,7 +254,7 @@ ansi_codes = {
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
-    # 21 - bold_off or underline_double
+    # 21 - bright_off or underline_double
     22    : [ 'control' , 'normal_weight' ],
     23    : [ 'control' , 'no_italic'     ],
     24    : [ 'control' , 'no_underline'  ],

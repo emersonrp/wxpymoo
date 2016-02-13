@@ -2,16 +2,16 @@ import wx
 import wx.richtext as rtc
 import prefs
 import re
+from window.basepane import BasePane
 from utility import platform
 
-class InputPane(rtc.RichTextCtrl):
+class InputPane(BasePane):
 
     def __init__(self, parent, connection):
-        rtc.RichTextCtrl.__init__(self, parent,
+        BasePane.__init__(self, parent, connection,
             style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE
         )
 
-        self.connection = connection
         self.cmd_history    = CommandHistory(self)
         self.tab_completion = TabCompletion(self)
 
@@ -38,18 +38,6 @@ class InputPane(rtc.RichTextCtrl):
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
-
-    def restyle_thyself(self):
-        basic_style = rtc.RichTextAttr()
-        basic_style.SetTextColour      (prefs.get('input_fgcolour'))
-        basic_style.SetBackgroundColour(prefs.get('input_bgcolour'))
-
-        self.SetBackgroundColour(prefs.get('input_bgcolour'))
-        self.SetBasicStyle(basic_style)
-
-        font = wx.NullFont
-        font.SetNativeFontInfoFromString(prefs.get('input_font'))
-        self.SetFont(font)
 
     ### HANDLERS
     def send_to_connection(self, evt):

@@ -8,10 +8,8 @@ _get         = None
 _config      = None
 _defaultFont = None
 _defaults   = {
-    'output_fgcolour' : '#839496',
-    'output_bgcolour' : '#002b36',
-    'input_fgcolour'  : '#839496',
-    'input_bgcolour'  : '#002b36',
+    'fgcolour' : '#839496',
+    'bgcolour' : '#002b36',
 
     'save_window_size' : True,
     'window_width'     : 800,
@@ -63,13 +61,10 @@ def update(prefs_window):
     set('save_window_size',       prefs_window.general_page.save_size_checkbox.GetValue() )
     set('autoconnect_last_world', prefs_window.general_page.autoconnect_checkbox.GetValue() )
 
-    set('output_font',prefs_window.fonts_page.ofont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-    set('input_font', prefs_window.fonts_page.ifont_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+    set('font',prefs_window.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
 
-    set('output_fgcolour',prefs_window.fonts_page.o_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-    set('output_bgcolour',prefs_window.fonts_page.o_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-    set('input_fgcolour', prefs_window.fonts_page.i_fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-    set('input_bgcolour', prefs_window.fonts_page.i_bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+    set('fgcolour',prefs_window.fonts_page.fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+    set('bgcolour',prefs_window.fonts_page.bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
 
     set('use_ansi', prefs_window.fonts_page.ansi_checkbox.GetValue() )
 

@@ -54,79 +54,50 @@ class PrefsEditor(wx.Dialog):
     def createFontPanel(self):
         fcp = wx.Panel(self.book)
 
-        ofont = wx.NullFont
-        ifont = wx.NullFont
-        ofont.SetNativeFontInfoFromString(prefs.get('output_font'))
-        ifont.SetNativeFontInfoFromString(prefs.get('input_font'))
+        font = wx.NullFont
+        font.SetNativeFontInfoFromString(prefs.get('font'))
 
-
-        o_fgcolour = prefs.get('output_fgcolour')
-        o_bgcolour = prefs.get('output_bgcolour')
-        i_fgcolour = prefs.get('input_fgcolour')
-        i_bgcolour = prefs.get('input_bgcolour')
+        fgcolour = prefs.get('fgcolour')
+        bgcolour = prefs.get('bgcolour')
 
         # output sample/controls
-        fcp.o_sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
-        fcp.ofont_ctrl  = wx.FontPickerCtrl(fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL)
+        fcp.sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
+        fcp.font_ctrl = wx.FontPickerCtrl(fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL)
 
-        bsize = fcp.ofont_ctrl.GetSize().GetHeight()
+        bsize = fcp.font_ctrl.GetSize().GetHeight()
         button_size = [bsize, bsize]
 
-        fcp.o_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_fgcolour, size = button_size)
-        fcp.o_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_bgcolour, size = button_size)
+        fcp.fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = fgcolour, size = button_size)
+        fcp.bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = bgcolour, size = button_size)
 
-        fcp.o_sample.SetFont(ofont)
-        fcp.o_sample.SetBackgroundColour(o_bgcolour)
-        fcp.o_sample.SetForegroundColour(o_fgcolour)
-        fcp.o_sample.SetValue('Haakon says, "This is the output window."')
-
-        # input sample/controls
-        fcp.i_sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
-        fcp.ifont_ctrl  = wx.FontPickerCtrl(fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL)
-        fcp.i_fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = i_fgcolour, size = button_size)
-        fcp.i_bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = o_bgcolour, size = button_size)
-
-        fcp.i_sample.SetFont(ifont)
-        fcp.i_sample.SetBackgroundColour(i_bgcolour)
-        fcp.i_sample.SetForegroundColour(i_fgcolour)
-        fcp.i_sample.SetValue('`Haakon Hello from the input window.')
+        fcp.sample.SetFont(font)
+        fcp.sample.SetBackgroundColour(bgcolour)
+        fcp.sample.SetForegroundColour(fgcolour)
+        fcp.sample.SetValue('Emerson says, "This is what your window will look like."')
 
         fcp.ansi_checkbox = wx.CheckBox(fcp, -1, 'Use ANSI colors')
         fcp.ansi_checkbox.SetValue( True if prefs.get('use_ansi') == "True" else False )
 
-        output_sizer = wx.FlexGridSizer(1, 3, 5, 10)
-        output_sizer.Add(fcp.ofont_ctrl     , 0, wx.EXPAND, 0)
-        output_sizer.Add(fcp.o_fgcolour_ctrl, 0)
-        output_sizer.Add(fcp.o_bgcolour_ctrl, 0)
-        output_sizer.AddGrowableCol(0)
-        #output_sizer.Fit(fcp)
-
-        input_sizer = wx.FlexGridSizer(1, 3, 5, 10)
-        input_sizer.Add(fcp.ifont_ctrl      , 0, wx.EXPAND, 0)
-        input_sizer.Add(fcp.i_fgcolour_ctrl , 0)
-        input_sizer.Add(fcp.i_bgcolour_ctrl , 0)
-        input_sizer.AddGrowableCol(0)
-        #input_sizer.Fit(fcp)
+        fc_sizer = wx.FlexGridSizer(1, 3, 5, 10)
+        fc_sizer.Add(fcp.font_ctrl    , 0, wx.EXPAND, 0)
+        fc_sizer.Add(fcp.fgcolour_ctrl, 0)
+        fc_sizer.Add(fcp.bgcolour_ctrl, 0)
+        fc_sizer.AddGrowableCol(0)
+        #fc_sizer.Fit(fcp)
 
         ansi_sizer = wx.BoxSizer(wx.VERTICAL)
         ansi_sizer.Add(fcp.ansi_checkbox)
         #ansi_sizer.Fit(fcp)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        panel_sizer.Add(fcp.o_sample, 0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
-        panel_sizer.Add(output_sizer, 0, wx.RIGHT|wx.LEFT|wx.EXPAND, 10)
-        panel_sizer.AddSpacer(bsize)
-        panel_sizer.Add(fcp.i_sample, 0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
-        panel_sizer.Add(input_sizer,  0, wx.RIGHT|wx.LEFT|wx.EXPAND, 10)
+        panel_sizer.Add(fcp.sample, 0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
+        panel_sizer.Add(fc_sizer,   0, wx.RIGHT|wx.LEFT|wx.EXPAND,        10)
         panel_sizer.AddSpacer(bsize)
         panel_sizer.Add(ansi_sizer)
 
-        self.Bind(wx.EVT_FONTPICKER_CHANGED  , self.update_sample_text, fcp.ofont_ctrl)
-        self.Bind(wx.EVT_FONTPICKER_CHANGED  , self.update_sample_text, fcp.ifont_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.i_fgcolour_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.i_bgcolour_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.o_fgcolour_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.o_bgcolour_ctrl)
+        self.Bind(wx.EVT_FONTPICKER_CHANGED  , self.update_sample_text, fcp.font_ctrl)
+        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.fgcolour_ctrl)
+        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.bgcolour_ctrl)
 
         fcp.SetSizer(panel_sizer)
 
@@ -154,11 +125,7 @@ class PrefsEditor(wx.Dialog):
 
     def update_sample_text(self, evt):
         fcp = self.fonts_page
-        fcp.i_sample.SetFont            (fcp.ifont_ctrl.GetSelectedFont())
-        fcp.i_sample.SetForegroundColour(fcp.i_fgcolour_ctrl.GetColour())
-        fcp.i_sample.SetBackgroundColour(fcp.i_bgcolour_ctrl.GetColour())
-        fcp.o_sample.SetFont            (fcp.ofont_ctrl.GetSelectedFont())
-        fcp.o_sample.SetForegroundColour(fcp.o_fgcolour_ctrl.GetColour())
-        fcp.o_sample.SetBackgroundColour(fcp.o_bgcolour_ctrl.GetColour())
+        fcp.sample.SetFont            (fcp.font_ctrl.GetSelectedFont())
+        fcp.sample.SetForegroundColour(fcp.fgcolour_ctrl.GetColour())
+        fcp.sample.SetBackgroundColour(fcp.bgcolour_ctrl.GetColour())
         evt.Skip()
-

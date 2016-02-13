@@ -91,6 +91,7 @@ class Connection(wx.SplitterWindow):
         self.output_pane.ScrollIfAppropriate()
 
     def CreateNotice(self, message):
+        return
         notice = TB.ToasterBox(self,
                 tbstyle = TB.TB_COMPLEX, windowstyle = TB.TB_DEFAULT_STYLE,
                 closingstyle = TB.TB_ONCLICK)
