@@ -13,16 +13,20 @@ class BasePane(rtc.RichTextCtrl):
         self.cols = 0
         self.rows = 0
         self.basic_style = None
+        self.fg_colour = ''
+        self.bg_colour = ''
 
         self.Clear()
         self.restyle_thyself()
 
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()
-        basic_style.SetTextColour      (prefs.get('fgcolour'))
-        basic_style.SetBackgroundColour(prefs.get('bgcolour'))
+        self.fg_colour = prefs.get('fgcolour')
+        self.bg_colour = prefs.get('bgcolour')
+        basic_style.SetTextColour      (self.fg_colour)
+        basic_style.SetBackgroundColour(self.bg_colour)
 
-        self.SetBackgroundColour(prefs.get('bgcolour'))
+        self.SetBackgroundColour(self.bg_colour)
         self.SetBasicStyle(basic_style)
         self.basic_style = basic_style
 

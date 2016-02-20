@@ -18,7 +18,7 @@ class OutputPane(BasePane):
         )
 
         # state toggles for ANSI processing
-        self.weight  = None
+        self.intensity = ''
         self.inverse = False
 
         self.theme = Theme()
@@ -113,10 +113,7 @@ class OutputPane(BasePane):
                                 if re.match(utility.URL_REGEX, chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
-                                    tmp_weight = self.weight
-                                    self.weight = 'bright'
-                                    self.BeginTextColour( self.lookup_colour('blue', True) )
-                                    self.weight = tmp_weight
+                                    self.BeginTextColour( self.lookup_colour('blue', '') )
 
                                     self.WriteText(chunk)
 
@@ -130,25 +127,23 @@ class OutputPane(BasePane):
             else:
                 self.WriteText(line)
 
-    def lookup_colour(self, color, *bright):
-        return self.theme.Colour(color,
-                True if (bright or self.bright) else False)
+    def lookup_colour(self, color, intensity = ''):
+        return self.theme.Colour(color, intensity or self.intensity)
 
     def apply_ansi(self, bit):
         type, payload = bit
         if type == 'control':
             if payload == 'normal':
-                self.SetDefaultStyle(self.basic_style)
-                self.bright = False
+                self.EndTextColour()
+                self.intensity = ''
                 self.inverse = False
-            elif payload == 'bold':
-                self.BeginBold()
-                self.end_dim()
-                self.bright = True
+                self.SetDefaultStyle(self.basic_style)
+            elif payload == 'bright':
+                self.intensity = 'bright'
+                self.BeginTextColour(self.lookup_colour(self.fg_colour))
             elif payload == 'dim':
-                self.EndBold()
-                self.start_dim()
-                self.bright = False
+                self.intensity = 'dim'
+                self.BeginTextColour(self.lookup_colour(self.fg_colour))
             elif payload == 'italic':    self.BeginItalic()
             elif payload == 'underline': self.BeginUnderline()
             elif payload == 'blink':
@@ -164,9 +159,8 @@ class OutputPane(BasePane):
                 font.SetStrikethrough(True)
                 self.BeginFont(font)
             elif payload == 'normal_weight':
-                self.EndBold()
-                self.end_dim()
-                self.bright = False
+                self.intensity = ''
+                self.BeginTextColour(self.lookup_colour(self.fg_colour))
             elif payload == "no_italic":    self.EndItalic()
             elif payload == 'no_underline': self.EndUnderline()
             elif payload == 'no_blink':
@@ -190,24 +184,14 @@ class OutputPane(BasePane):
         else:
             print("unknown ANSI type:", type)
 
-    def start_dim(self):
-        pass
-
-    def end_dim(self):
-        pass
-
     def invert_colors(self):
         if self.inverse: return
 
-        current = rtc.RichTextAttr()
-        self.GetStyle(self.GetInsertionPoint(), current)
-        fg = wx.Colour(*current.GetTextColour())
-        bg = wx.Colour(*current.GetBackgroundColour())
-
-        current.SetTextColour      (bg)
-        current.SetBackgroundColour(fg)
-
         self.inverse = True
+
+        current = rtc.RichTextAttr()
+        current.SetTextColour      (self.bg_colour)
+        current.SetBackgroundColour(self.fg_colour)
 
         self.BeginStyle(current);
 
@@ -254,7 +238,6 @@ ansi_codes = {
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
-    # 21 - bright_off or underline_double
     22    : [ 'control' , 'normal_weight' ],
     23    : [ 'control' , 'no_italic'     ],
     24    : [ 'control' , 'no_underline'  ],
