@@ -87,6 +87,7 @@ class OutputPane(BasePane):
             wx.PostEvent(self, rc_evt)
 
     def display(self, text):
+        global ansi_codes
         self.SetInsertionPointEnd()
         for line in text.split('\n'):
             line = line + "\n"
@@ -99,10 +100,83 @@ class OutputPane(BasePane):
                 line = emoji.emojize(line, use_aliases = True)
 
             if prefs.get('use_ansi') == 'True':
-                stuff = self.ansi_parse(line)
-                for bit in stuff:
-                    if type(bit) is list:
-                        self.apply_ansi(bit)
+                # Dear lord this is sorta ugly
+
+                # snip and ring bells
+                # TODO -- "if beep is enabled in the prefs"
+                line, count = re.subn("\007", '', line)
+                for b in range(0, count):
+                    print("DEBUG: found an ANSI beep")
+                    wx.Bell();
+
+                # chop the line into text, ansi, text, ansi....
+                bits = re.split('\x1b\[(\d+(?:;\d+)*)m', line)
+
+                for idx, bit in enumerate(bits):
+                    if bit == '': continue
+
+                    # if it's ansi...
+                    if (idx % 2):
+                        # pick apart the ANSI stuff.
+                        codes = bit.split(';')
+                        type, payload = ansi_codes[codes.pop(0)]
+                        if type == 'control':
+                            if payload == 'normal':
+                                self.EndTextColour()
+                                self.intensity = ''
+                                self.inverse = False
+                                self.SetDefaultStyle(self.basic_style)
+                            elif payload == 'bright':
+                                self.intensity = 'bright'
+                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
+                            elif payload == 'dim':
+                                self.intensity = 'dim'
+                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
+                            elif payload == 'italic':    self.BeginItalic()
+                            elif payload == 'underline': self.BeginUnderline()
+                            elif payload == 'blink':
+                                print('Got an ANSI "blink"')
+                                # TODO - create timer
+                                # apply style name
+                                # periodically switch foreground color to background
+                            elif payload == 'inverse':      self.invert_colors()
+                            elif payload == 'conceal':
+                                print('Got an ANSI "conceal"')
+                            elif payload == 'strike':
+                                font = self.GetFont()
+                                font.SetStrikethrough(True)
+                                self.BeginFont(font)
+                            elif payload == 'normal_weight':
+                                self.intensity = ''
+                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
+                            elif payload == "no_italic":    self.EndItalic()
+                            elif payload == 'no_underline': self.EndUnderline()
+                            elif payload == 'no_blink':
+                                print('Got an ANSI "no_blink"')
+                                # TODO - remove blink-code-handles style
+                            elif payload == "no_conceal":
+                                print('Got an ANSI "no_conceal"')
+                            elif payload == 'no_strike':
+                                font = self.GetFont()
+                                font.SetStrikethrough(False)
+                                self.BeginFont(font)
+
+                        elif type == 'foreground':
+                            if payload == "extended":
+                                print("Got an extended foreground ANSI: " + str(codes))
+                            else:
+                                self.BeginTextColour(self.lookup_colour(payload))
+                        elif type == "background":
+                            if payload == "extended":
+                                print("Got an extended background ANSI: " + str(codes))
+                            else:
+                                bg_attr = rtc.RichTextAttr()
+                                self.GetStyle(self.GetInsertionPoint(), bg_attr)
+                                bg_attr.SetBackgroundColour(self.lookup_colour(payload))
+                                bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
+                                self.BeginStyle(bg_attr)
+                        else:
+                            print("unknown ANSI type:", type)
                     else:
                         # TODO - this might should be separate from use_ansi.
                         # TODO - snip URLs first then ansi-parse pre and post?
@@ -124,65 +198,9 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
-            else:
-                self.WriteText(line)
 
     def lookup_colour(self, color, intensity = ''):
         return self.theme.Colour(color, intensity or self.intensity)
-
-    def apply_ansi(self, bit):
-        type, payload = bit
-        if type == 'control':
-            if payload == 'normal':
-                self.EndTextColour()
-                self.intensity = ''
-                self.inverse = False
-                self.SetDefaultStyle(self.basic_style)
-            elif payload == 'bright':
-                self.intensity = 'bright'
-                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-            elif payload == 'dim':
-                self.intensity = 'dim'
-                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-            elif payload == 'italic':    self.BeginItalic()
-            elif payload == 'underline': self.BeginUnderline()
-            elif payload == 'blink':
-                print('Got an ANSI "blink"')
-                # TODO - create timer
-                # apply style name
-                # periodically switch foreground color to background
-            elif payload == 'inverse':      self.invert_colors()
-            elif payload == 'conceal':
-                print('Got an ANSI "conceal"')
-            elif payload == 'strike':
-                font = self.GetFont()
-                font.SetStrikethrough(True)
-                self.BeginFont(font)
-            elif payload == 'normal_weight':
-                self.intensity = ''
-                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-            elif payload == "no_italic":    self.EndItalic()
-            elif payload == 'no_underline': self.EndUnderline()
-            elif payload == 'no_blink':
-                print('Got an ANSI "no_blink"')
-                # TODO - remove blink-code-handles style
-            elif payload == "no_conceal":
-                print('Got an ANSI "no_conceal"')
-            elif payload == 'no_strike':
-                font = self.GetFont()
-                font.SetStrikethrough(False)
-                self.BeginFont(font)
-
-        elif type == 'foreground':
-            self.BeginTextColour(self.lookup_colour(payload))
-        elif type == "background":
-            bg_attr = rtc.RichTextAttr()
-            self.GetStyle(self.GetInsertionPoint(), bg_attr)
-            bg_attr.SetBackgroundColour(self.lookup_colour(payload))
-            bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
-            self.BeginStyle(bg_attr)
-        else:
-            print("unknown ANSI type:", type)
 
     def invert_colors(self):
         if self.inverse: return
@@ -195,76 +213,46 @@ class OutputPane(BasePane):
 
         self.BeginStyle(current);
 
-    def ansi_parse(self, line):
-        global ansi_codes
-        beep_cleaned, count = re.subn("\007", '', line)
-
-        if count:
-            line = beep_cleaned
-            for b in range(0, count):
-                print("DEBUG: found an ANSI beep")
-                wx.Bell();  # TODO -- "if beep is enabled in the prefs"
-
-        styled_text = []
-
-        bits = re.split('\x1b\[(\d+(?:;\d+)*)m', line)
-
-        if len(bits) > 1:
-            # We'll have a list that alternates text, ansicode, text, ansicode....
-            for idx, bit in enumerate(bits):
-                if bit == '': continue
-                # if it's ansi...
-                if (idx % 2):
-                    # ...split it up and add the style(s) to the styled_text list
-                    for code in bit.split(';'):
-                        styled_text.append(ansi_codes[int(code)])
-                # otherwise it's text, just mash it on there
-                else: styled_text.append(bit)
-        else:
-            styled_text.append(bits[0])
-
-        return styled_text
-
 ansi_codes = {
-    0     : [ 'control' , 'normal'        ],
-    1     : [ 'control' , 'bright'        ],
-    2     : [ 'control' , 'dim'           ],
-    3     : [ 'control' , 'italic'        ],
-    4     : [ 'control' , 'underline'     ],
-    5     : [ 'control' , 'blink'         ],
-    7     : [ 'control' , 'inverse'       ],
-    8     : [ 'control' , 'conceal'       ],
-    9     : [ 'control' , 'strike'        ],
+    '0'     : [ 'control' , 'normal'    ],
+    '1'     : [ 'control' , 'bright'    ],
+    '2'     : [ 'control' , 'dim'       ],
+    '3'     : [ 'control' , 'italic'    ],
+    '4'     : [ 'control' , 'underline' ],
+    '5'     : [ 'control' , 'blink'     ],
+    '7'     : [ 'control' , 'inverse'   ],
+    '8'     : [ 'control' , 'conceal'   ],
+    '9'     : [ 'control' , 'strike'    ],
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
-    22    : [ 'control' , 'normal_weight' ],
-    23    : [ 'control' , 'no_italic'     ],
-    24    : [ 'control' , 'no_underline'  ],
-    25    : [ 'control' , 'no_blink'      ],
-    28    : [ 'control' , 'no_conceal'    ],
-    29    : [ 'control' , 'no_strike'     ],
+    '22'    : [ 'control' , 'normal_weight' ],
+    '23'    : [ 'control' , 'no_italic'     ],
+    '24'    : [ 'control' , 'no_underline'  ],
+    '25'    : [ 'control' , 'no_blink'      ],
+    '28'    : [ 'control' , 'no_conceal'    ],
+    '29'    : [ 'control' , 'no_strike'     ],
 
-    30    : [ 'foreground' , 'black'  ],
-    31    : [ 'foreground' , 'red'    ],
-    32    : [ 'foreground' , 'green'  ],
-    33    : [ 'foreground' , 'yellow' ],
-    34    : [ 'foreground' , 'blue'   ],
-    35    : [ 'foreground' , 'magenta'],
-    36    : [ 'foreground' , 'cyan'   ],
-    37    : [ 'foreground' , 'white'  ],
-    # 38 - extended foreground colors
+    '30'    : [ 'foreground' , 'black'    ],
+    '31'    : [ 'foreground' , 'red'      ],
+    '32'    : [ 'foreground' , 'green'    ],
+    '33'    : [ 'foreground' , 'yellow'   ],
+    '34'    : [ 'foreground' , 'blue'     ],
+    '35'    : [ 'foreground' , 'magenta'  ],
+    '36'    : [ 'foreground' , 'cyan'     ],
+    '37'    : [ 'foreground' , 'white'    ],
+    '38'    : [ 'foreground' , 'extended' ],
     # 39 - default foreground color
 
-    40    : [ 'background' , 'black'  ],
-    41    : [ 'background' , 'red'    ],
-    42    : [ 'background' , 'green'  ],
-    43    : [ 'background' , 'yellow' ],
-    44    : [ 'background' , 'blue'   ],
-    45    : [ 'background' , 'magenta'],
-    46    : [ 'background' , 'cyan'   ],
-    47    : [ 'background' , 'white'  ],
-    # 48 - extended background colors
+    '40'    : [ 'background' , 'black'    ],
+    '41'    : [ 'background' , 'red'      ],
+    '42'    : [ 'background' , 'green'    ],
+    '43'    : [ 'background' , 'yellow'   ],
+    '44'    : [ 'background' , 'blue'     ],
+    '45'    : [ 'background' , 'magenta'  ],
+    '46'    : [ 'background' , 'cyan'     ],
+    '47'    : [ 'background' , 'white'    ],
+    '48'    : [ 'background' , 'extended' ],
     # 49 - default background color
     # 50 - reserved
     # 51 - framed
