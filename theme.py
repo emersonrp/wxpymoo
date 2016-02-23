@@ -22,7 +22,7 @@ class Theme(dict):
         for k in init:
             self[k] = init[k]
 
-    def Colour(self, colour, intensity):
+    def Colour(self, colour, intensity = ''):
         hexcolour = self.get(colour) or colour
         if intensity:
             r, g, b = self.hex_to_rgb(hexcolour)
@@ -41,7 +41,6 @@ class Theme(dict):
                 intensity = 'bright'
             color = self.Colour(color_codes[index], intensity)
         elif index > 15 and index < 232:
-            print("256-color index: " + str(index))
             index_R = ((index - 16) // 36)
             rgb_R = 55 + index_R * 40 if index_R > 0 else 0
             index_G = (((index - 16) % 36) // 6)
@@ -49,7 +48,6 @@ class Theme(dict):
             index_B = ((index - 16) % 6)
             rgb_B = 55 + index_B * 40 if index_B > 0 else 0
         elif index >= 232:
-            print("grayscale index: " + str(index))
             rgb_R = rgb_G = rgb_B = (index - 232) * 10 + 8
         else:
             print("bad 256 index: " + str(index))

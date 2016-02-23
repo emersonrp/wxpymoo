@@ -105,7 +105,7 @@ class Connection(wx.SplitterWindow):
         notice.Play()
 
     def Close(self):
-        if self.input_receiver.connected:
+        if self.input_receiver and self.input_receiver.connected:
             self.output_pane.display("wxpymoo: Connection closed.\n");
         # force it again just to be sure
         #self.keepalive.Stop()

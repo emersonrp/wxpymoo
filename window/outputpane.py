@@ -120,86 +120,78 @@ class OutputPane(BasePane):
                     if (idx % 2):
                         # pick apart the ANSI stuff.
                         codes = bit.split(';')
-                        type, payload = ansi_codes[codes.pop(0)]
-                        if type == 'control':
-                            if payload == 'normal':
-                                self.EndTextColour()
-                                self.intensity = ''
-                                self.inverse = False
-                                self.SetDefaultStyle(self.basic_style)
-                            elif payload == 'bright':
-                                self.intensity = 'bright'
-                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-                            elif payload == 'dim':
-                                self.intensity = 'dim'
-                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-                            elif payload == 'italic':    self.BeginItalic()
-                            elif payload == 'underline': self.BeginUnderline()
-                            elif payload == 'blink':
-                                print('Got an ANSI "blink"')
-                                # TODO - create timer
-                                # apply style name
-                                # periodically switch foreground color to background
-                            elif payload == 'inverse':      self.invert_colors()
-                            elif payload == 'conceal':
-                                print('Got an ANSI "conceal"')
-                            elif payload == 'strike':
-                                font = self.GetFont()
-                                font.SetStrikethrough(True)
-                                self.BeginFont(font)
-                            elif payload == 'normal_weight':
-                                self.intensity = ''
-                                self.BeginTextColour(self.lookup_colour(self.fg_colour))
-                            elif payload == "no_italic":    self.EndItalic()
-                            elif payload == 'no_underline': self.EndUnderline()
-                            elif payload == 'no_blink':
-                                print('Got an ANSI "no_blink"')
-                                # TODO - remove blink-code-handles style
-                            elif payload == "no_conceal":
-                                print('Got an ANSI "no_conceal"')
-                            elif payload == 'no_strike':
-                                font = self.GetFont()
-                                font.SetStrikethrough(False)
-                                self.BeginFont(font)
+                        while codes:
+                            command, payload = ansi_codes[codes.pop(0)]
+                            if command == 'control':
+                                if payload == 'normal':
+                                    self.intensity = ''
+                                    self.inverse = False
+                                    self.EndItalic()
+                                    self.EndUnderline()
+                                    font = self.GetFont()
+                                    font.SetStrikethrough(False)
+                                    self.BeginFont(font)
+                                    self.fg_colour = prefs.get('fgcolour')
+                                    self.bg_colour = prefs.get('bgcolour')
+                                    self.set_current_colours()
+                                elif payload == 'bright':
+                                    self.intensity = 'bright'
+                                    self.set_current_colours()
+                                elif payload == 'dim':
+                                    self.intensity = 'dim'
+                                    self.set_current_colours()
+                                elif payload == 'italic':    self.BeginItalic()
+                                elif payload == 'underline': self.BeginUnderline()
+                                elif payload == 'blink':
+                                    print('Got an ANSI "blink"')
+                                    # TODO - create timer
+                                    # apply style name
+                                    # periodically switch foreground color to background
+                                elif payload == 'inverse':
+                                    self.inverse = True
+                                    self.set_current_colours()
+                                elif payload == 'conceal':
+                                    print('Got an ANSI "conceal"')
+                                elif payload == 'strike':
+                                    font = self.GetFont()
+                                    font.SetStrikethrough(True)
+                                    self.BeginFont(font)
+                                elif payload == 'normal_weight':
+                                    self.intensity = ''
+                                    self.set_current_colours()
+                                elif payload == "no_italic":    self.EndItalic()
+                                elif payload == 'no_underline': self.EndUnderline()
+                                elif payload == 'no_blink':
+                                    print('Got an ANSI "no_blink"')
+                                    # TODO - remove blink-code-handles style
+                                elif payload == "no_conceal":
+                                    print('Got an ANSI "no_conceal"')
+                                elif payload == 'no_strike':
+                                    font = self.GetFont()
+                                    font.SetStrikethrough(False)
+                                    self.BeginFont(font)
 
-                        elif type == 'foreground':
-                            if payload == "extended":
-                                print("extended foreground: " + str(codes))
-                                subtype = codes.pop(0)
-                                if subtype == '2':
-                                    colour = self.theme.rgb_to_hex(codes)
-                                elif subtype == '5':
-                                    colour = self.theme.index256_to_hex(codes[0])
+                            elif command == 'foreground' or command == "background":
+                                if payload == "extended":
+                                    subtype = str(codes.pop(0))
+                                    if subtype == '2':
+                                        colour = self.theme.rgb_to_hex(codes.pop(0), codes.pop(0), codes.pop(0))
+                                    elif subtype == '5':
+                                        colour = self.theme.index256_to_hex(codes.pop(0))
+                                    else:
+                                        print("Got an unknown fg/bg ANSI: " + str(subtype))
                                 else:
-                                    print("Got an unknown fg ANSI: " + str(subtype)+" "+str(codes))
-                            else:
-                                colour = self.lookup_colour(payload)
+                                    colour = payload
 
-                            self.BeginTextColour(colour)
-
-                        elif type == "background":
-                            if payload == "extended":
-                                print("extended background: " + str(codes))
-                                subtype = codes.pop(0)
-                                if subtype == '2':
-                                    colour = self.theme.rgb_to_hex(codes)
-                                elif subtype == '5':
-                                    colour = self.theme.index256_to_hex(codes[0])
+                                if command == "foreground":
+                                    self.fg_colour = colour
                                 else:
-                                    print("Got an unknown bg ANSI: " + str(subtype)+" "+str(codes))
-                            else:
-                                colour = self.lookup_colour(payload)
+                                    self.bg_colour = colour
+                                self.set_current_colours()
 
-                            bg_attr = rtc.RichTextAttr()
-                            self.GetStyle(self.GetInsertionPoint(), bg_attr)
-                            bg_attr.SetBackgroundColour(colour)
-                            bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
-                            self.BeginStyle(bg_attr)
-                        else:
-                            print("unknown ANSI type:", type)
+                            else:
+                                print("unknown ANSI command:", command)
                     else:
-                        # TODO - this might should be separate from use_ansi.
-                        # TODO - snip URLs first then ansi-parse pre and post?
                         if prefs.get('highlight_urls') == 'True':
                             matches = re.split(utility.URL_REGEX, bit)
                             for chunk in matches:
@@ -207,7 +199,11 @@ class OutputPane(BasePane):
                                 if re.match(utility.URL_REGEX, chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
-                                    self.BeginTextColour( self.lookup_colour('blue', '') )
+
+                                    current_intensity = self.intensity
+                                    self.intensity = 'normal'
+                                    self.BeginTextColour( self.lookup_colour('blue') )
+                                    self.intensity = current_intensity
 
                                     self.WriteText(chunk)
 
@@ -219,19 +215,25 @@ class OutputPane(BasePane):
                         else:
                             self.WriteText(bit)
 
-    def lookup_colour(self, color, intensity = ''):
-        return self.theme.Colour(color, intensity or self.intensity)
+    def foreground_colour(self):
+        return self.theme.Colour(self.fg_colour, self.intensity)
 
-    def invert_colors(self):
-        if self.inverse: return
+    def background_colour(self):
+        return self.theme.Colour(self.bg_colour)
 
-        self.inverse = True
+    def lookup_colour(self, color):
+        return self.theme.Colour(color, self.intensity)
 
+    def set_current_colours(self):
         current = rtc.RichTextAttr()
-        current.SetTextColour      (self.bg_colour)
-        current.SetBackgroundColour(self.fg_colour)
+        if self.inverse:
+            current.SetTextColour      (self.background_colour())
+            current.SetBackgroundColour(self.foreground_colour())
+        else:
+            current.SetTextColour      (self.foreground_colour())
+            current.SetBackgroundColour(self.background_colour())
 
-        self.BeginStyle(current);
+        self.BeginStyle(current)
 
 ansi_codes = {
     '0'     : [ 'control' , 'normal'    ],
