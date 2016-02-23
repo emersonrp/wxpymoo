@@ -89,6 +89,7 @@ class OutputPane(BasePane):
     def display(self, text):
         global ansi_codes
         self.SetInsertionPointEnd()
+        text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
         for line in text.split('\n'):
             line = line + "\n"
             if prefs.get('use_mcp') == 'True':
@@ -163,18 +164,37 @@ class OutputPane(BasePane):
 
                         elif type == 'foreground':
                             if payload == "extended":
-                                print("Got an extended foreground ANSI: " + str(codes))
+                                print("extended foreground: " + str(codes))
+                                subtype = codes.pop(0)
+                                if subtype == '2':
+                                    colour = self.theme.rgb_to_hex(codes)
+                                elif subtype == '5':
+                                    colour = self.theme.index256_to_hex(codes[0])
+                                else:
+                                    print("Got an unknown fg ANSI: " + str(subtype)+" "+str(codes))
                             else:
-                                self.BeginTextColour(self.lookup_colour(payload))
+                                colour = self.lookup_colour(payload)
+
+                            self.BeginTextColour(colour)
+
                         elif type == "background":
                             if payload == "extended":
-                                print("Got an extended background ANSI: " + str(codes))
+                                print("extended background: " + str(codes))
+                                subtype = codes.pop(0)
+                                if subtype == '2':
+                                    colour = self.theme.rgb_to_hex(codes)
+                                elif subtype == '5':
+                                    colour = self.theme.index256_to_hex(codes[0])
+                                else:
+                                    print("Got an unknown bg ANSI: " + str(subtype)+" "+str(codes))
                             else:
-                                bg_attr = rtc.RichTextAttr()
-                                self.GetStyle(self.GetInsertionPoint(), bg_attr)
-                                bg_attr.SetBackgroundColour(self.lookup_colour(payload))
-                                bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
-                                self.BeginStyle(bg_attr)
+                                colour = self.lookup_colour(payload)
+
+                            bg_attr = rtc.RichTextAttr()
+                            self.GetStyle(self.GetInsertionPoint(), bg_attr)
+                            bg_attr.SetBackgroundColour(colour)
+                            bg_attr.SetFlags( wx.TEXT_ATTR_BACKGROUND_COLOUR )
+                            self.BeginStyle(bg_attr)
                         else:
                             print("unknown ANSI type:", type)
                     else:

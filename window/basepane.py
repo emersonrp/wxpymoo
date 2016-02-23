@@ -40,9 +40,9 @@ class BasePane(rtc.RichTextCtrl):
         font.SetNativeFontInfoFromString(prefs.get('output_font'))
         self.SetFont(font)
 
-        # set one character's worth of left margin
+        # set one-half character's worth of left / top margin
         font_width, font_height = self.font_size()
-        self.SetMargins((font_width, -1))
+        self.SetMargins((font_width / 2, -1))
 
         self.update_size()
 
