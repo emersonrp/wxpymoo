@@ -214,39 +214,44 @@ class TabCompletion(wx.PopupWindow):
 
         # if we've just hit <tab> again without making any changes...
         if to_complete == self.last_completed:
+            # ...re-show the popup if it's hidden...
             if not self.IsShown():
                 self.Show()
+                # ...and do nothing else...
                 return
-            # ... move the selection 'down' by one...
+            # ...otherwise (wasn't hidden), move the selection 'down' by one...
             self.next_item()
 
             # ...and do nothing else...
             return
 
         #... otherwise, carry on
-        self.last_completed = to_complete
-        # really this is totally.ridiculous.indirection.into.other.modules.innards
         # TODO -- prolly the mcp package should .Initialize and install itself into TabCompletion
         self.parent.connection.mcp.registry.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
 
-    def popup_completions(self, begin_pos, completions):
-        # do we have one or more completions?
-        if completions:
+    def popup_completions(self, begin_pos, to_complete, completions):
 
+        # do we have one or more new completions for the list?
+        if completions:
+            self.last_completed = to_complete
             if len(completions) == 1:
                 # we have just the one completion, we should use it
                 self.parent.do_completion(begin_pos, completions[0])
             else:
                 # there are multiple, clear the listbox, repop it, and show it
-                if self.completion_list: self.completion_list.Destroy()
 
-                self.completion_list = CompletionList(self, completions)
-                self.begin_pos  = begin_pos
+                if not self.completion_list:
+                    self.completion_list = CompletionList(self)
 
-                self.SetSize(self.completion_list.GetSize())
+                self.completion_list.fill(completions)
+                self.begin_pos = begin_pos
 
+                # TODO - asking about the panel is sorta impolite but sigh wx
+                self.SetSize(self.completion_list.panel.GetSize())
+
+                # TODO, use begin_pos to stick the list at the same x as the completion string
                 pos = self.parent.ClientToScreen((5,-5))
-                self.Position(pos, (0, self.GetSize()[1]))
+                self.SetPosition((pos[0], pos[1] - self.GetSize()[1]))
                 self.Show(True)
 
         # pressing tab but no completions
@@ -255,17 +260,26 @@ class TabCompletion(wx.PopupWindow):
             self.Hide()
 
 class CompletionList(wx.ListCtrl):
-    def __init__(self, parent, completions):
-        wx.ListCtrl.__init__(self, parent,
+    def __init__(self, parent):
+        self.panel = wx.Panel(parent)
+
+        wx.ListCtrl.__init__(self, self.panel,
             style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
         )
 
-        self.SetTextColour(prefs.get('input_fgcolour'))
-        self.SetBackgroundColour(prefs.get('input_bgcolour'))
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self, 0, wx.ALL, 1)
+        self.panel.SetSizer(self.sizer)
+
+        self.SetTextColour(prefs.get('fgcolour'))
+        self.SetBackgroundColour(prefs.get('bgcolour'))
 
         font = wx.NullFont
-        font.SetNativeFontInfoFromString(prefs.get('input_font'))
+        font.SetNativeFontInfoFromString(prefs.get('font'))
         self.SetFont(font)
+
+    def fill(self, completions):
+        self.ClearAll()
 
         self.InsertColumn(0, '')
 
@@ -278,6 +292,10 @@ class CompletionList(wx.ListCtrl):
             height += self.GetItemRect(idx).height
 
         self.SetColumnWidth(0,-1)
-        self.SetSize((self.GetColumnWidth(0), height))
+
+        width = self.GetColumnWidth(0)
+
+        self.panel.SetSize((width + 2, height + 2))
+        self.SetSize((width, height))
 
         self.Select(0)

@@ -22,17 +22,17 @@ class MCPPackage(MCPPackageBase):
             'suffix' : suffix,
             'channel' : '0',
         })
-        self.callbacks[request_id] = callback
+        self.callbacks[request_id] = (prefix, callback)
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-vmoo-smartcomplete-result': self.do_result(msg)
 
     def do_result(self, msg):
         request_id = msg.data['id']
-        callback = self.callbacks.pop(request_id, None)
+        to_complete, callback = self.callbacks.pop(request_id, None)
         if callback:
-            options = msg.data.get('options')
-            if options:
-                options = list(set(options))
-                options.sort()
-                callback(msg.data.get('startpos'), options)
+            completions = msg.data.get('options')
+            if completions:
+                completions = list(set(completions))
+                completions.sort()
+                callback(msg.data.get('startpos'), to_complete, completions)
