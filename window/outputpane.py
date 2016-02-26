@@ -87,7 +87,6 @@ class OutputPane(BasePane):
             wx.PostEvent(self, rc_evt)
 
     def display(self, text):
-        global ansi_codes
         self.SetInsertionPointEnd()
         text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
         for line in text.split('\n'):
@@ -111,7 +110,7 @@ class OutputPane(BasePane):
                     wx.Bell();
 
                 # chop the line into text, ansi, text, ansi....
-                bits = re.split('\x1b\[(\d+(?:;\d+)*)m', line)
+                bits = re.split('\033\[(\d+(?:;\d+)*)m', line)
 
                 for idx, bit in enumerate(bits):
                     if bit == '': continue
@@ -119,21 +118,22 @@ class OutputPane(BasePane):
                     # if it's ansi...
                     if (idx % 2):
                         # pick apart the ANSI stuff.
-                        codes = bit.split(';')
+                        codes = [int(c) for c in bit.split(';')]
                         while codes:
                             command, payload = ansi_codes[codes.pop(0)]
                             if command == 'control':
                                 if payload == 'normal':
-                                    self.intensity = ''
-                                    self.inverse = False
-                                    self.EndItalic()
-                                    self.EndUnderline()
-                                    font = self.GetFont()
-                                    font.SetStrikethrough(False)
-                                    self.BeginFont(font)
+                                    # self.intensity = ''
+                                    # self.inverse = False
+                                    # self.EndItalic()
+                                    # self.EndUnderline()
+                                    # font = self.GetFont()
+                                    # font.SetStrikethrough(False)
+                                    # self.BeginFont(font)
                                     self.fg_colour = prefs.get('fgcolour')
                                     self.bg_colour = prefs.get('bgcolour')
                                     self.set_current_colours()
+                                    self.BeginStyle(self.basic_style)
                                 elif payload == 'bright':
                                     self.intensity = 'bright'
                                     self.set_current_colours()
@@ -173,10 +173,10 @@ class OutputPane(BasePane):
 
                             elif command == 'foreground' or command == "background":
                                 if payload == "extended":
-                                    subtype = str(codes.pop(0))
-                                    if subtype == '2':
-                                        colour = self.theme.rgb_to_hex(codes.pop(0), codes.pop(0), codes.pop(0))
-                                    elif subtype == '5':
+                                    subtype = codes.pop(0)
+                                    if subtype == 2:
+                                        colour = self.theme.rgb_to_hex((codes.pop(0), codes.pop(0), codes.pop(0)))
+                                    elif subtype == 5:
                                         colour = self.theme.index256_to_hex(codes.pop(0))
                                     else:
                                         print("Got an unknown fg/bg ANSI: " + str(subtype))
@@ -235,46 +235,94 @@ class OutputPane(BasePane):
 
         self.BeginStyle(current)
 
+    def ansi_test(self):
+        self.display("--- ANSI TEST ---")
+        self.display("System Colors:")
+
+        fg_cube = bg_cube = ''
+
+        for c in range(0,7):
+            fg_cube += "\033[3" + str(c) + "m*\033[0m"
+            bg_cube += "\033[4" + str(c) + "m \033[0m"
+        self.display(fg_cube + "    " + bg_cube)
+        fg_cube = bg_cube = ''
+
+        self.display("")
+        self.display("Color cube, 6x6x6")
+        for g in range(0,6):
+            for b in range(0,6):
+                for r in range(0,6):
+                    c = ((r * 36) + (g * 6) + b) + 16
+                    fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
+                    bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
+            self.display(fg_cube + "    " + bg_cube)
+            fg_cube = bg_cube = ''
+
+        self.display("")
+        self.display("Greyscale ramp:")
+        for c in range(232,255):
+            fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
+            bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
+        self.display(fg_cube + "    " + bg_cube)
+        fg_cube = bg_cube = ''
+
+        self.display("")
+        self.display("Some random 24-bit color samples:")
+        from random import randint
+        line = ""
+        for i in range(0,6):
+            for j in range(0,6):
+                r = randint(0,255)
+                g = randint(0,255)
+                b = randint(0,255)
+                fg_bg = 48 if (j % 2) else 38
+
+                line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
+            self.display(line)
+            line = ""
+
+
+
 ansi_codes = {
-    '0'     : [ 'control' , 'normal'    ],
-    '1'     : [ 'control' , 'bright'    ],
-    '2'     : [ 'control' , 'dim'       ],
-    '3'     : [ 'control' , 'italic'    ],
-    '4'     : [ 'control' , 'underline' ],
-    '5'     : [ 'control' , 'blink'     ],
-    '7'     : [ 'control' , 'inverse'   ],
-    '8'     : [ 'control' , 'conceal'   ],
-    '9'     : [ 'control' , 'strike'    ],
+    0     : [ 'control' , 'normal'    ],
+    1     : [ 'control' , 'bright'    ],
+    2     : [ 'control' , 'dim'       ],
+    3     : [ 'control' , 'italic'    ],
+    4     : [ 'control' , 'underline' ],
+    5     : [ 'control' , 'blink'     ],
+    7     : [ 'control' , 'inverse'   ],
+    8     : [ 'control' , 'conceal'   ],
+    9     : [ 'control' , 'strike'    ],
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
-    '22'    : [ 'control' , 'normal_weight' ],
-    '23'    : [ 'control' , 'no_italic'     ],
-    '24'    : [ 'control' , 'no_underline'  ],
-    '25'    : [ 'control' , 'no_blink'      ],
-    '28'    : [ 'control' , 'no_conceal'    ],
-    '29'    : [ 'control' , 'no_strike'     ],
+    22    : [ 'control' , 'normal_weight' ],
+    23    : [ 'control' , 'no_italic'     ],
+    24    : [ 'control' , 'no_underline'  ],
+    25    : [ 'control' , 'no_blink'      ],
+    28    : [ 'control' , 'no_conceal'    ],
+    29    : [ 'control' , 'no_strike'     ],
 
-    '30'    : [ 'foreground' , 'black'    ],
-    '31'    : [ 'foreground' , 'red'      ],
-    '32'    : [ 'foreground' , 'green'    ],
-    '33'    : [ 'foreground' , 'yellow'   ],
-    '34'    : [ 'foreground' , 'blue'     ],
-    '35'    : [ 'foreground' , 'magenta'  ],
-    '36'    : [ 'foreground' , 'cyan'     ],
-    '37'    : [ 'foreground' , 'white'    ],
-    '38'    : [ 'foreground' , 'extended' ],
+    30    : [ 'foreground' , 'black'    ],
+    31    : [ 'foreground' , 'red'      ],
+    32    : [ 'foreground' , 'green'    ],
+    33    : [ 'foreground' , 'yellow'   ],
+    34    : [ 'foreground' , 'blue'     ],
+    35    : [ 'foreground' , 'magenta'  ],
+    36    : [ 'foreground' , 'cyan'     ],
+    37    : [ 'foreground' , 'white'    ],
+    38    : [ 'foreground' , 'extended' ],
     # 39 - default foreground color
 
-    '40'    : [ 'background' , 'black'    ],
-    '41'    : [ 'background' , 'red'      ],
-    '42'    : [ 'background' , 'green'    ],
-    '43'    : [ 'background' , 'yellow'   ],
-    '44'    : [ 'background' , 'blue'     ],
-    '45'    : [ 'background' , 'magenta'  ],
-    '46'    : [ 'background' , 'cyan'     ],
-    '47'    : [ 'background' , 'white'    ],
-    '48'    : [ 'background' , 'extended' ],
+    40    : [ 'background' , 'black'    ],
+    41    : [ 'background' , 'red'      ],
+    42    : [ 'background' , 'green'    ],
+    43    : [ 'background' , 'yellow'   ],
+    44    : [ 'background' , 'blue'     ],
+    45    : [ 'background' , 'magenta'  ],
+    46    : [ 'background' , 'cyan'     ],
+    47    : [ 'background' , 'white'    ],
+    48    : [ 'background' , 'extended' ],
     # 49 - default background color
     # 50 - reserved
     # 51 - framed

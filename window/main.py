@@ -67,6 +67,7 @@ class Main(wx.Frame):
 
         WindowMenu = wx.Menu()
         Window_debugmcp = WindowMenu.Append(-1, "&Debug MCP", "")
+        Window_ansi_test = WindowMenu.Append(-1, "&ANSI Color Test", "")
 
         HelpMenu = wx.Menu()
         Help_help  = HelpMenu.Append(wx.ID_HELP)
@@ -95,6 +96,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.showPrefsEditor, Prefs_prefs )
 
         self.Bind(wx.EVT_MENU, self.toggleDebugMCP, Window_debugmcp )
+        self.Bind(wx.EVT_MENU, self.ansi_test,      Window_ansi_test )
 
         self.Bind(wx.EVT_MENU, self.showHelp,     Help_help  )
         self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
@@ -128,6 +130,9 @@ class Main(wx.Frame):
 
     def handlePaste(self, evt):
         self.input_pane.Paste
+
+    def ansi_test(self, evt):
+        self.currentConnection().output_pane.ansi_test()
 
 ### DIALOGS AND SUBWINDOWS
 

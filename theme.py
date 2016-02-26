@@ -34,12 +34,12 @@ class Theme(dict):
 
     # this is from Adaephon http://stackoverflow.com/a/27165165
     def index256_to_hex(self, index):
-        index = int(index)
         if index <= 15:
             intensity = ''
             if index > 7: # bright
                 intensity = 'bright'
             color = self.Colour(color_codes[index], intensity)
+            rgb_R, rgb_G, rgb_B = self.hex_to_rgb(color)
         elif index > 15 and index < 232:
             index_R = ((index - 16) // 36)
             rgb_R = 55 + index_R * 40 if index_R > 0 else 0
