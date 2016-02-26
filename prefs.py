@@ -4,12 +4,11 @@ import utility
 
 PrefsChangedEvent, EVT_PREFS_CHANGED = wx.lib.newevent.NewEvent()
 
-_get         = None
 _config      = None
-_defaultFont = None
 _defaults   = {
     'fgcolour' : '#839496',
     'bgcolour' : '#002b36',
+    'font'     :  wx.Font( 12, wx.TELETYPE, wx.NORMAL, wx.NORMAL ).GetNativeFontInfoDesc(),
 
     'save_window_size' : True,
     'window_width'     : 800,
@@ -34,13 +33,10 @@ _defaults   = {
 }
 
 def Initialize():
-    global _config, _defaultFont, get
+    global _config
 
-    _config                  = wx.FileConfig()
-    _get                     = _config.Read
-    _defaultFont             = wx.Font( 12, wx.TELETYPE, wx.NORMAL, wx.NORMAL )
-    _defaults['input_font']  = _defaultFont.GetNativeFontInfoDesc()
-    _defaults['output_font'] = _defaultFont.GetNativeFontInfoDesc()
+    _config = wx.FileConfig()
+
     for default in _defaults.items():
         (key, def_val) = default
         # if nothing exists for that key, set it to the default.
@@ -54,22 +50,20 @@ def set(param, val):
     _config.Write(param, str(val))
     _config.Flush()
 
-def update(prefs_window):
+def update(pw):
+    # pw == prefs_window
     # This is doing some nasty GetAsString and GetNativeFontInfoDesc foo here,
     # instead of encapsulated in prefs, which I think I'm OK with.
 
-    set('save_window_size',       prefs_window.general_page.save_size_checkbox.GetValue() )
-    set('autoconnect_last_world', prefs_window.general_page.autoconnect_checkbox.GetValue() )
+    set('save_window_size',       pw.general_page.save_size_checkbox.GetValue() )
+    set('autoconnect_last_world', pw.general_page.autoconnect_checkbox.GetValue() )
 
-    set('font',prefs_window.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+    set('font',     pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+    set('fgcolour', pw.fonts_page.fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+    set('bgcolour', pw.fonts_page.bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+    set('use_ansi', pw.fonts_page.ansi_checkbox.GetValue() )
 
-    set('fgcolour',prefs_window.fonts_page.fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-    set('bgcolour',prefs_window.fonts_page.bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
+    set('external_editor', pw.paths_page.external_editor.GetValue() )
 
-    set('use_ansi', prefs_window.fonts_page.ansi_checkbox.GetValue() )
-
-    set('external_editor', prefs_window.paths_page.external_editor.GetValue() )
-
-    prefs_evt = PrefsChangedEvent()
-    wx.PostEvent(prefs_window.parent, prefs_evt)
+    wx.PostEvent(pw.parent, PrefsChangedEvent())
 
