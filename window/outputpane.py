@@ -70,6 +70,11 @@ class OutputPane(BasePane):
         if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
             self.scroll_to_bottom()
 
+    def Thaw(self):
+        super(OutputPane, self).Thaw()
+        self.Refresh()
+        self.ScrollIfAppropriate()
+
 
     # This updates the widget's internal notion of "how big" it is in characters
     # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
@@ -89,7 +94,7 @@ class OutputPane(BasePane):
     def display(self, text):
         self.SetInsertionPointEnd()
         text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
-        self.Freeze()
+        # self.Freeze() # causing delay on last line - TODO: investigate
         for line in text.split('\n'):
             line = line + "\n"
             if prefs.get('use_mcp') == 'True':
@@ -215,8 +220,7 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
-        self.Thaw()
-        self.Refresh()
+        # self.Thaw() # causing delay on last line - TODO investigate.
 
     def foreground_colour(self):
         return self.theme.Colour(self.fg_colour, self.intensity)
@@ -289,7 +293,6 @@ class OutputPane(BasePane):
         self.display("--- ANSI TEST END ---")
         self.display("")
         self.Thaw()
-
 
 
 ansi_codes = {
