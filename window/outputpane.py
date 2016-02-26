@@ -216,6 +216,7 @@ class OutputPane(BasePane):
                         else:
                             self.WriteText(bit)
         self.Thaw()
+        self.Refresh()
 
     def foreground_colour(self):
         return self.theme.Colour(self.fg_colour, self.intensity)
@@ -238,6 +239,7 @@ class OutputPane(BasePane):
         self.BeginStyle(current)
 
     def ansi_test(self):
+        self.Freeze()
         self.display("")
         self.display("--- ANSI TEST BEGIN ---")
         self.display("System Colors:")
@@ -286,6 +288,7 @@ class OutputPane(BasePane):
         self.display("")
         self.display("--- ANSI TEST END ---")
         self.display("")
+        self.Thaw()
 
 
 
