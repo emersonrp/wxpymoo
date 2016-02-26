@@ -122,14 +122,15 @@ class Main(wx.Frame):
         self.Layout()
 
     def handleCopy(self, evt):
-        if   (self.output_pane.HasSelection()): self.output_pane.Copy()
-        elif (self.input_pane .HasSelection()): self.input_pane .Copy()
+        c = self.currentConnection()
+        if   (c.output_pane.HasSelection()): c.output_pane.Copy()
+        elif (c.input_pane .HasSelection()): c.input_pane .Copy()
 
     def handleCut(self, evt):
-        self.input_pane.Cut
+        self.currentConnection().input_pane.Cut()
 
     def handlePaste(self, evt):
-        self.input_pane.Paste
+        self.currentConnection().input_pane.Paste()
 
     def ansi_test(self, evt):
         self.currentConnection().output_pane.ansi_test()
