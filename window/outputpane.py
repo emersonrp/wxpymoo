@@ -89,6 +89,7 @@ class OutputPane(BasePane):
     def display(self, text):
         self.SetInsertionPointEnd()
         text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
+        self.Freeze()
         for line in text.split('\n'):
             line = line + "\n"
             if prefs.get('use_mcp') == 'True':
@@ -123,13 +124,13 @@ class OutputPane(BasePane):
                             command, payload = ansi_codes[codes.pop(0)]
                             if command == 'control':
                                 if payload == 'normal':
-                                    # self.intensity = ''
-                                    # self.inverse = False
-                                    # self.EndItalic()
-                                    # self.EndUnderline()
-                                    # font = self.GetFont()
-                                    # font.SetStrikethrough(False)
-                                    # self.BeginFont(font)
+                                    self.intensity = ''
+                                    self.inverse = False
+                                    if self.IsSelectionItalics():    self.EndItalic()
+                                    if self.IsSelectionUnderlined(): self.EndUnderline()
+                                    font = self.GetFont()
+                                    font.SetStrikethrough(False)
+                                    self.BeginFont(font)
                                     self.fg_colour = prefs.get('fgcolour')
                                     self.bg_colour = prefs.get('bgcolour')
                                     self.set_current_colours()
@@ -214,6 +215,7 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
+        self.Thaw()
 
     def foreground_colour(self):
         return self.theme.Colour(self.fg_colour, self.intensity)
@@ -236,7 +238,8 @@ class OutputPane(BasePane):
         self.BeginStyle(current)
 
     def ansi_test(self):
-        self.display("--- ANSI TEST ---")
+        self.display("")
+        self.display("--- ANSI TEST BEGIN ---")
         self.display("System Colors:")
 
         fg_cube = bg_cube = ''
@@ -280,6 +283,9 @@ class OutputPane(BasePane):
                 line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
             self.display(line)
             line = ""
+        self.display("")
+        self.display("--- ANSI TEST END ---")
+        self.display("")
 
 
 
