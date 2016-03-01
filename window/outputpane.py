@@ -37,48 +37,11 @@ class OutputPane(BasePane):
         pass
         # TODO - "if preferences dictate, send @linelength to self.connection"
 
-    def on_size(self, evt):
-        self.scroll_to_bottom()
-        self.update_size()
-        evt.Skip()
-
-    def copy_from_selection(self, evt = None):
-        uxcp = prefs.get('use_x_copy_paste') == 'True'
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
-        self.Copy()
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
-
-    def process_url_click(self, evt):
-        url = evt.GetString()
-        wx.BeginBusyCursor()
-        webbrowser.open(url)
-        wx.EndBusyCursor()
-
-    def focus_input(self,evt): self.connection.input_pane.SetFocus()
-
-    ######################################
-    def WriteText(self, rest):
-        super(OutputPane, self).WriteText(rest)
-        self.ScrollIfAppropriate()
-
-    def scroll_to_bottom(self):
-        self.ShowPosition(self.GetLastPosition())
-
-    def is_at_bottom(self): return True
-
-    def ScrollIfAppropriate(self):
-        if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
-            self.scroll_to_bottom()
-
-    def Thaw(self):
-        super(OutputPane, self).Thaw()
-        self.Refresh()
-        self.ScrollIfAppropriate()
-
-
     # This updates the widget's internal notion of "how big" it is in characters
     # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
-    def update_size(self, evt = None):
+    def on_size(self, evt):
+        self.ScrollIfAppropriate()
+
         font_width, font_height = self.font_size()
         self_width, self_height = self.GetSizeTuple()
 
@@ -90,6 +53,40 @@ class OutputPane(BasePane):
             self.rows = new_rows
             rc_evt = RowColChangeEvent()
             wx.PostEvent(self, rc_evt)
+
+        evt.Skip()
+
+    def copy_from_selection(self, evt):
+        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+        self.Copy()
+        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
+
+    def process_url_click(self, evt):
+        url = evt.GetString()
+        wx.BeginBusyCursor()
+        webbrowser.open(url)
+        wx.EndBusyCursor()
+
+    def focus_input(self, evt):
+        self.connection.input_pane.SetFocus()
+
+    ######################################
+    def WriteText(self, rest):
+        super(OutputPane, self).WriteText(rest)
+        self.ScrollIfAppropriate()
+
+    def is_at_bottom(self):
+        return True
+
+    def ScrollIfAppropriate(self):
+        if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
+            self.ShowPosition(self.GetLastPosition())
+        self.Refresh()
+
+    def Thaw(self):
+        super(OutputPane, self).Thaw()
+        self.ScrollIfAppropriate()
 
     def display(self, text):
         self.SetInsertionPointEnd()
@@ -180,12 +177,14 @@ class OutputPane(BasePane):
                             elif command == 'foreground' or command == "background":
                                 if payload == "extended":
                                     subtype = codes.pop(0)
+                                    # 24-bit color
                                     if subtype == 2:
                                         colour = self.theme.rgb_to_hex((codes.pop(0), codes.pop(0), codes.pop(0)))
+                                    # 256-color
                                     elif subtype == 5:
                                         colour = self.theme.index256_to_hex(codes.pop(0))
                                     else:
-                                        print("Got an unknown fg/bg ANSI: " + str(subtype))
+                                        print("Got an unknown fg/bg ANSI subtype: " + str(subtype))
                                 else:
                                     colour = payload
 
@@ -194,10 +193,10 @@ class OutputPane(BasePane):
                                 else:
                                     self.bg_colour = colour
                                 self.set_current_colours()
-
                             else:
                                 print("unknown ANSI command:", command)
                     else:
+                        # is a text-only chunk, check for URLs
                         if prefs.get('highlight_urls') == 'True':
                             matches = re.split(utility.URL_REGEX, bit)
                             for chunk in matches:
