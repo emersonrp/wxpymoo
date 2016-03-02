@@ -126,17 +126,12 @@ class OutputPane(BasePane):
                             command, payload = ansi_codes[codes.pop(0)]
                             if command == 'control':
                                 if payload == 'normal':
+                                    self.EndAllStyles()
                                     self.intensity = ''
                                     self.inverse = False
-                                    if self.IsSelectionItalics():    self.EndItalic()
-                                    if self.IsSelectionUnderlined(): self.EndUnderline()
-                                    font = self.GetFont()
-                                    font.SetStrikethrough(False)
-                                    self.BeginFont(font)
                                     self.fg_colour = prefs.get('fgcolour')
                                     self.bg_colour = prefs.get('bgcolour')
                                     self.set_current_colours()
-                                    self.BeginStyle(self.basic_style)
                                 elif payload == 'bright':
                                     self.intensity = 'bright'
                                     self.set_current_colours()
@@ -173,6 +168,18 @@ class OutputPane(BasePane):
                                     font = self.GetFont()
                                     font.SetStrikethrough(False)
                                     self.BeginFont(font)
+
+                                elif payload == 'framed':
+                                    print('Got an ANSI "framed"')
+                                elif payload == 'encircled':
+                                    print('Got an ANSI "encircled"')
+                                elif payload == 'overline':
+                                    print('Got an ANSI "overline"')
+
+                                elif payload == 'no_framed_encircled':
+                                    print('Got an ANSI "no_framed_encircled"')
+                                elif payload == 'no_overline':
+                                    print('Got an ANSI "no_overline"')
 
                             elif command == 'foreground' or command == "background":
                                 if payload == "extended":
@@ -336,10 +343,10 @@ ansi_codes = {
     48    : [ 'background' , 'extended' ],
     # 49 - default background color
     # 50 - reserved
-    # 51 - framed
-    # 52 - encircled
-    # 53 - overlined
-    # 54 - no_framed + no_encircled
-    # 55 - no_overined
+    51    : [ 'control' , 'framed' ],
+    52    : [ 'control' , 'encircled' ],
+    53    : [ 'control' , 'overline' ],
+    54    : [ 'control' , 'no_framed_encircled' ],
+    55    : [ 'control' , 'no_overline' ],
 }
 
