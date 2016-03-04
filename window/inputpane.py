@@ -244,9 +244,16 @@ class TabCompletion(wx.PopupWindow):
                 # TODO - asking about the panel is sorta impolite but sigh wx
                 self.SetSize(self.completion_list.panel.GetSize())
 
-                # TODO, use begin_pos to stick the list at the same x as the completion string
-                pos = self.parent.ClientToScreen((5,-5))
-                self.SetPosition((pos[0], pos[1] - self.GetSize()[1]))
+                # find the x and y location to pop up the menu
+                x_pos, y_pos = self.parent.ClientToScreen((-2,-5))
+
+                # temporarily move the cursor back to begin_pos so we can 
+                # find out its relative location.
+                self.parent.SetInsertionPoint(long(begin_pos))
+                x_pos += self.parent.GetCaret().GetPosition()[0]
+                self.parent.SetInsertionPointEnd()
+
+                self.SetPosition((x_pos, y_pos - self.GetSize()[1]))
                 self.Show(True)
 
         # pressing tab but no completions
