@@ -89,30 +89,22 @@ class InputPane(BasePane):
 #            self.SetInsertionPoint(0)
 
         elif k == ord('W') and evt.CmdDown():  # Ctrl-W
-            self.change_last_word_to('')
+            self.delete_last_word()
         else:
             self.tab_completion.Hide()
             evt.Skip()
             return
         self.SetInsertionPointEnd()
 
-    def change_last_word_to(self, word):
-        last_word = self.last_word()
-        if word == '':
-            # we're deleting the terminal word, also get the whitespace before it
-            last_word = "\s*" + last_word
-
-        self.SetValue( re.sub(last_word + "$", word, self.GetValue()) )
-
-    def last_word(self):
+    def delete_last_word(self):
         current_value = self.GetValue()
         if not current_value: return
-        if current_value.endswith(' '):
-            last_word = ''
-        else:
-            last_word = current_value.split()[-1] # rightmost word/fragment
 
-        return last_word
+        new_value = current_value.rsplit(None, 1)[0]
+
+        if new_value == current_value: new_value = ''
+
+        self.SetValue( new_value )
 
     def fetch_completions(self):
         self.tab_completion.complete(self.GetValue())
