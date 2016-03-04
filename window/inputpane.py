@@ -72,7 +72,7 @@ class InputPane(BasePane):
         elif k == wx.WXK_TAB:      self.fetch_completions()
         elif k == wx.WXK_ESCAPE:   self.tab_completion.Hide()
         elif k == wx.WXK_INSERT:
-            if evt.ShiftDown: self.paste_from_selection()
+            if evt.ShiftDown(): self.paste_from_selection()
 
         elif k == wx.WXK_RETURN or k == wx.WXK_NUMPAD_ENTER:
             if self.tab_completion.IsShown():
@@ -88,8 +88,7 @@ class InputPane(BasePane):
 #            print("HOME!")
 #            self.SetInsertionPoint(0)
 
-        elif k == 23:  # Ctrl-W
-            # TODO - can't test this b/c Ctrl-W is currently auto-bound to Close
+        elif k == ord('W') and evt.CmdDown():  # Ctrl-W
             self.change_last_word_to('')
         else:
             self.tab_completion.Hide()
@@ -98,8 +97,12 @@ class InputPane(BasePane):
         self.SetInsertionPointEnd()
 
     def change_last_word_to(self, word):
-        new_value = re.sub(self.last_word() + "$", word, self.GetValue());
-        self.SetValue(new_value)
+        last_word = self.last_word()
+        if word == '':
+            # we're deleting the terminal word, also get the whitespace before it
+            last_word = "\s*" + last_word
+
+        self.SetValue( re.sub(last_word + "$", word, self.GetValue()) )
 
     def last_word(self):
         current_value = self.GetValue()

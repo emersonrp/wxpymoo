@@ -17,8 +17,6 @@ class Main(wx.Frame):
 
         self.buildMenu()
 
-        self.addEvents()
-
         self.about_info     = None
         self.connect_dialog = None
         self.prefs_editor   = None
@@ -37,6 +35,8 @@ class Main(wx.Frame):
         self.sizer.Add(self.tabs, True, wx.ALL|wx.GROW)
         self.SetSizer(self.sizer)
 
+        self.addEvents()
+
         if prefs.get('autoconnect_last_world') == 'True':
             world = worlds.get(prefs.get('last_world'))
             if world:
@@ -52,9 +52,9 @@ class Main(wx.Frame):
         WorldsMenu = wx.Menu()
         Worlds_worlds  = WorldsMenu.Append(-1, "&Worlds...",  "Browse list of worlds")
         Worlds_connect = WorldsMenu.Append(-1, "&Connect...", "Connect to a host and port")
-        Worlds_close   = WorldsMenu.Append(wx.ID_CLOSE)
+        Worlds_close   = WorldsMenu.Append(-1, "C&lose", "Close the connection to the current world")
         WorldsMenu.AppendSeparator()
-        Worlds_reconnect = WorldsMenu.Append(-1, "&Reconnect", "Close and re-open the current connection")
+        Worlds_reconnect = WorldsMenu.Append(-1, "&Reconnect", "Close and re-open the connection to the current world")
         Worlds_quit      = WorldsMenu.Append(wx.ID_EXIT)
 
         EditMenu = wx.Menu()
@@ -105,14 +105,16 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.onSize)
 
     def closeConnection(self, evt):
-        self.currentConnection().Close()
-        self.tabs.DeletePage(self.tabs.GetSelection())
+        if self.currentConnection():
+            self.currentConnection().Close()
+            self.tabs.DeletePage(self.tabs.GetSelection())
 
     def reconnectConnection(self, evt):
         self.currentConnection().reconnect()
 
     def currentConnection(self):
-        return self.tabs.GetPage(self.tabs.GetSelection())
+        if (self.tabs.GetSelection() != wx.NOT_FOUND):
+            return self.tabs.GetPage(self.tabs.GetSelection())
 
     def onSize(self, evt):
         if prefs.get('save_window_size'):
@@ -120,6 +122,7 @@ class Main(wx.Frame):
             prefs.set('window_width',  str(size.GetWidth()))
             prefs.set('window_height', str(size.GetHeight()))
         self.Layout()
+        evt.Skip()
 
     def handleCopy(self, evt):
         c = self.currentConnection()
@@ -164,7 +167,7 @@ class Main(wx.Frame):
             info = wx.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetCopyright('(c) 2013-2016')
-            info.SetWebSite('http://github.com/emersonrp/wxpymoo')
+            info.SetWebSite('http://emersonrp.github.io/wxpymoo/')
             info.SetName('wxpymoo')
             info.SetVersion('0.1')
             self.about_info = info

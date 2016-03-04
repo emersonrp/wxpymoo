@@ -6,11 +6,7 @@ class ConnectDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, name = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
 
         self.parent = parent
-        self.host = ''
-        self.port = ''
 
-        host_label = wx.StaticText(self, label = "Host:")
-        port_label = wx.StaticText(self, label = "Port:")
         self.host = wx.TextCtrl(self)
         self.port = wx.SpinCtrl(self)
         self.port.SetRange(1, 65535)
@@ -20,9 +16,9 @@ class ConnectDialog(wx.Dialog):
 
         input_sizer = wx.FlexGridSizer(2, 2, 0, 0)
         input_sizer.AddGrowableCol( True )
-        input_sizer.Add(host_label, 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
+        input_sizer.Add(wx.StaticText(self, label = "Host:"), 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
         input_sizer.Add(self.host,  0, wx.EXPAND | wx.ALL, 5)
-        input_sizer.Add(port_label, 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
+        input_sizer.Add(wx.StaticText(self, label = "Port:"), 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
         input_sizer.Add(self.port,  0, wx.EXPAND | wx.ALL, 5)
 
         button_sizer = self.CreateButtonSizer( wx.OK | wx.CANCEL )
@@ -45,22 +41,20 @@ class ConnectDialog(wx.Dialog):
         enable_button = False
 
         # host needs to have something at all in it.
-        # TODO -- check for "looks like hostname or ip"?  Maybe not.
         if test_host:
             self.host.SetBackgroundColour(wx.WHITE)
             enable_button = True
         else:
             self.host.SetBackgroundColour(wx.YELLOW)
-
         # deactivate the button if we're not aok with the values
         self.FindWindowById(wx.ID_OK).Enable(enable_button)
-
 
     def connect_please(self, evt):
         host = self.host.GetValue()
         port = self.port.GetValue()
 
         if host and port:
+            # TODO - make a notion of 'save the current world to worlds file'
             new_world = World({
                 'host' : host,
                 'port' : port,
