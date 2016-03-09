@@ -30,4 +30,4 @@ class MCPPackage(MCPPackageBase):
         self.hashes.append(msg.data['list'].split(' '))
 
     def do_remove(self, msg):
-        self.hashes.remove(msg.data['list'].split(' '))
+        self.hashes[:] = [x for x in self.hashes if x not in msg.data['list'].split()]
