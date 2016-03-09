@@ -9,7 +9,7 @@ class MCPPackage(MCPPackageBase):
         self.min     = '1.0'
         self.max     = '1.0'
 
-        mcp.registry.register(self, ['dns-com-awns-status'])
+        mcp.register(self, ['dns-com-awns-status'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-awns-status': self.do_status(msg)

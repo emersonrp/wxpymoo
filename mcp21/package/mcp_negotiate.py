@@ -10,10 +10,10 @@ class MCPPackage(MCPPackageBase):
         self.max       = '2.0'
         self.activated = '2.0'
 
-        mcp.registry.register(self, ['mcp-negotiate-can','mcp-negotiate-end'])
+        mcp.register(self, ['mcp-negotiate-can','mcp-negotiate-end'])
 
     def Initialize(self):
-        for p in self.mcp.registry.packages.values():
+        for p in self.mcp.packages.values():
 
             if p.package == 'mcp': continue
             self.mcp.server_notify("mcp-negotiate-can", {
@@ -31,15 +31,19 @@ class MCPPackage(MCPPackageBase):
         min = msg.data['min-version']
         max = msg.data['max-version']
         pkg = msg.data['package']
-        ver = self.mcp.registry.get_best_version(pkg, min, max)
+        ver = self.mcp.get_best_version(pkg, min, max)
         if ver:
             self.mcp.debug("activating " + pkg)
-            self.mcp.registry.packages[pkg].activated = ver
+            self.mcp.packages[pkg].activated = ver
 
     def do_mcp_negotiate_end(self):
-        for pkg_name in self.mcp.registry.packages:
-            pkg = self.mcp.registry.packages[pkg_name]
+        deactivate_packages = []
+        for pkg_name in self.mcp.packages:
+            pkg = self.mcp.packages[pkg_name]
             if pkg.activated:
                 pkg.mcp_negotiate_end()
             else:
-                self.mcp.registry.packages.pop(pkg_name, None)
+                deactivate_packages.append(pkg_name)
+
+        for pkg_name in deactivate_packages:
+            self.mcp.packages.pop(pkg_name, None)

@@ -11,7 +11,7 @@ class MCPPackage(MCPPackageBase):
 
         self.in_progress = {}
 
-        mcp.registry.register(self, ['dns-org-mud-moo-simpleedit-content'])
+        mcp.register(self, ['dns-org-mud-moo-simpleedit-content'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-org-mud-moo-simpleedit-content':

@@ -17,8 +17,8 @@ class MCPPackage(MCPPackageBase):
         # per-connection instead of globally.
         return
 
+        self.mcp.register(self, ['dns-com-awns-serverinfo'])
 
-        mcp.registry.register(self, ['dns-com-awns-serverinfo'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-awns-serverinfo': self.do_serverinfo(msg)

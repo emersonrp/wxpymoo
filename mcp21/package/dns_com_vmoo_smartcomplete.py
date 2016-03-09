@@ -12,7 +12,7 @@ class MCPPackage(MCPPackageBase):
         self.max       = '1.0'
         self.callbacks = {}
 
-        mcp.registry.register(self, ['dns-com-vmoo-smartcomplete-result'])
+        mcp.register(self, ['dns-com-vmoo-smartcomplete-result'])
 
     def request(self, callback, prefix, suffix = ""):
         request_id = str(wx.NewId())

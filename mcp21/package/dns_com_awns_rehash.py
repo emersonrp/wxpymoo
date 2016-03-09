@@ -14,9 +14,9 @@ class MCPPackage(MCPPackageBase):
 
         self.hashes = []
 
-        mcp.registry.register(self, ['dns-com-awns-rehash-commands'])
-        mcp.registry.register(self, ['dns-com-awns-rehash-add'])
-        mcp.registry.register(self, ['dns-com-awns-rehash-remove'])
+        mcp.register(self, ['dns-com-awns-rehash-commands'])
+        mcp.register(self, ['dns-com-awns-rehash-add'])
+        mcp.register(self, ['dns-com-awns-rehash-remove'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-awns-rehash-commands': self.do_commands(msg)

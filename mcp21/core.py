@@ -1,7 +1,5 @@
 import re, random, os, importlib
 
-from mcp21.registry import MCPRegistry
-
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
 # file, to which this code bears more than a little resemblance and owes
@@ -21,15 +19,21 @@ QUOTE_PREFIX = re.compile('^#\$"')
 #                        )/igx)
 raw_re = re.compile(r'([-_*a-z0-9]+):\s+((?:"[^"]*")|(?:[-a-z0-9~`!@#$%^&*()=+{}[\]\|\';?/><.,])+)')
 
+def _version_cmp(v1, v2):
+    v1_maj, v1_min = re.split('\.', v1)
+    v2_maj, v2_min = re.split('\.', v2)
+
+    return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min));
+
 class MCPCore:
     def __init__(self, conn):
-
-
         self.multiline_messages = {}
         self.mcp_active = 0
         self.mcp_auth_key = ''
         self.connection = conn
-        self.registry = MCPRegistry()
+
+        self.msg_registry = {}
+        self.packages = {}
 
         MCP(self) # initialize the 'mcp' core package
 
@@ -146,7 +150,7 @@ class MCPCore:
         return message
 
     def dispatch(self, message):
-        package = self.registry.msg_registry.get(message.message)
+        package = self.msg_registry.get(message.message)
         if not package: return
 
         if package.activated: package.dispatch(message)
@@ -182,9 +186,31 @@ class MCPCore:
         self.debug("C->S: " + out_line)
 
     def start_mcp(self):
-        for p in self.registry.packages.values():
+        for p in self.packages.values():
             p.Initialize()
 
+    def register(self, pkg, messages):
+        if not isinstance(pkg, MCPPackageBase):
+            print("something that isn't an MCP package tried to register")
+            return
+        self.packages[pkg.package] = pkg
+        for message in messages:
+            self.msg_registry[message] = pkg
+
+    # next two subs taken from MCP 2.1 specification, section 2.4.3
+    def get_best_version(self, pkg, smin, smax):
+        if not self.packages.has_key(pkg): return
+
+        cmax = self.packages[pkg].max
+        cmin = self.packages[pkg].min
+
+        if (_version_cmp(cmax, smin) and _version_cmp(smax, cmin)):
+            if _version_cmp(smax, cmax):
+                return cmax
+            else:
+                return smax
+        else:
+            return undef
 ### "MCP" package to get MCP itself enfired
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
@@ -198,7 +224,7 @@ class MCP(MCPPackageBase):
         self.activated = 2.1
         self.mcp       = mcp
 
-        mcp.registry.register(self, ['mcp'])
+        mcp.register(self, ['mcp'])
 
     def dispatch(self, message):
         if re.search('mcp', message.message): self.do_mcp(message)

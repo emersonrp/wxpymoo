@@ -9,7 +9,7 @@ class MCPPackage(MCPPackageBase):
         self.min     = '1.0'
         self.max     = '1.0'
 
-        mcp.registry.register(self, ['mcp-cord','mcp-cord-open','mcp-cord-closed'])
+        mcp.register(self, ['mcp-cord','mcp-cord-open','mcp-cord-closed'])
 
     def dispatch(self, msg):
         if re.match('mcp-cord',        msg.message): self.do_mcp_cord(msg)

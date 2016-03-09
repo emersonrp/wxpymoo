@@ -10,7 +10,7 @@ class MCPPackage(MCPPackageBase):
         self.min     = '1.0'
         self.max     = '1.0'
 
-        mcp.registry.register(self, ['dns-com-vmoo-client-disconnect'])
+        mcp.register(self, ['dns-com-vmoo-client-disconnect'])
 
     def dispatch(self, msg):
         if msg.message == 'dns-com-vmoo-client-disconnect': self.do_disconnect(msg)

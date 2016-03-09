@@ -222,7 +222,7 @@ class TabCompletion(wx.PopupWindow):
 
         #... otherwise, carry on
         # TODO -- prolly the mcp package should .Initialize and install itself into TabCompletion
-        self.parent.connection.mcp.registry.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
+        self.parent.connection.mcp.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
 
     def popup_completions(self, begin_pos, to_complete, completions):
 
