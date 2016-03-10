@@ -10,43 +10,58 @@ class MCPPackage(MCPPackageBase):
         self.min     = '1.0'
         self.max     = '1.0'
 
-        self.home_url = ''
-        self.help_url = ''
+        mainwindow = wx.GetApp().GetTopWindow()
 
-        # TODO - need to get this to understand hacking the menu 
-        # per-connection instead of globally.
-        return
+        self.notebook = mainwindow.tabs
+        self.notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.updateMenu)
+
+        self.menubar = mainwindow.GetMenuBar()
+        self.helpmenu = self.menubar.GetMenu(self.menubar.FindMenu('Help'))
 
         self.mcp.register(self, ['dns-com-awns-serverinfo'])
 
-
     def dispatch(self, msg):
         if msg.message == 'dns-com-awns-serverinfo': self.do_serverinfo(msg)
+
+    def updateMenu(self, evt):
+        if evt: cp = evt.GetSelection()
+        else:   cp = self.notebook.GetSelection()
+
+        page = self.notebook.GetPage(cp)
+
+        # Clear the existing help menu items, if any, on any tab change...
+        home_item = self.helpmenu.FindItem('World Homepage')
+        if home_item != wx.NOT_FOUND: self.helpmenu.DestroyItem(self.helpmenu.FindItemById(home_item))
+
+        help_item = self.helpmenu.FindItem('World Help Page')
+        if help_item != wx.NOT_FOUND: self.helpmenu.DestroyItem(self.helpmenu.FindItemById(help_item))
+
+        last_menu_item = self.helpmenu.FindItemByPosition(self.helpmenu.GetMenuItemCount()-1)
+        if last_menu_item.IsSeparator(): self.helpmenu.DestroyItem(last_menu_item)
+
+        # ...and if we have home/help info for the current connection...
+        if not (page.home_url or page.help_url): return
+
+        # ...make new menu entries for them
+        last_menu_item = self.helpmenu.FindItemByPosition(self.helpmenu.GetMenuItemCount()-1)
+        if not last_menu_item.IsSeparator():
+            self.helpmenu.AppendSeparator()
+        if page.home_url:
+            home_item = self.helpmenu.Append(-1, "World Homepage", "Visit the homepage for the current world")
+            self.menubar.Bind(wx.EVT_MENU, lambda x: webbrowser.open(page.home_url), home_item)
+        if page.help_url:
+            help_item = self.helpmenu.Append(-1, "World Help Page", "Visit the help page for the current world")
+            self.menubar.Bind(wx.EVT_MENU, lambda x: webbrowser.open(page.home_url), help_item)
 
     # when we're all settled in, ask the server for the URLs
     def mcp_negotiate_end(self):
         self.mcp.server_notify('dns-com-awns-serverinfo-get')
 
-    # When we get new URLs from the server, install/activate the "Help" menu entries
+    # When we get new URLs from the server, save them in the associated Connection
     def do_serverinfo(self, msg):
-        self.home_url = msg.data['home_url']
-        self.help_url = msg.data['help_url']
-        if not (self.home_url or self.help_url): return
+        page = self.notebook.GetPage(self.notebook.GetSelection())
 
-        menubar = self.mcp.connection.mainwindow.GetMenuBar()
-        if not menubar: return
+        page.home_url = (msg.data.get('home_url') or '')
+        page.help_url = (msg.data.get('help_url') or '')
 
-        help_menu = menubar.GetMenu(menubar.FindMenu('Help'))
-        if not help_menu: return
-
-        # TODO - we'll stash all these away so we can remove them on disconnect.... later someday
-        self.menuitem_separator = help_menu.AppendSeparator()
-        if self.home_url:
-            self.menuitem_home = help_menu.Append(-1, "World Homepage", "Visit the homepage for the current world")
-            menubar.Bind(wx.EVT_MENU, self.visit_home, self.menuitem_home)
-        if self.help_url:
-            self.menuitem_help = help_menu.Append(-1, "World Help Page", "Visit the help page for the current world")
-            menubar.Bind(wx.EVT_MENU, self.visit_help, self.menuitem_help)
-
-    def visit_home(self, evt): webbrowser.open(self.home_url)
-    def visit_help(self, evt): webbrowser.open(self.help_url)
+        self.updateMenu(None)

@@ -63,12 +63,16 @@ class Connection(wx.SplitterWindow):
         self.debug_mcp      = None
         self.input_pane     = InputPane(self, self)
         self.output_pane    = OutputPane(self, self)
+        # these two are set with dns_com_awns_serverinfo but hypothetically
+        # -could- come from the saved world also
+        self.home_url       = ''
+        self.help_url       = ''
 
         #self.keepalive     = Keepalive(self)
         self.connector = None
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
-        self.SetMinimumPaneSize(20); # TODO - set to "one line of input field"
+        self.SetMinimumPaneSize(self.input_pane.font_size()[1] + 2)
 
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
         self.Bind(wx.EVT_SIZE, self.HandleResize)
