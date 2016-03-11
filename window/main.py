@@ -13,7 +13,7 @@ class Main(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
 
-        # self.status_bar = self.CreateStatusBar()
+        self.status_bar = self.CreateStatusBar()
 
         self.buildMenu()
 
@@ -138,7 +138,7 @@ class Main(wx.Frame):
     def ansi_test(self, evt):
         self.currentConnection().output_pane.ansi_test()
 
-### DIALOGS AND SUBWINDOWS
+    ### DIALOGS AND SUBWINDOWS
 
     def showWorldsList(self, evt):
         if self.worlds_list is None: self.worlds_list = WorldsList(self)
@@ -161,7 +161,6 @@ class Main(wx.Frame):
     def showHelp(self, evt):
         pass
 
-    # TODO - window.about
     def showAboutBox(self, evt):
         if self.about_info is None:
             info = wx.AboutDialogInfo()

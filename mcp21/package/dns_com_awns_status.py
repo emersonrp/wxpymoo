@@ -15,4 +15,4 @@ class MCPPackage(MCPPackageBase):
         if msg.message == 'dns-com-awns-status': self.do_status(msg)
 
     def do_status(self, msg):
-        self.mcp.connection.CreateNotice(msg.data['text'])
+        self.mcp.connection.ShowMessage(msg.data['text'])

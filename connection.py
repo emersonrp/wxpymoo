@@ -9,13 +9,6 @@ from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
 
-try:
-    from agw import toasterbox as TB
-    bitmapDir = 'bitmaps/'
-except ImportError:
-    import wx.lib.agw.toasterbox as TB
-    bitmapDir = 'agw/bitmaps/'
-
 class ConnectionClient(LineReceiver):
     def lineReceived(self, line):
         self.factory.connection.output_pane.display(line)
@@ -61,8 +54,10 @@ class Connection(wx.SplitterWindow):
         self.world          = None
         self.input_receiver = None
         self.debug_mcp      = None
+
         self.input_pane     = InputPane(self, self)
         self.output_pane    = OutputPane(self, self)
+
         # these two are set with dns_com_awns_serverinfo but hypothetically
         # -could- come from the saved world also
         self.home_url       = ''
@@ -94,19 +89,8 @@ class Connection(wx.SplitterWindow):
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
 
-    def CreateNotice(self, message):
-        return
-        notice = TB.ToasterBox(self,
-                tbstyle = TB.TB_COMPLEX, windowstyle = TB.TB_DEFAULT_STYLE,
-                closingstyle = TB.TB_ONCLICK)
-        notice.SetPopupPositionByInt(1)
-        panel = wx.Panel(notice.GetToasterBoxWindow(), -1)
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(wx.StaticText(panel, label = message))
-        panel.SetSizer(sizer)
-        panel.Layout()
-        notice.AddPanel(panel)
-        notice.Play()
+    def ShowMessage(self, message):
+        wx.GetApp().GetTopWindow().GetStatusBar().SetStatusText(message)
 
     def Close(self):
         if self.input_receiver and self.input_receiver.connected:
