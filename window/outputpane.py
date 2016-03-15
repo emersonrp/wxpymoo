@@ -40,7 +40,6 @@ class OutputPane(BasePane):
     # This updates the widget's internal notion of "how big" it is in characters
     # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
     def on_size(self, evt):
-        self.ScrollIfAppropriate()
 
         font_width, font_height = self.font_size()
         self_width, self_height = self.GetSizeTuple()
@@ -54,6 +53,7 @@ class OutputPane(BasePane):
             rc_evt = RowColChangeEvent()
             wx.PostEvent(self, rc_evt)
 
+        self.ScrollIfAppropriate()
         evt.Skip()
 
     def copy_from_selection(self, evt):

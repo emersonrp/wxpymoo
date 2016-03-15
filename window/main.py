@@ -1,9 +1,10 @@
 import wx
 from connection import Connection
 from window.connectdialog import ConnectDialog
-from window.prefseditor import PrefsEditor
-from window.worldslist import WorldsList
 from window.debugmcp import DebugMCP
+from window.prefseditor import PrefsEditor
+from window.statusbar import StatusBar
+from window.worldslist import WorldsList
 
 from worlds import worlds
 
@@ -13,7 +14,8 @@ class Main(wx.Frame):
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
 
-        self.status_bar = self.CreateStatusBar()
+        self.status_bar = StatusBar(self)
+        self.SetStatusBar(self.status_bar)
 
         self.buildMenu()
 
@@ -30,10 +32,6 @@ class Main(wx.Frame):
         self.SetSize((w, h))
 
         self.tabs = wx.Notebook(self)
-
-        self.sizer = wx.BoxSizer( wx.VERTICAL )
-        self.sizer.Add(self.tabs, True, wx.ALL|wx.GROW)
-        self.SetSizer(self.sizer)
 
         self.addEvents()
 
@@ -103,6 +101,7 @@ class Main(wx.Frame):
 
     def addEvents(self):
         self.Bind(wx.EVT_SIZE, self.onSize)
+        self.tabs.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.status_bar.UpdateConnectionStatus)
 
     def closeConnection(self, evt):
         if self.currentConnection():

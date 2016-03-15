@@ -1,4 +1,5 @@
 import wx
+import time
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
@@ -19,6 +20,7 @@ class ConnectionClient(LineReceiver):
     def connectionMade(self):
         self.connected = True
         # turn on TCP keepalive if possible
+        self.factory.connection.connect_time = time.time()
         try:
             self.transport.setTcpKeepAlive(1)
         except AttributeError: pass
@@ -90,13 +92,18 @@ class Connection(wx.SplitterWindow):
         self.output_pane.ScrollIfAppropriate()
 
     def ShowMessage(self, message):
-        wx.GetApp().GetTopWindow().GetStatusBar().SetStatusText(message)
+        if self.IsCurrentConnection():
+            self.main_window.GetStatusBar().AddStatus(message)
+
+    def IsCurrentConnection(self):
+        return self.main_window.currentConnection() == self
 
     def Close(self):
         if self.input_receiver and self.input_receiver.connected:
             self.output_pane.display("wxpymoo: Connection closed.\n");
         # force it again just to be sure
         #self.keepalive.Stop()
+        self.connect_time = None
         self.connector.disconnect()
 
     # connection.connect ([host], [port])
@@ -104,10 +111,14 @@ class Connection(wx.SplitterWindow):
     # existing connections will remember their host and port if not supplied here,
     # for ease of reconnect etc.
     def connect(self, world):
-        self.world = world
         host =     world.get('host')
         port = int(world.get('port'))
-        self.connector = reactor.connectTCP(host, port, ConnectionClientFactory(self))
+
+        self.world        = world
+        self.connector    = reactor.connectTCP(host, port, ConnectionClientFactory(self))
+        self.connect_time = 0
+
+        self.main_window = wx.GetApp().GetTopWindow()
 
         self.mcp = MCPCore(self)
 
@@ -120,6 +131,9 @@ class Connection(wx.SplitterWindow):
     def reconnect(self):
         if self.connector: self.Close()
         self.connect(self.world)
+
+    def connected(self):
+        return self.connector.connected
 
 class Keepalive(wx.EvtHandler):
     ######################
