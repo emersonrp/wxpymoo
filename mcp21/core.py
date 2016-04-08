@@ -136,7 +136,10 @@ class MCPCore:
 
         for keyval in keyvals:
             keyword, value = keyval
-            if re.search('\*$', keyword):
+            m = re.match(r'^(.+)(\*)', keyword)
+            if m:
+                keyword, splat = m.group(1,2)
+
                 message.data[keyword] = []
                 message.multi_in_progress = True
             elif keyword == '_data-tag':
