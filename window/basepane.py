@@ -38,7 +38,8 @@ class BasePane(rtc.RichTextCtrl):
 
         # set one-half character's worth of left / top margin
         font_width, font_height = self.font_size()
-        self.SetMargins((font_width / 2, -1))
+        # Apparently Centos' Wx doesn't have this, so commenting it out.
+        #self.SetMargins((font_width / 2, -1))
 
         self.update_size()
 

@@ -12,8 +12,6 @@ class ConnectDialog(wx.Dialog):
         self.port.SetRange(1, 65535)
         self.port.SetValue(7777)
 
-        self.host.SetBackgroundColour(wx.YELLOW)
-
         input_sizer = wx.FlexGridSizer(2, 2, 0, 0)
         input_sizer.AddGrowableCol( True )
         input_sizer.Add(wx.StaticText(self, label = "Host:"), 0, wx.LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
@@ -36,6 +34,8 @@ class ConnectDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.connect_please, id = wx.ID_OK)
         self.host.Bind(wx.EVT_KEY_UP, self.check_fields)
 
+        self.check_fields(None);
+
     def check_fields(self, evt):
         test_host = self.host.GetValue()
         enable_button = False
@@ -45,7 +45,9 @@ class ConnectDialog(wx.Dialog):
             self.host.SetBackgroundColour(wx.WHITE)
             enable_button = True
         else:
-            self.host.SetBackgroundColour(wx.YELLOW)
+            yellow = wx.Colour(255,255,0)
+            if yellow:
+                self.host.SetBackgroundColour(yellow)
         # deactivate the button if we're not aok with the values
         self.FindWindowById(wx.ID_OK).Enable(enable_button)
 
