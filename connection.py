@@ -69,7 +69,7 @@ class Connection(wx.SplitterWindow):
         self.connector = None
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
-        self.SetMinimumPaneSize(self.input_pane.font_size()[1] + 2)
+        self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
 
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
         self.Bind(wx.EVT_SIZE, self.HandleResize)
