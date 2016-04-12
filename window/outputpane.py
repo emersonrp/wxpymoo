@@ -7,7 +7,8 @@ import utility
 from theme import Theme
 from window.basepane import BasePane
 
-import webbrowser, re, math, emoji
+#import webbrowser, re, math, emoji
+import webbrowser, re, math
 
 RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
@@ -98,9 +99,9 @@ class OutputPane(BasePane):
                 line = self.connection.mcp.output_filter(line)
                 if not line: continue  # output_filter returns falsie if it handled it.
 
-            if (True or prefs.get('render_emoji') == 'True'):
+            #if (True or prefs.get('render_emoji') == 'True'):
                 # TODO - preference?  "if (we detect an emoji)?"
-                line = emoji.emojize(line, use_aliases = True)
+                #line = emoji.emojize(line, use_aliases = True)
 
             if prefs.get('use_ansi') == 'True':
                 # Dear lord this is sorta ugly
