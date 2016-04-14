@@ -270,7 +270,7 @@ class CompletionList(wx.ListCtrl):
         )
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self, 0, wx.ALL, 1)
+        self.sizer.Add(self, 1, wx.ALL|wx.EXPAND, 2)
         self.panel.SetSizer(self.sizer)
 
         self.SetTextColour(prefs.get('fgcolour'))
@@ -297,7 +297,8 @@ class CompletionList(wx.ListCtrl):
 
         width = self.GetColumnWidth(0)
 
-        self.panel.SetSize((width + 2, height + 2))
+        self.panel.SetSize((width + 4, height + 4))
         self.SetSize((width, height))
 
         self.Select(0)
+
