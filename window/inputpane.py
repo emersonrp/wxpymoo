@@ -15,6 +15,8 @@ class InputPane(BasePane):
         self.cmd_history    = CommandHistory(self)
         self.tab_completion = TabCompletion(self)
 
+        self.tabs = wx.GetApp().GetTopWindow().tabs
+
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.update_command_history )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
@@ -83,10 +85,33 @@ class InputPane(BasePane):
             # either way:
             self.tab_completion.Hide()
 
-# TODO: this next bit simply doesn't work, but 'home' is not acting right by default
-#        elif k == wx.WXK_HOME:
-#            print("HOME!")
-#            self.SetInsertionPoint(0)
+        # TODO: this next bit simply doesn't work, but 'home' is not acting right by default
+        elif k == wx.WXK_HOME:
+            print("HOME!")
+            self.SetInsertionPoint(0)
+
+        # Alt-[#] to switch directly to a tab -- includes 1234567890-= keys
+        # this is a little confusing because the tab indices are zero-based, so 
+        # we want key [1] to turn into a 0.
+        elif evt.AltDown() and (k in (49,50,51,52,53,54,55,56,57,48,45,61)):
+
+            # for [1]-[9], we want indices 0-8, so subtract 49 from k to get that
+            page_index = k - 49
+            if (k == 48): page_index = 9  # [0]
+            if (k == 45): page_index = 10 # [-]
+            if (k == 61): page_index = 11 # [=]
+            if (page_index > self.tabs.GetPageCount()): return
+
+            # if we're re-selecting the current one, pop back to the last one
+            # this behavior copped from weechat
+            if (page_index == self.tabs.GetSelection()):
+                page_index = self.tabs.last_selection
+
+            self.tabs.last_selection = self.tabs.SetSelection(page_index)
+
+        # Alt-Left / Alt-Right to switch tabs
+        elif (evt.AltDown() and (k == wx.WXK_LEFT or k == wx.WXK_RIGHT)):
+            self.tabs.AdvanceSelection(k == wx.WXK_RIGHT)
 
         elif k == ord('W') and evt.CmdDown():  # Ctrl-W
             self.delete_last_word()
