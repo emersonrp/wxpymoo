@@ -1,3 +1,4 @@
+import wx
 import re, random, os, importlib
 
 # This module was developed by squinting directly at both the MCP spec
@@ -40,7 +41,8 @@ class MCPCore:
         # walk the packages directory, and instantiate everything we find there.
         # this relies on each package having a class called "MCPPackage" that's a
         # sane and correct subclass of MCPPackageBase.
-        for package_file in os.listdir("./mcp21/package"):
+        path = wx.GetApp().path
+        for package_file in os.listdir(os.path.join(path, 'mcp21', 'package')):
             package, ext = package_file.split('.')
 
             if package == '__init__' or ext != 'py' : continue
@@ -173,7 +175,8 @@ class MCPCore:
                 datatag = str(random.randint(1,1000000))
                 out += " " + k + '*: "" _data-tag: ' + datatag
             else :
-                out += ' ' + k + ': "' + v + '"'
+                esc_v = v.replace('"', '\\"')
+                out += ' ' + k + ': "' + esc_v + '"'
 
         self.server_send(out)
 
