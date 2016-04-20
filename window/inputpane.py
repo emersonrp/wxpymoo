@@ -120,6 +120,8 @@ class InputPane(BasePane):
 
     def onTextChange(self, evt):
         self.cmd_history.update(self.GetValue())
+        if self.GetValue() == '':
+            self.tab_completion.Hide()
         if self.tab_completion.IsShown():
             evt.Skip()
             self.fetch_completions()
