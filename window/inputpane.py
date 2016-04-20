@@ -13,7 +13,7 @@ class InputPane(BasePane):
         )
 
         self.cmd_history    = CommandHistory(self)
-        self.tab_completion = TabCompletion(self)
+        self.tab_completion = TabCompletion(self, connection)
 
         self.tabs = wx.GetApp().GetTopWindow().tabs
 
@@ -205,13 +205,22 @@ class CommandHistory:
         self.update('')
 
 class TabCompletion(wx.PopupWindow):
-    def __init__(self, parent):
-        wx.PopupWindow.__init__(self, parent)
+    def __init__(self, parent, connection):
+        wx.PopupWindow.__init__(self, parent,
+            flags = wx.BORDER_SIMPLE
+        )
         self.verbs = []
         self.names = []
         self.parent = parent
-        self.completion_list = None
+        self.completion_list = CompletionList(self)
         self.last_completed = None
+        self.connection = connection
+        self.SetBackgroundColour(prefs.get('fgcolour'))
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.completion_list, 1, wx.ALL|wx.EXPAND, 2)
+        self.SetSizer(sizer)
+
 
     def pick_completion(self):
         current = self.completion_list.GetFirstSelected()
@@ -264,13 +273,10 @@ class TabCompletion(wx.PopupWindow):
 
         # do we have one or more new completions for the list?
         if completions:
-            self.last_completed = to_complete
             # populate the list in every case
-            if not self.completion_list:
-                self.completion_list = CompletionList(self)
-
             self.completion_list.fill(completions)
             self.begin_pos = begin_pos
+            self.last_completed = to_complete
 
             if len(completions) == 1:
                 # we have just the one completion, we should use it
@@ -278,9 +284,10 @@ class TabCompletion(wx.PopupWindow):
                 self.last_completed = None
             else:
                 # there are multiple, format and show the list
+                w, h = self.completion_list.GetSize()
+                avail_height = min( h, self.connection.output_pane.GetSize()[1])
 
-                # TODO - asking about the panel is sorta impolite but sigh wx
-                self.SetSize(self.completion_list.panel.GetSize())
+                self.SetSize((w, avail_height))
 
                 # find the x and y location to pop up the menu
                 x_pos, y_pos = self.parent.ClientToScreen((-2,-5))
@@ -291,7 +298,7 @@ class TabCompletion(wx.PopupWindow):
                 x_pos += self.parent.GetCaret().GetPosition()[0]
                 self.parent.SetInsertionPointEnd()
 
-                self.SetPosition((x_pos, y_pos - self.GetSize()[1]))
+                self.SetPosition((x_pos, y_pos - avail_height))
                 self.Show(True)
 
         # pressing tab but no completions
@@ -301,15 +308,10 @@ class TabCompletion(wx.PopupWindow):
 
 class CompletionList(wx.ListCtrl):
     def __init__(self, parent):
-        self.panel = wx.Panel(parent)
 
-        wx.ListCtrl.__init__(self, self.panel,
+        wx.ListCtrl.__init__(self, parent,
             style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
         )
-
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self, 1, wx.ALL|wx.EXPAND, 2)
-        self.panel.SetSizer(self.sizer)
 
         self.SetTextColour(prefs.get('fgcolour'))
         self.SetBackgroundColour(prefs.get('bgcolour'))
@@ -335,7 +337,6 @@ class CompletionList(wx.ListCtrl):
 
         width = self.GetColumnWidth(0)
 
-        self.panel.SetSize((width + 4, height + 4))
         self.SetSize((width, height))
 
         self.Select(0)
