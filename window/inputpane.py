@@ -18,7 +18,7 @@ class InputPane(BasePane):
         self.tabs = wx.GetApp().GetTopWindow().tabs
 
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
-        self.Bind(wx.EVT_TEXT,       self.update_command_history )
+        self.Bind(wx.EVT_TEXT,       self.onTextChange )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
 ##       EVT_CHAR      ( self,     \&debug_key_code )
 
@@ -48,9 +48,6 @@ class InputPane(BasePane):
             self.cmd_history.add(stuff)
             self.connection.output(stuff)
             self.Clear()
-
-    def update_command_history(self, evt):
-        self.cmd_history.update(self.GetValue())
 
     def debug_key_code(self, evt):
         k = evt.GetKeyCode()
@@ -116,10 +113,16 @@ class InputPane(BasePane):
         elif k == ord('W') and evt.CmdDown():  # Ctrl-W
             self.delete_last_word()
         else:
-            self.tab_completion.Hide()
+        #    self.tab_completion.Hide()
             evt.Skip()
             return
         self.SetInsertionPointEnd()
+
+    def onTextChange(self, evt):
+        self.cmd_history.update(self.GetValue())
+        if self.tab_completion.IsShown():
+            evt.Skip()
+            self.fetch_completions()
 
     def delete_last_word(self):
         current_value = self.GetValue()
@@ -136,6 +139,7 @@ class InputPane(BasePane):
 
     def do_completion(self, begin_pos, completion):
         if completion:
+            self.tab_completion.Hide()
             self.SetValue(self.GetValue()[:int(begin_pos)] + completion)
             self.SetInsertionPointEnd()
 
