@@ -69,7 +69,7 @@ class InputPane(BasePane):
         elif k == wx.WXK_PAGEUP:   self.connection.output_pane.ScrollPages(-1)
         elif k == wx.WXK_PAGEDOWN: self.connection.output_pane.ScrollPages(1)
         elif k == wx.WXK_TAB:      self.fetch_completions()
-        elif k == wx.WXK_ESCAPE:   self.tab_completion.Hide()
+        elif k == wx.WXK_ESCAPE:   self.tab_completion.CloseAndClear()
         elif k == wx.WXK_INSERT:
             if evt.ShiftDown(): self.paste_from_selection()
 
@@ -80,7 +80,7 @@ class InputPane(BasePane):
                 self.send_to_connection(evt)
 
             # either way:
-            self.tab_completion.Hide()
+            self.tab_completion.CloseAndClear()
 
         # TODO: this next bit simply doesn't work, but 'home' is not acting right by default
 #        elif k == wx.WXK_HOME:
@@ -113,7 +113,7 @@ class InputPane(BasePane):
         elif k == ord('W') and evt.CmdDown():  # Ctrl-W
             self.delete_last_word()
         else:
-        #    self.tab_completion.Hide()
+        #    self.tab_completion.CloseAndClear()
             evt.Skip()
             return
         self.SetInsertionPointEnd()
@@ -121,7 +121,7 @@ class InputPane(BasePane):
     def onTextChange(self, evt):
         self.cmd_history.update(self.GetValue())
         if self.GetValue() == '':
-            self.tab_completion.Hide()
+            self.tab_completion.CloseAndClear()
         if self.tab_completion.IsShown():
             evt.Skip()
             self.fetch_completions()
@@ -141,7 +141,7 @@ class InputPane(BasePane):
 
     def do_completion(self, begin_pos, completion):
         if completion:
-            self.tab_completion.Hide()
+            self.tab_completion.CloseAndClear()
             self.SetValue(self.GetValue()[:int(begin_pos)] + completion)
             self.SetInsertionPointEnd()
 
@@ -217,6 +217,11 @@ class TabCompletion(wx.PopupWindow):
         current = self.completion_list.GetFirstSelected()
         return self.begin_pos, self.completion_list.GetItemText(current)
 
+    def CloseAndClear(self):
+        self.Hide()
+        if self.completion_list:
+            self.completion_list.ClearAll()
+
     def next_item(self):
         clist = self.completion_list
         current = clist.GetFirstSelected()
@@ -239,7 +244,7 @@ class TabCompletion(wx.PopupWindow):
         if not to_complete: return
 
         # if we've just hit <tab> again without making any changes...
-        if to_complete == self.last_completed:
+        if self.last_completed and (to_complete == self.last_completed):
             # ...re-show the popup if it's hidden...
             if not self.IsShown():
                 self.Show()
@@ -260,17 +265,19 @@ class TabCompletion(wx.PopupWindow):
         # do we have one or more new completions for the list?
         if completions:
             self.last_completed = to_complete
+            # populate the list in every case
+            if not self.completion_list:
+                self.completion_list = CompletionList(self)
+
+            self.completion_list.fill(completions)
+            self.begin_pos = begin_pos
+
             if len(completions) == 1:
                 # we have just the one completion, we should use it
                 self.parent.do_completion(begin_pos, completions[0])
+                self.last_completed = None
             else:
-                # there are multiple, clear the listbox, repop it, and show it
-
-                if not self.completion_list:
-                    self.completion_list = CompletionList(self)
-
-                self.completion_list.fill(completions)
-                self.begin_pos = begin_pos
+                # there are multiple, format and show the list
 
                 # TODO - asking about the panel is sorta impolite but sigh wx
                 self.SetSize(self.completion_list.panel.GetSize())
@@ -290,7 +297,7 @@ class TabCompletion(wx.PopupWindow):
         # pressing tab but no completions
         else:
             self.last_completed = None
-            self.Hide()
+            self.CloseAndClear()
 
 class CompletionList(wx.ListCtrl):
     def __init__(self, parent):
