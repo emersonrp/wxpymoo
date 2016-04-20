@@ -1,5 +1,6 @@
 import wx
 import re
+import os
 
 class World(dict):
 
@@ -51,7 +52,8 @@ while g_more:
 
 else:
     import json
-    initial_worlds = json.load(open('initial_worlds.json','r'))
+    path = wx.GetApp().path
+    initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
 
     for world_data in initial_worlds:
         world = World(world_data)
