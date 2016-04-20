@@ -287,13 +287,19 @@ class TabCompletion(wx.PopupWindow):
                 w, h = self.completion_list.GetSize()
                 avail_height = min( h, self.connection.output_pane.GetSize()[1])
 
-                self.SetSize((w, avail_height))
+                # if we're gonna have a vertical scrollbar, make room
+                if h > avail_height:
+                    w = w + 15
+
+                self.SetSize((w + 5, avail_height + 10))
+                self.Layout()
 
                 # find the x and y location to pop up the menu
                 x_pos, y_pos = self.parent.ClientToScreen((-2,-5))
 
                 # temporarily move the cursor back to begin_pos so we can 
-                # find out its relative location.
+                # find out where, along the 'x' axis, the text being completed
+                # actually begins
                 self.parent.SetInsertionPoint(long(begin_pos))
                 x_pos += self.parent.GetCaret().GetPosition()[0]
                 self.parent.SetInsertionPointEnd()
