@@ -239,6 +239,7 @@ class TabCompletion(wx.PopupWindow):
         else:
             current +=1
         clist.Select(current)
+        clist.EnsureVisible(current)
 
     def prev_item(self):
         clist = self.completion_list
@@ -248,6 +249,7 @@ class TabCompletion(wx.PopupWindow):
         else:
             current -=1
         clist.Select(current)
+        clist.EnsureVisible(current)
 
     def complete(self, to_complete):
         if not to_complete: return
@@ -291,7 +293,7 @@ class TabCompletion(wx.PopupWindow):
                 if h > avail_height:
                     w = w + 15
 
-                self.SetSize((w + 5, avail_height + 10))
+                self.SetSize((w + 5, avail_height))
                 self.Layout()
 
                 # find the x and y location to pop up the menu
