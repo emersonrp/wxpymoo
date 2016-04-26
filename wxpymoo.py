@@ -7,6 +7,7 @@ wxreactor.install() # must be before 'import reactor'
 from twisted.internet import reactor
 
 
+
 def run():
     app = wx.App(False)
 
@@ -14,13 +15,17 @@ def run():
 
     from window.main import Main
     import prefs
+    import worlds
 
     prefs.Initialize()
+    worlds.Initialize()
+
     frame = Main(None, "wxpymoo")
     frame.Show(True)
 
     reactor.registerWxApp(app)
     reactor.run()
+
 
     app.MainLoop()
 

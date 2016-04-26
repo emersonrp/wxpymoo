@@ -28,35 +28,38 @@ class World(dict):
 
 worlds    = {}
 _defaults = { }
-_config = wx.FileConfig(localFilename = '.wxpymoo_worlds')
+_config   = None
+def Initialize():
+    global _config, worlds, _defaults
+    _config = wx.FileConfig(localFilename = '.wxpymoo_worlds')
 
-# loop worlds...
-g_more, worldname, g_index = _config.GetFirstGroup()
-while g_more:
-    _config.SetPath(worldname)
+    # loop worlds...
+    g_more, worldname, g_index = _config.GetFirstGroup()
+    while g_more:
+        _config.SetPath(worldname)
 
-    worlddata = {}
+        worlddata = {}
 
-    # loop data lines inside each world....
-    e_more, dataname, e_index = _config.GetFirstEntry()
-    while e_more:
-        worlddata[dataname] = _config.Read(dataname)
-        e_more, dataname, e_index = _config.GetNextEntry(e_index)
+        # loop data lines inside each world....
+        e_more, dataname, e_index = _config.GetFirstEntry()
+        while e_more:
+            worlddata[dataname] = _config.Read(dataname)
+            e_more, dataname, e_index = _config.GetNextEntry(e_index)
 
-    # build the World object
-    worlds[worlddata['name']] = World(worlddata)
+        # build the World object
+        worlds[worlddata['name']] = World(worlddata)
 
-    # carry on, back to the top for the next world
-    _config.SetPath('/')
-    g_more, worldname, g_index = _config.GetNextGroup(g_index)
+        # carry on, back to the top for the next world
+        _config.SetPath('/')
+        g_more, worldname, g_index = _config.GetNextGroup(g_index)
 
-else:
-    import json
-    path = wx.GetApp().path
-    initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
+    else:
+        import json
+        path = wx.GetApp().path
+        initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
 
-    for world_data in initial_worlds:
-        world = World(world_data)
-        world.save()
-        worlds[world.get('name')] = world
+        for world_data in initial_worlds:
+            world = World(world_data)
+            world.save()
+            worlds[world.get('name')] = world
 
