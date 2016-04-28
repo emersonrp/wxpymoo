@@ -77,14 +77,14 @@ class WorldsList(wx.Dialog):
         #note_box = wx.StaticBoxSizer(wx.StaticBox(self, label = "Notes:"), wx.VERTICAL)
         #note_box.Add(self.note, 1, wx.EXPAND)
 
-        mcp_check          = wx.CheckBox(self, label = "MCP 2.1")
-        login_dialog_check = wx.CheckBox(self, label = "Use Login Dialog")
-        shortlist_check    = wx.CheckBox(self, label = "On Short List")
+        self.mcp_check          = wx.CheckBox(self, label = "MCP 2.1")
+        self.login_dialog_check = wx.CheckBox(self, label = "Use Login Dialog")
+        self.shortlist_check    = wx.CheckBox(self, label = "On Short List")
         checkbox_sizer     = wx.GridSizer(3, 2, 0, 0)
         checkbox_sizer.AddMany([
-            (mcp_check         , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
-            (login_dialog_check, 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
-            (shortlist_check   , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
+            (self.mcp_check         , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
+            (self.login_dialog_check, 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
+            (self.shortlist_check   , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
         ])
 
         new_button   = wx.Button(self, label = "New")
@@ -179,6 +179,10 @@ class WorldsList(wx.Dialog):
             world['ssh_username'] = ''
             world['ssh_loc_host'] = ''
 
+        world['use_mcp'] = self.mcp_check.GetValue()
+        world['use_login_dialog'] = self.login_dialog_check.GetValue()
+        world['on_shortlist'] = self.shortlist_check.GetValue()
+
         world.save() # TODO - error checking, like at all
 
     def on_reset(self, evt):
@@ -191,12 +195,15 @@ class WorldsList(wx.Dialog):
     def fill_thyself(self):
         world = worlds[self.world_picker.GetStringSelection()]
 
-        self.host.SetValue(unicode(world.get("host")   ) or "")
-        self.port.SetValue(    int(world.get("port")   ) or "")
+        self.host.SetValue(unicode(world.get("host", "")))
+        self.port.SetValue(    int(world.get("port", 0)))
+
+        self.conntype.SetStringSelection(world.get("conntype", "Direct"))
+
 
         self.conntype.SetStringSelection(world.get("conntype") or "Direct")
-        self.username.SetValue(    world.get("username") or "")
-        self.password.SetValue(    world.get("password") or "")
+        self.username.SetValue( world.get("username", ""))
+        self.password.SetValue( world.get("password", ""))
 
         desc = unicode(world.get('description'))
         if not desc or desc == "None": desc = ''
@@ -208,8 +215,13 @@ class WorldsList(wx.Dialog):
         #if not note or note == "None": note = ''
         #self.note.SetValue(note)
 
-        self.ssh_username.SetValue(world.get("ssh_username") or "")
-        self.ssh_loc_host.SetValue(world.get("ssh_loc_host") or "")
+        self.ssh_username.SetValue(world.get("ssh_username", ""))
+        self.ssh_loc_host.SetValue(world.get("ssh_loc_host", ""))
+
+        self.mcp_check.SetValue(world.get('use_mcp', '') == 'True')
+        self.login_dialog_check.SetValue(world.get('use_login_dialog', '') == 'True')
+        self.shortlist_check.SetValue(world.get('on_shortlist', '') == 'True')
+
 
         self.show_ssh_fields_if_appropriate()
 
