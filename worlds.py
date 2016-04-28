@@ -39,7 +39,6 @@ def Initialize():
     g_more, worldname, g_index = _config.GetFirstGroup()
     if g_more:  # do we have anything at all from the config file?
         while g_more: # yes, loop and fill stuff out.
-            print "loading " + worldname
             _config.SetPath(worldname)
 
             worlddata = {}
@@ -58,7 +57,6 @@ def Initialize():
             g_more, worldname, g_index = _config.GetNextGroup(g_index)
 
     else:  # nothing from config file, grab the initial_worlds data
-        print "Importing json file"
         import json
         path = wx.GetApp().path
         initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))

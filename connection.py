@@ -1,5 +1,6 @@
 import wx
 import time
+import re
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineReceiver
@@ -26,6 +27,7 @@ class ConnectionClient(LineReceiver):
         except AttributeError: pass
 
         prefs.set('last_world', self.factory.connection.world.get('name'))
+        self.factory.connection.connected()
 
     def connectionLost(self, reason):
         self.connected = False
@@ -133,7 +135,12 @@ class Connection(wx.SplitterWindow):
         self.connect(self.world)
 
     def connected(self):
-        return self.connector.connected
+        if self.world.get('auto_login'):
+            login_script = self.world.get('login_script')
+            if login_script:
+                login_script = re.sub('%u', self.world.get('username', ''), login_script)
+                login_script = re.sub('%p', self.world.get('password', ''), login_script)
+            self.output(login_script)
 
 class Keepalive(wx.EvtHandler):
     ######################

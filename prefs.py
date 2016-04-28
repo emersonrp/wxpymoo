@@ -17,13 +17,11 @@ _defaults   = {
 
     # 'theme'        : 'solarized',
 
-    'use_ansi'             : True,
-    'use_mcp'              : True,
-    'highlight_urls'       : True,
-    'save_mcp_window_size' : True,
-    # TODO -- make this default to False, but currently having no connection
-    # at start-time breaks mainwindow
-    'autoconnect_last_world'  : True,
+    'use_ansi'               : True,
+    'use_mcp'                : True,
+    'highlight_urls'         : True,
+    'save_mcp_window_size'   : True,
+    'autoconnect_last_world' : True,
 
     'mcp_window_width'  : 600,
     'mcp_window_height' : 400,

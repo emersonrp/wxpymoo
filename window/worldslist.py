@@ -40,15 +40,19 @@ class WorldsList(wx.Dialog):
         port_sizer.Add([5,5],         0, wx.EXPAND)
         port_sizer.Add(self.conntype, 0, wx.EXPAND)
 
-        username_label = wx.StaticText(self, label = "Username:")
-        password_label = wx.StaticText(self, label = "Password:")
-        self.username  = wx.TextCtrl(self)
-        self.password  = wx.TextCtrl(self, style = wx.TE_PASSWORD)
-
         self.ssh_username_label = wx.StaticText(self, label = "SSH User:")
         self.ssh_loc_host_label = wx.StaticText(self, label = "SSH Host:")
         self.ssh_username       = wx.TextCtrl(self)
         self.ssh_loc_host       = wx.TextCtrl(self)
+
+        self.auto_login_check   = wx.CheckBox(self, label   = "Auto-Login")
+        self.login_script_label = wx.StaticText(self, label = "Login Script:")
+        self.login_script       = wx.TextCtrl(self)
+
+        self.username_label = wx.StaticText(self, label = "Username:")
+        self.password_label = wx.StaticText(self, label = "Password:")
+        self.username       = wx.TextCtrl(self)
+        self.password       = wx.TextCtrl(self, style   = wx.TE_PASSWORD)
 
         field_sizer = wx.FlexGridSizer(cols = 2, hgap = 5, vgap = 5)
         field_sizer.AddMany([
@@ -58,14 +62,18 @@ class WorldsList(wx.Dialog):
             (self.host              , 0, wx.EXPAND                              , 0),
             (port_label             , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
             (port_sizer             , 0, wx.EXPAND                              , 0),
-            (username_label         , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
-            (self.username          , 0, wx.EXPAND                              , 0),
-            (password_label         , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
-            (self.password          , 0, wx.EXPAND                              , 0),
             (self.ssh_username_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
             (self.ssh_username      , 0, wx.EXPAND                              , 0),
             (self.ssh_loc_host_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
             (self.ssh_loc_host      , 0, wx.EXPAND                              , 0),
+            (wx.StaticText(self)    , 0, wx.EXPAND                              , 0),
+            (self.auto_login_check  , 0, wx.EXPAND                              , 0),
+            (self.login_script_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
+            (self.login_script      , 0, wx.EXPAND                              , 0),
+            (self.username_label    , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
+            (self.username          , 0, wx.EXPAND                              , 0),
+            (self.password_label    , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
+            (self.password          , 0, wx.EXPAND                              , 0),
         ])
         field_sizer.AddGrowableCol(1)
 
@@ -145,10 +153,11 @@ class WorldsList(wx.Dialog):
         self.Centre(wx.BOTH)
 
         self.Bind(wx.EVT_CHOICE, self.select_world, self.world_picker)
-        self.Bind(wx.EVT_CHOICE, self.show_ssh_fields_if_appropriate, self.conntype)
+        self.Bind(wx.EVT_CHOICE,   self.show_fields_if_appropriate, self.conntype)
+        self.Bind(wx.EVT_CHECKBOX, self.show_fields_if_appropriate, self.auto_login_check)
         self.Bind(wx.EVT_BUTTON, self.on_connect, id = wx.ID_OK)
 
-        self.show_ssh_fields_if_appropriate()
+        self.show_fields_if_appropriate()
 
 
     def select_world(self, evt):
@@ -167,6 +176,8 @@ class WorldsList(wx.Dialog):
         world['host'] = self.host.GetValue()
         world['port'] = self.port.GetValue()
         world['conntype'] = self.conntype.GetStringSelection()
+        world['auto_login'] = self.auto_login_check.GetValue()
+        world['login_script'] = self.login_script.GetValue()
         world['username'] = self.username.GetValue()
         world['password'] = self.password.GetValue()
         world['desc'] = self.desc.GetOpenedPage()
@@ -200,8 +211,8 @@ class WorldsList(wx.Dialog):
 
         self.conntype.SetStringSelection(world.get("conntype", "Direct"))
 
-
-        self.conntype.SetStringSelection(world.get("conntype") or "Direct")
+        self.auto_login_check.SetValue(world.get("auto_login", False) == 'True')
+        self.login_script.SetValue(world.get("login_script", "connect %u %p"))
         self.username.SetValue( world.get("username", ""))
         self.password.SetValue( world.get("password", ""))
 
@@ -222,14 +233,22 @@ class WorldsList(wx.Dialog):
         self.login_dialog_check.SetValue(world.get('use_login_dialog', '') == 'True')
         self.shortlist_check.SetValue(world.get('on_shortlist', '') == 'True')
 
+        self.show_fields_if_appropriate()
 
-        self.show_ssh_fields_if_appropriate()
+    def show_fields_if_appropriate(self, evt = None):
 
-    def show_ssh_fields_if_appropriate(self, evt = None):
-        to_show = self.conntype.GetSelection() == conntypes.index('SSH Fwd')
-        self.ssh_username_label.Show(to_show)
-        self.ssh_loc_host_label.Show(to_show)
-        self.ssh_username.Show(to_show)
-        self.ssh_loc_host.Show(to_show)
+        show_ssh = self.conntype.GetSelection() == conntypes.index('SSH Fwd')
+        self.ssh_username_label.Show(show_ssh)
+        self.ssh_loc_host_label.Show(show_ssh)
+        self.ssh_username.Show(show_ssh)
+        self.ssh_loc_host.Show(show_ssh)
+
+        show_conn = self.auto_login_check.GetValue()
+        self.username_label.Show(show_conn)
+        self.login_script_label.Show(show_conn)
+        self.login_script.Show(show_conn)
+        self.password_label.Show(show_conn)
+        self.username.Show(show_conn)
+        self.password.Show(show_conn)
 
         self.world_details_box.Layout()
