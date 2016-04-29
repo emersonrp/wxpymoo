@@ -5,6 +5,7 @@ from window.debugmcp import DebugMCP
 from window.prefseditor import PrefsEditor
 from window.statusbar import StatusBar
 from window.worldslist import WorldsList
+from functools import partial
 
 from worlds import worlds
 
@@ -46,6 +47,11 @@ class Main(wx.Frame):
         self.tabs.AddPage(conn, world.get('name'), select = True)
         conn.input_pane.SetFocus()
 
+    def connect_to_shortlist(self, worldname, evt):
+        world = worlds.get(worldname, None)
+        if not world: return
+        self.openWorld(world)
+
     def buildMenu(self):
         WorldsMenu = wx.Menu()
         Worlds_worlds  = WorldsMenu.Append(-1, "&Worlds...",  "Browse list of worlds")
@@ -54,6 +60,17 @@ class Main(wx.Frame):
         WorldsMenu.AppendSeparator()
         Worlds_reconnect = WorldsMenu.Append(-1, "&Reconnect", "Close and re-open the connection to the current world")
         Worlds_quit      = WorldsMenu.Append(wx.ID_EXIT)
+
+        shortlist = []
+        for worldname, world in worlds.iteritems():
+            if world.get('on_shortlist'):
+                shortlist.append(worldname)
+
+        if shortlist:
+            WorldsMenu.AppendSeparator()
+            for world in sorted(shortlist):
+                menuitem = WorldsMenu.Append(-1, world)
+                self.Bind(wx.EVT_MENU, partial(self.connect_to_shortlist, world), menuitem)
 
         EditMenu = wx.Menu()
         Edit_cut   = EditMenu.Append(wx.ID_CUT)
