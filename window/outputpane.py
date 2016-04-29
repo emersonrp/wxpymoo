@@ -29,7 +29,7 @@ class OutputPane(BasePane):
         self.Bind(wx.EVT_SIZE                        , self.on_size)
         self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
         self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
-        self.Bind(wx.EVT_MIDDLE_UP                   , self.connection.input_pane.paste_from_selection )
+        self.Bind(wx.EVT_MIDDLE_DOWN                 , self.connection.input_pane.paste_from_selection )
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 

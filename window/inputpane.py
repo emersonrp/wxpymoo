@@ -20,10 +20,9 @@ class InputPane(BasePane):
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.onTextChange )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
-##       EVT_CHAR      ( self,     \&debug_key_code )
 
         if (prefs.get('use_x_copy_paste') == 'True'):
-            self.Bind(wx.EVT_MIDDLE_UP                  , self.paste_from_selection )
+            self.Bind(wx.EVT_MIDDLE_DOWN                , self.paste_from_selection )
             self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED, self.copy_from_selection )
 
         self.Clear()
@@ -48,10 +47,6 @@ class InputPane(BasePane):
             self.cmd_history.add(stuff)
             self.connection.output(stuff)
             self.Clear()
-
-    def debug_key_code(self, evt):
-        k = evt.GetKeyCode()
-        # print("EVT_CHAR: " + str(k))
 
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
