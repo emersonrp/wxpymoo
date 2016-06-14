@@ -11,31 +11,31 @@ And then I started discovering how difficult it is to package and release wxPerl
 So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 
 ##Done
-* Connects to a MOO.  Initially, it defaults to my MOO at hayseed.net:7777, but the Worlds->Connect dialog now works to connect wherever you like.
-* Takes input, and shows output.  Almost pleasantly, even.
-* Input field has a super-basic but functional command history.
+* Connects to arbitrary host/port combinations
+* Contains a "worlds list" full of ~50 currently-active MOOs to choose from.
+* Basic but functional command history.
+* Tab-complete, currently fed from dns-com-vmoo-smartcomplete
 * ANSI color/style codes are well-supported.
-* Partial [MCP/2.1](http://www.moo.mud.org/mcp/mcp2.html) implementation -- mcp-negotiate is implemented;  mcp-cord is only partially.
-* Starting in on MCP packages:
+* Partial [MCP/2.1](http://www.moo.mud.org/mcp/mcp2.html) implementation -- mcp-negotiate is implemented;  mcp-cord only partially.
+* MCP packages:
+    * dns-com-awns-displayurl
     * dns-com-awns-rehash (partial)
     * dns-com-awns-serverinfo
     * dns-com-awns-status (partial)
     * dns-com-vmoo-client
     * dns-com-vmoo-smartcomplete (partial)
-    * dns-org-mud-moo-simpleedit (external editor configurable)
-* Saving prefs works, for the small set of prefs it honors.  Lots of work intended here, still.
-* Rudimentary tab-complete
+    * dns-org-mud-moo-simpleedit
+* Colors and fonts, ANSI support, external editor saved via prefs
+* Multiple connections supported via tabbed interface
 
 ##0.1 Milestone
 * fix output pane scroll-to-bottom behavior to dwym.
 * More keyboard accelerators;  page-up/down etc
 * make sure it works on MacOS and Windows
-* Clean up tab-complete ui
-* Finish dns-com-awns-status Toast-style popups
+* Finish toast-style popups for dns-com-awns-status et al
 
 ##To do
 * Add proper prefs and world/connection handling (85% done)
-* Actually support multiple simultaneous connections (90% done)
 * Pondering schemes to scrape online MOO lists to offer suggestions. (70% done)
 * Start rolling binary packages for all platforms once it's remotely useful to anyone but me.
 * Customizable colors / themes (currently you can have any colors you want as long as they're solarized-dark.)
@@ -56,7 +56,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 ##Guiding thoughts
 * Monospaced fonts and line-based terminal output are not mutually incompatible with intuitive, pleasant UIs.
 * There are many wheels out there that have been invented well already.  My MOO client doesn't need its own built-in text editor.  Lather, rinse, repeat.
-* Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows.
+* Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows?
 
 ##Dependencies
 * [Python](http://www.python.org) 2.7
@@ -65,10 +65,3 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 
 Fedora users:
     sudo dnf install python wxPython python-twisted
-
-
-##Acknowledgements
-* wxpymoo is inspired by (and occasionally directly borrows from) [Andrew Wilson](http://www.awns.com)'s [tkMOO-light](http://www.awns.com/tkMOO-light), which is still probably the most-capable and -advanced MOO client around.
-* [PADRE](http://padre.perlide.org) is not something I use, being a [vim](http://www.vim.org) junkie, but their generously-licensed code for a production wxperl application was an invaluable reference while getting the original perl version working..
-* [Daring Fireball](http://www.daringfireball.net)'s blog graciously supplied to the public domain the [URL-detecting regex](http://daringfireball.net/2010/07/improved_regex_for_matching_urls) that I adapted.
-* [Stack Overflow](http://www.stackoverflow.com) has helped me in countless large and small ways.  Specifically, answers by Adaephon, Jeremy Cantrell, and Mark Ransom assisted in getting my head around working with color in Python.
