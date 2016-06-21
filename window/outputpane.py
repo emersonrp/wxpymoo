@@ -54,7 +54,7 @@ class OutputPane(BasePane):
             rc_evt = RowColChangeEvent()
             wx.PostEvent(self, rc_evt)
 
-        self.ScrollIfAppropriate()
+        wx.CallAfter( self.ScrollIfAppropriate )
         evt.Skip()
 
     def copy_from_selection(self, evt):
@@ -85,7 +85,7 @@ class OutputPane(BasePane):
     def ScrollIfAppropriate(self):
         if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
             self.ShowPosition(self.GetLastPosition())
-        self.Refresh()
+            self.Refresh()
 
     def Thaw(self):
         super(OutputPane, self).Thaw()
