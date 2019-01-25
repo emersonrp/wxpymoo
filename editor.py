@@ -23,25 +23,33 @@ class Editor(wx.EvtHandler):
         # ...write to it...
         for line in self.content: tmpfile.write(line + "\n")
         tmpfile.flush()
-        self._last_sent = os.stat(self.tmpfilename).st_mtime
 
         # ... then let's get the os' hands off it so the editor can write to it.
         tmpfile.close()
         os.close(tempfd)
 
+        # set the "last sent" time so we don't send it instantly
+        self._last_sent = os.stat(self.tmpfilename).st_mtime
+
         # hands are off now, start the editor
         thread = threading.Thread(target = self.runEditor)
         thread.start()
 
+        # We run a timer to check the file a few times a second so that a
+        # "save" will send, even without a "quit" attached.
         self.watchTimer.Start(250, 0)
         self.Bind(wx.EVT_TIMER, self._send_file_if_needed, self.watchTimer)
 
     def runEditor(self):
         cmd = re.split(' +', prefs.get('external_editor'))
         cmd.append(self.tmpfilename)
-        proc = subprocess.call(cmd)
-        # blocks the thread while the editor runs, then send it:
+
+        # block the thread while the editor runs...
+        subprocess.Popen(cmd).wait()
+
+        # ...then send it once the editor exits...
         self._send_file_if_needed(None)
+
         # ...and remove the temp file.
         os.remove(self.tmpfilename)
 
