@@ -26,7 +26,6 @@ def _version_cmp(v1, v2):
 
 class MCPCore:
     def __init__(self, conn):
-        return # TODO XXX XXX until we fix this for python 3
         self.multiline_messages = {}
         self.mcp_active = 0
         self.mcp_auth_key = ''
@@ -44,6 +43,7 @@ class MCPCore:
         # sane and correct subclass of MCPPackageBase.
         path = wx.GetApp().path
         for package_file in os.listdir(os.path.join(path, 'mcp21', 'package')):
+            if package_file == "__pycache__": continue
             package, ext = package_file.split('.')
 
             if package == '__init__' or ext != 'py' : continue
