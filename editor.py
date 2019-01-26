@@ -57,7 +57,7 @@ class Editor(wx.EvtHandler):
 
     def _send_file_if_needed(self, evt):
         mtime = os.stat(self.tmpfilename).st_mtime
-        if not mtime: print "wtf is wrong with file?!?"
+        if not mtime: print("wtf is wrong with file?!?")
         if mtime > self._last_sent:
             tmpfile = open(self.tmpfilename, 'r')
             tmpfile.seek(0)

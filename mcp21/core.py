@@ -26,6 +26,7 @@ def _version_cmp(v1, v2):
 
 class MCPCore:
     def __init__(self, conn):
+        return # TODO XXX XXX until we fix this for python 3
         self.multiline_messages = {}
         self.mcp_active = 0
         self.mcp_auth_key = ''

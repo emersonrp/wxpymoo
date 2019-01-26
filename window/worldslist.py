@@ -204,10 +204,11 @@ class WorldsList(wx.Dialog):
         print("TODO: got a 'new' button click")
 
     def fill_thyself(self):
-        world = worlds[self.world_picker.GetStringSelection()]
+        selected_world = self.world_picker.GetStringSelection()
+        world = worlds[ selected_world ]
 
-        self.host.SetValue(unicode(world.get("host", "")))
-        self.port.SetValue(    int(world.get("port", 0)))
+        self.host.SetValue(str(world.get("host", "")))
+        self.port.SetValue(int(world.get("port", 0)))
 
         self.conntype.SetStringSelection(world.get("conntype", "Direct"))
 
@@ -216,13 +217,13 @@ class WorldsList(wx.Dialog):
         self.username.SetValue( world.get("username", ""))
         self.password.SetValue( world.get("password", ""))
 
-        desc = unicode(world.get('description'))
+        desc = str(world.get('description'))
         if not desc or desc == "None": desc = ''
         self.desc.SetPage(desc)
         # TODO - figure out how to get the Right Size instead of hard-coded 200px
         self.desc.SetMinSize((1, 200))
 
-        #note = unicode(world.get('note'))
+        #note = str(world.get('note'))
         #if not note or note == "None": note = ''
         #self.note.SetValue(note)
 
