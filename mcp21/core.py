@@ -1,13 +1,11 @@
 import wx
 import re, random, os, importlib
+import utility
 
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
 # file, to which this code bears more than a little resemblance and owes
 # more than a little debt.
-
-OOB_PREFIX   = re.compile('^#\$#')
-QUOTE_PREFIX = re.compile('^#\$"')
 
 #    my $simpleChars = q|[-a-z0-9~`!@#$%^&*()=+{}[\]\|';?/><.,]|;
 #    while ($raw =~ /([-_*a-z0-9]+)              # keyword
@@ -37,6 +35,8 @@ class MCPCore:
         self.packages = {}
 
         MCP(self) # initialize the 'mcp' core package
+
+        conn.output_pane.register_filter(self.output_filter)
 
         # walk the packages directory, and instantiate everything we find there.
         # this relies on each package having a class called "MCPPackage" that's a
@@ -68,13 +68,13 @@ class MCPCore:
         # the prefix #$" removed.  Any other received network line translates to an
         # in-band line consisting of exactly the same characters.
 
-        data, matches = QUOTE_PREFIX.subn('', data)  # did we have the quote prefix?
+        data, matches = utility.QUOTE_PREFIX.subn('', data)  # did we have the quote prefix?
         if matches > 0: return data                  # we did, and removed it.  Return the line
 
-        data, matches = OOB_PREFIX.subn('', data) # did we have the oob prefix?
+        data, matches = utility.OOB_PREFIX.subn('', data) # did we have the oob prefix?
         if matches == 0: return data              # we did not, so return the line and bail
 
-        # now we have only lines that started with OOB_PREFIX, which has been trimmed
+        # now we have only lines that started with utility.OOB_PREFIX, which has been trimmed
         self.debug("S->C: #$#" + data)
 
         m = re.match(r'(\S+)\s*(.*)', data)

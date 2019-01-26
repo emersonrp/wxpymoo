@@ -1,14 +1,18 @@
 import wx
 import wx.richtext as rtc
 import wx.lib.newevent
+import re
 
 import prefs
 import utility
+from editor import Editor
 from theme import Theme
 from window.basepane import BasePane
 
 #import webbrowser, re, math, emoji
 import webbrowser, re, math
+
+LOCALEDIT_LINE = re.compile(utility.OOB_PREFIX.pattern + ' edit name: (.+?) upload: (.+)')
 
 RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
@@ -22,6 +26,10 @@ class OutputPane(BasePane):
         self.intensity = ''
         self.inverse = False
 
+        # output filters can register themselves
+        self.filters = [self.lm_localedit_filter]
+        self.localedit_contents = None
+
         self.theme = Theme()
 
         # TODO - this probably should be a preference, but for now, this is the
@@ -32,6 +40,9 @@ class OutputPane(BasePane):
         self.Bind(wx.EVT_MIDDLE_DOWN                 , self.connection.input_pane.paste_from_selection )
         self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
+
+    def register_filter(self, filter_callback):
+        self.filters.append(filter_callback)
 
     # EVENT HANDLERS #######################
     def on_row_col_changed(self, evt):
@@ -94,12 +105,13 @@ class OutputPane(BasePane):
     def display(self, text):
         self.SetInsertionPointEnd()
         text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
-        # self.Freeze() # causing delay on last line - TODO: investigate
-        for line in text.split('\n'):
-            line = line + "\n"
-            if prefs.get('use_mcp') == 'True':
-                line = self.connection.mcp.output_filter(line)
-                if not line: continue  # output_filter returns falsie if it handled it.
+        self.Freeze() # causing delay on last line - TODO: investigate
+        for line in text.split('\n+'):
+
+            for fil in self.filters:
+                line = fil(line)
+                if not line: break  # output_filter returns falsie if it handled it.
+            if not line: continue
 
             #if (True or prefs.get('render_emoji') == 'True'):
                 # TODO - preference?  "if (we detect an emoji)?"
@@ -208,10 +220,10 @@ class OutputPane(BasePane):
                     else:
                         # is a text-only chunk, check for URLs
                         if prefs.get('highlight_urls') == 'True':
-                            matches = re.split(utility.URL_REGEX, bit)
+                            matches = utility.URL_REGEX.split(bit)
                             for chunk in matches:
                                 if chunk is None: continue
-                                if re.match(utility.URL_REGEX, chunk):
+                                if utility.URL_REGEX.match(chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
 
@@ -229,7 +241,8 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
-        # self.Thaw() # causing delay on last line - TODO investigate.
+        self.Thaw() # causing delay on last line - TODO investigate.
+        self.WriteText("\n")
 
     def foreground_colour(self):
         return self.theme.Colour(self.fg_colour, self.intensity)
@@ -302,6 +315,47 @@ class OutputPane(BasePane):
         self.display("--- ANSI TEST END ---")
         self.display("")
         self.Thaw()
+
+    ########### LM LOCALEDIT
+    def lm_localedit_filter(self, line):
+        # Are we in the middle of an ongoing localedit blast?
+        if self.localedit_contents:
+            self.localedit_contents.append(line.rstrip())
+            if re.match('^\.$', line):
+                self.send_localedit_to_editor()
+                self.localedit_contents = None
+            return None
+        # Check for precisely "#$# edit name: xxxxxx upload: xxxxx"
+        else:
+            if LOCALEDIT_LINE.match(line):
+                self.localedit_contents = [line.rstrip()]
+                return None
+
+        # Nope?  OK, pass back the line for the next lucky winner to play with
+        return line
+
+    def send_localedit_to_editor(self):
+        invocation = self.localedit_contents[0]
+        matches = LOCALEDIT_LINE.match(invocation)
+        name    = matches.group(1)
+        upload  = matches.group(2)
+        self.localedit_contents[0] = upload
+
+        if re.match('@program', upload):
+            type = "moo-code"
+        else:
+            type = "text"
+
+        editor = Editor({
+            'filetype' : type,
+            'content'  : self.localedit_contents,
+            'callback' : self._send_file
+        })
+
+    def _send_file(self, id, content):
+        for l in content:
+            self.connection.output(l)
+    ########### LM LOCALEDIT
 
 
 ansi_codes = {
