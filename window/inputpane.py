@@ -319,8 +319,7 @@ class CompletionList(wx.ListCtrl):
         self.SetTextColour(prefs.get('fgcolour'))
         self.SetBackgroundColour(prefs.get('bgcolour'))
 
-        font = wx.NullFont
-        font.SetNativeFontInfoFromString(prefs.get('font'))
+        font = wx.Font(prefs.get('font'))
         self.SetFont(font)
 
     def fill(self, completions):
