@@ -104,7 +104,7 @@ class OutputPane(BasePane):
 
     def display(self, text):
         self.SetInsertionPointEnd()
-        text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
+        #text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
         self.Freeze() # causing delay on last line - TODO: investigate
         for line in text.split('\n+'):
 
