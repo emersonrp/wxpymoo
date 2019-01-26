@@ -1,8 +1,6 @@
 import wx
 import prefs
 
-from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
-
 class PrefsEditor(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent)
@@ -32,8 +30,6 @@ class PrefsEditor(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.update_prefs, id = wx.ID_OK)
 
-        self.update_sample_text(None)
-
         self.Layout()
 
     def update_prefs(self, evt):
@@ -58,20 +54,26 @@ class PrefsEditor(wx.Dialog):
     def createFontPanel(self):
         fcp = wx.Panel(self.book)
 
-        font = wx.Font(prefs.get('font'))
+        font = wx.NullFont
+        font.SetNativeFontInfoFromString(prefs.get('font'))
 
         fgcolour = prefs.get('fgcolour')
         bgcolour = prefs.get('bgcolour')
 
         # output sample/controls
-        fcp.sample    =    ExpandoTextCtrl(fcp, style = wx.TE_READONLY | wx.TE_RICH | wx.TE_MULTILINE )
-        fcp.font_ctrl = wx.FontPickerCtrl (fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL, font = font)
+        fcp.sample    = wx.TextCtrl      (fcp, style = wx.TE_READONLY)
+        fcp.font_ctrl = wx.FontPickerCtrl(fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL)
 
         bsize = fcp.font_ctrl.GetSize().GetHeight()
         button_size = [bsize, bsize]
 
-        fcp.fgcolour_ctrl = wx.ColourPickerCtrl(fcp, colour = fgcolour, size = button_size)
-        fcp.bgcolour_ctrl = wx.ColourPickerCtrl(fcp, colour = bgcolour, size = button_size)
+        fcp.fgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = fgcolour, size = button_size)
+        fcp.bgcolour_ctrl = wx.ColourPickerCtrl(fcp, col = bgcolour, size = button_size)
+
+        fcp.sample.SetFont(font)
+        fcp.sample.SetBackgroundColour(bgcolour)
+        fcp.sample.SetForegroundColour(fgcolour)
+        fcp.sample.SetValue('Emerson says, "This is what your window will look like."')
 
         fcp.ansi_checkbox = wx.CheckBox(fcp, -1, 'Use ANSI colors')
         fcp.ansi_checkbox.SetValue( True if prefs.get('use_ansi') == "True" else False )
@@ -81,11 +83,11 @@ class PrefsEditor(wx.Dialog):
         fc_sizer.Add(fcp.fgcolour_ctrl, 0)
         fc_sizer.Add(fcp.bgcolour_ctrl, 0)
         fc_sizer.AddGrowableCol(0)
-        fc_sizer.Fit(fcp)
+        #fc_sizer.Fit(fcp)
 
         ansi_sizer = wx.BoxSizer(wx.VERTICAL)
         ansi_sizer.Add(fcp.ansi_checkbox)
-        ansi_sizer.Fit(fcp)
+        #ansi_sizer.Fit(fcp)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         panel_sizer.Add(fcp.sample, 0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
@@ -96,12 +98,8 @@ class PrefsEditor(wx.Dialog):
         self.Bind(wx.EVT_FONTPICKER_CHANGED  , self.update_sample_text, fcp.font_ctrl)
         self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.fgcolour_ctrl)
         self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.bgcolour_ctrl)
-        self.Bind(wx.EVT_CHECKBOX            , self.update_sample_text, fcp.ansi_checkbox)
 
         fcp.SetSizer(panel_sizer)
-
-        fcp.Layout()
-        fcp.Fit()
 
         return fcp
 
@@ -126,21 +124,8 @@ class PrefsEditor(wx.Dialog):
         return pp
 
     def update_sample_text(self, evt):
-        fp = self.fonts_page
-
-        fgcolour = fp.fgcolour_ctrl.GetColour()
-        bgcolour = fp.bgcolour_ctrl.GetColour()
-        font     = fp.font_ctrl.GetSelectedFont()
-
-        textattr = wx.TextAttr(fgcolour, bgcolour, font)
-
-        fp.sample.SetBackgroundColour(bgcolour)
-        fp.sample.SetValue('Emerson says, "This is what your window will look like."')
-        fp.sample.SetStyle(0, fp.sample.GetLastPosition(), textattr)
-
-        # Mock up ANSI 'Emerson' if ANSI pref is on
-        if fp.ansi_checkbox.GetValue() == True:
-            textattr.SetTextColour(wx.BLUE)
-            fp.sample.SetStyle(0, 7, textattr)
-
-        if evt: evt.Skip()
+        fcp = self.fonts_page
+        fcp.sample.SetFont            (fcp.font_ctrl.GetSelectedFont())
+        fcp.sample.SetForegroundColour(fcp.fgcolour_ctrl.GetColour())
+        fcp.sample.SetBackgroundColour(fcp.bgcolour_ctrl.GetColour())
+        evt.Skip()
