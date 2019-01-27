@@ -65,7 +65,7 @@ class Main(wx.Frame):
         Worlds_quit      = WorldsMenu.Append(wx.ID_EXIT)
 
         shortlist = []
-        for worldname, world in worlds.iteritems():
+        for worldname, world in worlds.items():
             if world.get('on_shortlist'):
                 shortlist.append(worldname)
 

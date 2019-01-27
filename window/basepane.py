@@ -30,10 +30,7 @@ class BasePane(rtc.RichTextCtrl):
         self.SetBasicStyle(basic_style)
         self.basic_style = basic_style
 
-        # is there a way to construct a font directly from an InfoString, instead of making
-        # a generic one and then overriding it like this?
-        font = wx.NullFont
-        font.SetNativeFontInfoFromString(prefs.get('font'))
+        font = wx.Font(prefs.get('font'))
         self.SetFont(font)
 
         # set one-half character's worth of left / top margin

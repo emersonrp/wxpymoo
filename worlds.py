@@ -1,6 +1,7 @@
 import wx
 import re
 import os
+import collections
 
 class World(dict):
 
@@ -23,12 +24,12 @@ class World(dict):
         _config.SetPath(worldname)
 
         for f in self:
-            if self.get(f): _config.Write(f, unicode(self.get(f)))
+            if self.get(f): _config.Write(f, str(self.get(f)))
 
         _config.SetPath('/')
         _config.Flush()
 
-worlds    = {}
+worlds    = collections.OrderedDict({})
 _defaults = {}
 _config   = None
 def Initialize():
