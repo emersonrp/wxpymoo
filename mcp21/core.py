@@ -60,7 +60,7 @@ class MCPCore:
         # TODO - we might want one debug window per-connection-window
         print(self.connection.world.get('name') + ": " + info)
 
-    def output_filter(self, data):
+    def output_filter(self, output_pane, data):
         # MCP spec, 2.1:
         # A received network line that begins with the characters #$# is translated
         # to an out-of-band (MCP message) line consisting of exactly the same

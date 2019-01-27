@@ -3,6 +3,8 @@ import wx.richtext as rtc
 import wx.lib.newevent
 import re
 
+import telnetiac
+
 import prefs
 import utility
 from editor import Editor
@@ -27,7 +29,7 @@ class OutputPane(BasePane):
         self.inverse = False
 
         # output filters can register themselves
-        self.filters = [self.lm_localedit_filter]
+        self.filters = [telnetiac.process_line, self.lm_localedit_filter]
         self.localedit_contents = None
 
         self.theme = Theme()
@@ -109,7 +111,7 @@ class OutputPane(BasePane):
         for line in text.split('\n+'):
 
             for fil in self.filters:
-                line = fil(line)
+                line = fil(self, line)
                 if not line: break  # output_filter returns falsie if it handled it.
             if not line: continue
 
@@ -317,7 +319,7 @@ class OutputPane(BasePane):
         self.Thaw()
 
     ########### LM LOCALEDIT
-    def lm_localedit_filter(self, line):
+    def lm_localedit_filter(self, _, line):
         # Are we in the middle of an ongoing localedit blast?
         if self.localedit_contents:
             self.localedit_contents.append(line.rstrip())
