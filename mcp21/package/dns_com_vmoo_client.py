@@ -30,8 +30,8 @@ class MCPPackage(MCPPackageBase):
         self.mcp.server_notify(
             'dns-com-vmoo-client-info', {
                 'name'             : 'wxpymoo',
-                'text-version'     : 'pre-alpha',
-                'internal-version' : '1',
+                'text-version'     : '0.2',
+                'internal-version' : '0.2',
             }
         )
 

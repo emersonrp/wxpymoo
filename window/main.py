@@ -1,4 +1,5 @@
 import wx
+import wx.adv
 from connection import Connection
 from window.connectdialog import ConnectDialog
 from window.debugmcp import DebugMCP
@@ -6,6 +7,8 @@ from window.prefseditor import PrefsEditor
 from window.statusbar import StatusBar
 from window.worldslist import WorldsList
 from functools import partial
+
+from pathlib import Path
 
 from worlds import worlds
 
@@ -179,14 +182,16 @@ class Main(wx.Frame):
 
     def showAboutBox(self, evt):
         if self.about_info is None:
-            info = wx.AboutDialogInfo()
+            info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
-            info.SetCopyright('(c) 2013-2016')
-            info.SetWebSite('http://emersonrp.github.io/wxpymoo/')
+            info.AddDeveloper('C Bodt (https://github.com/sirk390)')
+            info.SetCopyright('(c) 2013-2019')
+            info.SetWebSite('https://emersonrp.github.io/wxpymoo/')
             info.SetName('wxpymoo')
-            info.SetVersion('0.1')
+            info.SetLicense(Path('LICENSE').read_text())
+            info.SetVersion('0.2')
             self.about_info = info
-        wx.AboutBox(self.about_info)
+        wx.adv.AboutBox(self.about_info)
 
     def quitApplication(self, evt):
         self.closeConnection

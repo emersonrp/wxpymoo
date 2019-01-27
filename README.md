@@ -25,13 +25,14 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
     * dns-com-vmoo-client
     * dns-com-vmoo-smartcomplete (partial)
     * dns-org-mud-moo-simpleedit
-* Colors and fonts, ANSI support, external editor saved via prefs
+* Colors and fonts, ANSI support, external editor, chosen via prefs
 * Multiple connections supported via tabbed interface
+* SSL support per-world
+* Works at least reasonably on Linux, MacOS, Windows.
 
-##0.1 Milestone
+##Immediate Concerns
 * fix output pane scroll-to-bottom behavior to dwym.
 * More keyboard accelerators;  page-up/down etc
-* make sure it works on MacOS and Windows
 * Finish toast-style popups for dns-com-awns-status et al
 
 ##To do
@@ -42,15 +43,15 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Per-world settings?  Colors, fonts?
 * Finish MCP 2.1 implementation.
 * Object browser, like MacMOOSE but hopefully nicer.
-* Connections to have a 'connection type' -- currently thinking TCP port, SSL, and SSH port forwarding (automagic at connection time).
+* Implement "SSH Forwarding" connection type.
 
 ##Blue-sky
 * HTML help, using jtext?
 * MIME-based external apps, ie mplayer for audio/flac etc?  MCP package to accept MIME+data?  dns-com-vmoo-mmedia?
 * inline MOO syntax highlighting?  Like, detect the output of "@list $player:tell" and auto-highlight it?
 
-##Things that aren't currently on the rader
-* tkMOO-light has a plugin architecture, and all sorts of third-party additions (I even wrote one, years ago).  Ihave no expectation that there'll be an ecosystem of developers around **this** MOO client, so I'm not actually desigining with that in mind.
+##Things not currently on the radar
+* tkMOO-light has a plugin architecture, and all sorts of third-party additions (I even wrote one, years ago).  I have no expectation that there'll be an ecosystem of developers around **this** MOO client, so I'm not actually desigining with that in mind.
 * I MOO socially, occasionally.  I don't do RPG MUDs or things like that, so I have no need for triggers and macros and so forth.  I don't even have a clear idea of what people do with them.  Convince me.
 
 ##Guiding thoughts
@@ -59,9 +60,17 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows?
 
 ##Dependencies
-* [Python](http://www.python.org) 2.7
-* [wxPython](http://www.wxpython.org) 3.0+
-* [twisted](https://twistedmatrix.com/trac/)
+* [Python](http://www.python.org) 3.7
+* [wxPython](http://www.wxpython.org) 4.0+
+
+Windows / Mac users:
+    * Clone this repo
+    * Go to the Python link above, get the latest version of Python
+    * Install it
+    * Open a terminal, type "pip install wxPython"
+    * Double-click "wxpymoo.py" inside the wxpymoo directory
 
 Fedora users:
-    sudo dnf install python wxPython python-twisted
+    * Clone this repo
+    * sudo dnf install python wxPython
+    * cd wxpymoo; python3 wxpymoo.py
