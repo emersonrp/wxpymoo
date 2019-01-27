@@ -80,8 +80,9 @@ class Connection(wx.SplitterWindow):
         world = self.world
         host =     world.get('host')
         port = int(world.get('port'))
+        conntype = world.get('conntype')
 
-        self.reader, self.writer = await asyncio.open_connection(host, port)
+        self.reader, self.writer = await asyncio.open_connection(host, port, ssl = True if conntype == "SSL" else False )
         self.connect_time = 0
 
         self.main_window = wx.GetApp().GetTopWindow()
@@ -95,7 +96,7 @@ class Connection(wx.SplitterWindow):
             if not line: break
 
             line = line.decode('latin1').rstrip()
-            if line: self.output_pane.display(line)
+            self.output_pane.display(line)
 
     def output(self, stuff):
         self.writer.write(stuff.encode('latin1'))
