@@ -113,7 +113,7 @@ class MCPCore:
         message.message = message.message or message_name
 
         if message.multi_in_progress:
-            if not self.multiline_messages.has_key(message._data_tag):
+            if not message._data_tag in self.multiline_messages:
                 self.multiline_messages[message._data_tag] = message
         else:
             # don't dispatch multilines in progress
@@ -206,7 +206,7 @@ class MCPCore:
 
     # next two subs taken from MCP 2.1 specification, section 2.4.3
     def get_best_version(self, pkg, smin, smax):
-        if not self.packages.has_key(pkg): return
+        if not pkg in self.packages: return
 
         cmax = self.packages[pkg].max
         cmin = self.packages[pkg].min
@@ -238,7 +238,7 @@ class MCP(MCPPackageBase):
 
     ### handlers
     def do_mcp(self, message):
-        if message.data['version'] == 2.1 or message.data['to'] >= 2.1:
+        if float(message.data['version']) == 2.1 or float(message.data['to']) >= 2.1:
             self.mcp.mcp_active = True
         else:
             self.mcp.debug("mcp version doesn't match, bailing")
