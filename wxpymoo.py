@@ -2,14 +2,12 @@
 
 import wx
 import os, sys
-from twisted.internet import wxreactor
-wxreactor.install() # must be before 'import reactor'
-from twisted.internet import reactor
-
-
+from wxasync import WxAsyncApp
+import asyncio
+from asyncio.events import get_event_loop
 
 def run():
-    app = wx.App(False)
+    app = WxAsyncApp()
 
     app.path = os.path.dirname(sys.argv[0])
 
@@ -23,12 +21,8 @@ def run():
     frame = Main(None, "wxpymoo")
     frame.Show(True)
 
-    reactor.registerWxApp(app)
-    reactor.run()
-
-
-    app.MainLoop()
-
+    loop = get_event_loop()
+    loop.run_until_complete(app.MainLoop())
 
 if __name__ == "__main__":
     run()

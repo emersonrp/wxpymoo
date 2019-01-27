@@ -1,55 +1,14 @@
 import wx
 import time
 import re
-from twisted.internet import reactor
-from twisted.internet.protocol import ClientFactory
-from twisted.protocols.basic import LineReceiver
+from wxasync import StartCoroutine
+import asyncio
 
 from window.inputpane import InputPane
 from window.outputpane import OutputPane
 from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
-
-class ConnectionClient(LineReceiver):
-    def lineReceived(self, line):
-        self.factory.connection.output_pane.display(line)
-
-    def output(self, line):
-        self.sendLine(line.encode('utf-8'))
-
-    def connectionMade(self):
-        self.connected = True
-        # turn on TCP keepalive if possible
-        self.factory.connection.connect_time = time.time()
-        try:
-            self.transport.setTcpKeepAlive(1)
-        except AttributeError: pass
-
-        prefs.set('last_world', self.factory.connection.world.get('name'))
-        self.factory.connection.connected()
-
-    def connectionLost(self, reason):
-        self.connected = False
-
-class ConnectionClientFactory(ClientFactory):
-    def __init__(self, connection):
-        self.connection = connection
-        self.protocol   = ConnectionClient
-
-    def buildProtocol(self, addr):
-        p = ClientFactory.buildProtocol(self, addr)
-        self.connection.input_receiver = p
-        return p
-
-    #def clientConnectionFailed(self, connector, reason):
-        #print("connection failed:", reason.getErrorMessage())
-        #reactor.stop()
-
-    #def clientConnectionLost(self, connector, reason):
-        #print('connection lost:', reason.getErrorMessage())
-        #reactor.stop()
-
 
 # the 'connection' contains both the network connection and the i/o ui
 class Connection(wx.SplitterWindow):
@@ -106,18 +65,23 @@ class Connection(wx.SplitterWindow):
         # force it again just to be sure
         #self.keepalive.Stop()
         self.connect_time = None
-        self.connector.disconnect()
+        self.writer.close()
 
     # connection.connect ([host], [port])
     #
     # existing connections will remember their host and port if not supplied here,
     # for ease of reconnect etc.
     def connect(self, world):
+        self.world = world
+        StartCoroutine(self._connect, self)
+        self.connect_time = None
+
+    async def _connect(self):
+        world = self.world
         host =     world.get('host')
         port = int(world.get('port'))
 
-        self.world        = world
-        self.connector    = reactor.connectTCP(host, port, ConnectionClientFactory(self))
+        self.reader, self.writer = await asyncio.open_connection(host, port)
         self.connect_time = 0
 
         self.main_window = wx.GetApp().GetTopWindow()
@@ -126,9 +90,16 @@ class Connection(wx.SplitterWindow):
 
         # TODO - 'if world.connection.keepalive'
         #self.keepalive.Start()
+        while True:
+            line = await self.reader.readline()
+            if not line: break
+
+            line = line.decode('latin1').rstrip()
+            if line: self.output_pane.display(line)
 
     def output(self, stuff):
-        self.input_receiver.output(stuff)
+        self.writer.write(stuff.encode('latin1'))
+        self.writer.write(b"\n")
 
     def reconnect(self):
         if self.connector: self.Close()
