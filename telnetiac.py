@@ -143,6 +143,9 @@ MSSP     = chr(70)
 MSSP_VAR = chr(1)
 MSSP_VAL = chr(2)
 
+# GMCP - Generic MUD Communication Protocol
+GMCP = chr(201)
+
 def process_line(output_pane, line):
     buf = ['','']
     iacseq  = ''
@@ -192,7 +195,15 @@ def process_line(output_pane, line):
 
 def handle_iac_negotiation(opt, conn):
     if opt == MSSP:
-        conn.output(IAC + DO + opt)
+        print("Sending IAC DO MSSP")
+        conn.output(IAC + DO + MSSP)
+    elif opt == GMCP:
+        # TODO - support this eventually
+        print("Sending IAC DONT GMCP")
+        conn.output(IAC + DONT + GMCP)
+    else:
+        print("Got an unknown IAC negotiation, saying no")
+        conn.output(IAC + DONT + opt)
     return
 
 def handle_iac_subnegotiation(sbdataq, conn):
@@ -200,6 +211,9 @@ def handle_iac_subnegotiation(sbdataq, conn):
     SB_ID = payload.popleft()
     if SB_ID == MSSP:
         handle_mssp(payload, conn)
+    else:
+        print("Unknown IAC Subnegotiation")
+        print(sbdataq)
     return
 
 def handle_mssp(payload, conn):
