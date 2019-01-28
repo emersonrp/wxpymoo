@@ -356,7 +356,7 @@ class OutputPane(BasePane):
 
     def _send_file(self, id, content):
         for l in content:
-            self.connection.output(l)
+            self.connection.output(l + "\n")
     ########### LM LOCALEDIT
 
 

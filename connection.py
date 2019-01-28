@@ -100,7 +100,6 @@ class Connection(wx.SplitterWindow):
 
     def output(self, stuff):
         self.writer.write(stuff.encode('latin1'))
-        self.writer.write(b"\n")
 
     def reconnect(self):
         if self.connector: self.Close()
@@ -112,7 +111,7 @@ class Connection(wx.SplitterWindow):
             if login_script:
                 login_script = re.sub('%u', self.world.get('username', ''), login_script)
                 login_script = re.sub('%p', self.world.get('password', ''), login_script)
-            self.output(login_script)
+            self.output(login_script + "\n")
 
 class Keepalive(wx.EvtHandler):
     ######################

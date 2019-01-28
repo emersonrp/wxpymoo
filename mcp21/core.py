@@ -189,7 +189,7 @@ class MCPCore:
                 self.server_send("#$#: " + datatag)
 
     def server_send(self, out_line):
-        self.connection.output(out_line)
+        self.connection.output(out_line + "\n")
         self.debug("C->S: " + out_line)
 
     def start_mcp(self):

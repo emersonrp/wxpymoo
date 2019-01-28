@@ -45,7 +45,7 @@ class InputPane(BasePane):
         if self.connection:
             stuff = self.GetValue()
             self.cmd_history.add(stuff)
-            self.connection.output(stuff)
+            self.connection.output(stuff + "\n")
             self.Clear()
 
     def check_for_interesting_keystrokes(self, evt):
