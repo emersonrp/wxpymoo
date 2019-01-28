@@ -166,6 +166,7 @@ class WorldsList(wx.Dialog):
     # TODO - make wxpymoo.World have a notion of "connect to yourself"
     # Also therefore merge wxpymoo.world and wxpymoo.window.world
     def on_connect(self, evt):
+        self.on_save(evt)
         world = worlds[self.world_picker.GetStringSelection()]
         self.parent.openWorld(world)
         self.Hide()

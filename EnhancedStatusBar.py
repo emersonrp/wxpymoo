@@ -95,7 +95,7 @@ class EnhancedStatusBar(wx.StatusBar):
         self._curPos = 0
         self._parent = parent
         
-        wx.EVT_SIZE(self, self.OnSize) 
+        self.Bind(wx.EVT_SIZE, self.OnSize, self)
         wx.CallAfter(self.OnSize, None)
 
             
