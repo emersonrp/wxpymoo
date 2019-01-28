@@ -3,6 +3,7 @@ import wx.richtext as rtc
 import prefs
 import re
 from utility import platform
+from theme import Theme
 
 class BasePane(rtc.RichTextCtrl):
 
@@ -13,16 +14,18 @@ class BasePane(rtc.RichTextCtrl):
         self.cols = 0
         self.rows = 0
         self.basic_style = None
-        self.fg_colour = ''
-        self.bg_colour = ''
+
+        self.theme = Theme.fetch()
+
+        self.fg_colour = self.theme.get('foreground')
+        self.bg_colour = self.theme.get('background')
 
         self.Clear()
         self.restyle_thyself()
 
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()
-        self.fg_colour = prefs.get('fgcolour')
-        self.bg_colour = prefs.get('bgcolour')
+        self.theme = Theme.fetch()
         basic_style.SetTextColour      (self.fg_colour)
         basic_style.SetBackgroundColour(self.bg_colour)
 

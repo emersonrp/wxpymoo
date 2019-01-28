@@ -8,7 +8,6 @@ import telnetiac
 import prefs
 import utility
 from editor import Editor
-from theme import Theme
 from window.basepane import BasePane
 
 #import webbrowser, re, math, emoji
@@ -31,8 +30,6 @@ class OutputPane(BasePane):
         # output filters can register themselves
         self.filters = [telnetiac.process_line, self.lm_localedit_filter]
         self.localedit_contents = None
-
-        self.theme = Theme()
 
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
@@ -93,6 +90,7 @@ class OutputPane(BasePane):
         self.ScrollIfAppropriate()
 
     def is_at_bottom(self):
+        # TODO - "is the bottom line currently visible / not scrolled-off"
         return True
 
     def ScrollIfAppropriate(self):
@@ -106,13 +104,12 @@ class OutputPane(BasePane):
 
     def display(self, text):
         self.SetInsertionPointEnd()
-        #text = text.decode('latin-1') # TODO - is this the right thing and/or place for this?
-        self.Freeze() # causing delay on last line - TODO: investigate
+        self.Freeze()
         for line in text.split('\n+'):
 
             for fil in self.filters:
                 line = fil(self, line)
-                if not line: break  # output_filter returns falsie if it handled it.
+                if line == None: break  # output_filter must return None / void, if it handled it
             if not line: continue
 
             #if (True or prefs.get('render_emoji') == 'True'):
@@ -146,8 +143,8 @@ class OutputPane(BasePane):
                                     self.EndAllStyles()
                                     self.intensity = ''
                                     self.inverse = False
-                                    self.fg_colour = prefs.get('fgcolour')
-                                    self.bg_colour = prefs.get('bgcolour')
+                                    self.fg_colour = self.theme.get('foreground')
+                                    self.bg_colour = self.theme.get('background')
                                     self.set_current_colours()
                                 elif payload == 'bright':
                                     self.intensity = 'bright'
@@ -243,8 +240,8 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
-        self.Thaw() # causing delay on last line - TODO investigate.
-        self.WriteText("\n")
+        self.Thaw()
+        if not line == None: self.WriteText("\n")
 
     def foreground_colour(self):
         return self.theme.Colour(self.fg_colour, self.intensity)

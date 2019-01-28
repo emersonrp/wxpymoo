@@ -14,9 +14,11 @@ def run():
     from window.main import Main
     import prefs
     import worlds
+    import theme
 
     prefs.Initialize()
     worlds.Initialize()
+    theme.Initialize()
 
     frame = Main(None, "wxpymoo")
     frame.Show(True)

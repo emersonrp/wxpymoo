@@ -1,5 +1,6 @@
 import wx
 import prefs
+from theme import Theme
 
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 
@@ -67,35 +68,37 @@ class PrefsEditor(wx.Dialog):
         fcp.sample    =    ExpandoTextCtrl(fcp, style = wx.TE_READONLY | wx.TE_RICH | wx.TE_MULTILINE )
         fcp.font_ctrl = wx.FontPickerCtrl (fcp, style = wx.FNTP_FONTDESC_AS_LABEL | wx.FNTP_USEFONT_FOR_LABEL, font = font)
 
-        bsize = fcp.font_ctrl.GetSize().GetHeight()
-        button_size = [bsize, bsize]
+        fcp.theme_picker = wx.Choice(fcp, choices = Theme.all_theme_names())
 
-        fcp.fgcolour_ctrl = wx.ColourPickerCtrl(fcp, colour = fgcolour, size = button_size)
-        fcp.bgcolour_ctrl = wx.ColourPickerCtrl(fcp, colour = bgcolour, size = button_size)
+        # TODO - get and set these two at display time not create time
+        fcp.theme = prefs.get('theme')
+        fcp.theme_picker.SetSelection(fcp.theme_picker.FindString(fcp.theme))
 
         fcp.ansi_checkbox = wx.CheckBox(fcp, -1, 'Use ANSI colors')
         fcp.ansi_checkbox.SetValue( True if prefs.get('use_ansi') == "True" else False )
 
         fc_sizer = wx.FlexGridSizer(1, 3, 5, 10)
         fc_sizer.Add(fcp.font_ctrl    , 0, wx.EXPAND, 0)
-        fc_sizer.Add(fcp.fgcolour_ctrl, 0)
-        fc_sizer.Add(fcp.bgcolour_ctrl, 0)
         fc_sizer.AddGrowableCol(0)
         fc_sizer.Fit(fcp)
+
+        theme_sizer = wx.BoxSizer(wx.VERTICAL)
+        theme_sizer.Add(fcp.theme_picker)
+        theme_sizer.Fit(fcp)
 
         ansi_sizer = wx.BoxSizer(wx.VERTICAL)
         ansi_sizer.Add(fcp.ansi_checkbox)
         ansi_sizer.Fit(fcp)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        panel_sizer.Add(fcp.sample, 0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
-        panel_sizer.Add(fc_sizer,   0, wx.RIGHT|wx.LEFT|wx.EXPAND,        10)
-        panel_sizer.AddSpacer(bsize)
-        panel_sizer.Add(ansi_sizer)
+        panel_sizer.Add(fcp.sample,  0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
+        panel_sizer.Add(fc_sizer,    0, wx.RIGHT|wx.LEFT|wx.EXPAND,        10)
+        panel_sizer.Add(theme_sizer, 0, wx.RIGHT|wx.LEFT|wx.EXPAND,        10)
+        panel_sizer.AddSpacer(10)
+        panel_sizer.Add(ansi_sizer,  0, wx.RIGHT|wx.LEFT|wx.EXPAND,        10)
 
         self.Bind(wx.EVT_FONTPICKER_CHANGED  , self.update_sample_text, fcp.font_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.fgcolour_ctrl)
-        self.Bind(wx.EVT_COLOURPICKER_CHANGED, self.update_sample_text, fcp.bgcolour_ctrl)
+        self.Bind(wx.EVT_CHOICE              , self.update_sample_text, fcp.theme_picker)
         self.Bind(wx.EVT_CHECKBOX            , self.update_sample_text, fcp.ansi_checkbox)
 
         fcp.SetSizer(panel_sizer)
@@ -128,8 +131,10 @@ class PrefsEditor(wx.Dialog):
     def update_sample_text(self, evt):
         fp = self.fonts_page
 
-        fgcolour = fp.fgcolour_ctrl.GetColour()
-        bgcolour = fp.bgcolour_ctrl.GetColour()
+        theme = Theme.fetch(fp.theme_picker.GetStringSelection())
+
+        fgcolour = theme.get('foreground')
+        bgcolour = theme.get('background')
         font     = fp.font_ctrl.GetSelectedFont()
 
         textattr = wx.TextAttr(fgcolour, bgcolour, font)
@@ -140,7 +145,7 @@ class PrefsEditor(wx.Dialog):
 
         # Mock up ANSI 'Emerson' if ANSI pref is on
         if fp.ansi_checkbox.GetValue() == True:
-            textattr.SetTextColour(wx.BLUE)
+            textattr.SetTextColour(theme.get('blue'))
             fp.sample.SetStyle(0, 7, textattr)
 
         if evt: evt.Skip()

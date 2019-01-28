@@ -1,24 +1,53 @@
 import wx
+import prefs
+
+ansi_color_codes = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+
+# TODO -- make more themes
+# TODO -- put themes into the config file
 
 # This is Solarized ANSI as per the Internet 
 # https://github.com/seebi/dircolors-solarized/blob/master/dircolors.ansi-universal
-color_codes = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
-solarized = {
-    'black'   : '#073642',
-    'red'     : '#dc322f',
-    'green'   : '#859900',
-    'yellow'  : '#b58900',
-    'blue'    : '#268bd2',
-    'magenta' : '#d33682',
-    'cyan'    : '#2aa198',
-    'white'   : '#eee8d5',
+
+all_themes = {}
+_default_themes = {
+    'ANSI'           : {
+        'black'      : '#000000',
+        'red'        : '#ff0000',
+        'green'      : '#00f000',
+        'yellow'     : '#ffff00',
+        'blue'       : '#0000ff',
+        'magenta'    : '#ff00ff',
+        'cyan'       : '#00ffff',
+        'white'      : '#ffffff',
+        'foreground' : '#bbbbbb',
+        'background' : '#000000',
+    },
+    'solarized'      : {
+        'black'      : '#073642',
+        'red'        : '#dc322f',
+        'green'      : '#859900',
+        'yellow'     : '#b58900',
+        'blue'       : '#268bd2',
+        'magenta'    : '#d33682',
+        'cyan'       : '#2aa198',
+        'white'      : '#eee8d5',
+        'foreground' : '#93a1a1',
+        'background' : '#002b36',
+    },
 }
 
 class Theme(dict):
-    def __init__(self, *init):
-        global solarized
-        for k in solarized:
-            self[k] = solarized[k]
+
+    @classmethod
+    def fetch(cls, themename = ''):
+        global all_themes
+        return all_themes[themename or prefs.get('theme')]
+
+    @classmethod
+    def all_theme_names(cls): return list(all_themes)
+
+    def __init__(self, init):
         for k in init:
             self[k] = init[k]
 
@@ -38,7 +67,7 @@ class Theme(dict):
             intensity = ''
             if index > 7: # bright
                 intensity = 'bright'
-            color = self.Colour(color_codes[index], intensity)
+            color = self.Colour(ansi_color_codes[index], intensity)
             rgb_R, rgb_G, rgb_B = self.hex_to_rgb(color)
         elif index > 15 and index < 232:
             index_R = ((index - 16) // 36)
@@ -76,3 +105,41 @@ class Theme(dict):
         gray = threshold - x * m
         return int(gray + x * r), int(gray + x * g), int(gray + x * b)
 
+def Initialize():
+    global _config, all_themes
+    _config = wx.FileConfig()
+
+    _config.SetPath('/Themes/')
+
+    # loop worlds...
+    g_more, themename, g_index = _config.GetFirstGroup()
+    if g_more:  # do we have anything at all from the config file?
+        while g_more: # yes, loop and fill stuff out.
+            _config.SetPath(themename)
+
+            theme = {}
+            # loop data lines inside each world....
+            e_more, dataname, e_index = _config.GetFirstEntry()
+            while e_more:
+                theme[dataname] = _config.Read(dataname)
+                e_more, dataname, e_index = _config.GetNextEntry(e_index)
+
+            all_themes[themename] = Theme(theme)
+
+            # carry on, back to the top for the next world
+            _config.SetPath('/Themes/')
+            g_more, themename, g_index = _config.GetNextGroup(g_index)
+
+    else:  # nothing from config file, grab the _default_themes data
+
+        for name, theme in _default_themes.items():
+            _config.SetPath(name)
+
+            for key, val in theme.items():
+                _config.Write(key, val)
+
+            _config.SetPath('/Themes/')
+
+            all_themes[name] = Theme(theme)
+
+    _config.SetPath('/')

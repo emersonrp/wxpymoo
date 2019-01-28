@@ -6,8 +6,6 @@ PrefsChangedEvent, EVT_PREFS_CHANGED = wx.lib.newevent.NewEvent()
 
 _config      = None
 _defaults   = {
-    'fgcolour' : '#839496',
-    'bgcolour' : '#002b36',
     'font'     :  wx.Font( 12, wx.TELETYPE, wx.NORMAL, wx.NORMAL ).GetNativeFontInfoDesc(),
 
     'save_window_size' : True,
@@ -15,10 +13,7 @@ _defaults   = {
     'window_height'    : 600,
     'input_height'     : 25,
 
-    # 'theme'        : 'solarized',
-
     'use_ansi'               : True,
-    'use_mcp'                : True,
     'highlight_urls'         : True,
     'save_mcp_window_size'   : True,
     'autoconnect_last_world' : True,
@@ -28,6 +23,8 @@ _defaults   = {
 
     'external_editor'  : 'gvim -f',
     'use_x_copy_paste' : utility.platform == 'linux',
+
+    'theme' : 'ANSI',
 }
 
 def Initialize():
@@ -57,9 +54,9 @@ def update(pw):
     set('autoconnect_last_world', pw.general_page.autoconnect_checkbox.GetValue() )
 
     set('font',     pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-    set('fgcolour', pw.fonts_page.fgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
-    set('bgcolour', pw.fonts_page.bgcolour_ctrl.GetColour().GetAsString(wx.C2S_HTML_SYNTAX))
     set('use_ansi', pw.fonts_page.ansi_checkbox.GetValue() )
+
+    set('theme',    pw.fonts_page.theme_picker.GetStringSelection() )
 
     set('external_editor', pw.paths_page.external_editor.GetValue() )
 
