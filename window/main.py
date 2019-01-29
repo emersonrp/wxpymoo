@@ -35,7 +35,8 @@ class Main(wx.Frame):
             if prefs.get('window_height'): h = int(prefs.get('window_height'))
         self.SetSize((w, h))
 
-        self.tabs = wx.Notebook(self)
+        #self.tabs = wx.Notebook(self)
+        self.tabs = MOONotebook(self)
 
         self.addEvents()
 
@@ -48,6 +49,7 @@ class Main(wx.Frame):
         conn = Connection(self)
         conn.connect(world)
         self.tabs.AddPage(conn, world.get('name'), select = True)
+        self.tabs.showOrHideTabs()
         conn.input_pane.SetFocus()
 
     def connect_to_shortlist(self, worldname, evt):
@@ -64,6 +66,7 @@ class Main(wx.Frame):
         Worlds_reconnect = WorldsMenu.Append(-1, "&Reconnect", "Close and re-open the connection to the current world")
         Worlds_quit      = WorldsMenu.Append(wx.ID_EXIT)
 
+        # TODO - on world save, rebuild shortlist.
         shortlist = []
         for worldname, world in worlds.items():
             if world.get('on_shortlist'):
@@ -122,6 +125,7 @@ class Main(wx.Frame):
     def addEvents(self):
         self.Bind(wx.EVT_SIZE, self.onSize)
         self.tabs.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.status_bar.UpdateConnectionStatus)
+        self.tabs.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED, self.tabs.showOrHideTabs)
 
     def closeConnection(self, evt):
         if self.currentConnection():
@@ -196,3 +200,13 @@ class Main(wx.Frame):
     def quitApplication(self, evt):
         self.closeConnection
         self.Close(True)
+
+from wx.aui import AuiNotebook
+class MOONotebook(AuiNotebook):
+    def __init__(self, parent):
+        AuiNotebook.__init__(self, parent, style =
+                wx.aui.AUI_NB_TAB_FIXED_WIDTH|wx.aui.AUI_NB_CLOSE_ON_ALL_TABS|wx.aui.AUI_NB_DEFAULT_STYLE)
+
+    def showOrHideTabs(self, evt = None):
+        self.SetTabCtrlHeight(-1 if self.GetPageCount() > 1 else 0)
+
