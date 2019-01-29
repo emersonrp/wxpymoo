@@ -37,12 +37,13 @@ class StatusBar(ESB.EnhancedStatusBar):
             self.connection_status.SetBackgroundColour(wx.RED)
             return
 
-        self.connection_status.SetBackgroundColour(wx.GREEN if conn.connected else wx.RED)
+        self.connection_status.SetBackgroundColour(wx.GREEN if conn.is_connected() else wx.RED)
+        self.connection_status.Refresh()
 
         if conn.connect_time:
             if not self.connected_time.GetToolTip():
                 conn_time = time.localtime(conn.connect_time)
-                self.connected_time.SetToolTipString(time.strftime('Connected since: %c', conn_time))
+                self.connected_time.SetToolTip(time.strftime('Connected since: %c', conn_time))
 
             ctime = time.time() - conn.connect_time
             dd, rest = divmod(ctime, 3600 * 24)

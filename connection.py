@@ -15,7 +15,6 @@ class Connection(wx.SplitterWindow):
     def __init__(self, mainwindow):
         wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
         self.world          = None
-        self.input_receiver = None
         self.debug_mcp      = None
 
         self.input_pane     = InputPane(self, self)
@@ -27,7 +26,6 @@ class Connection(wx.SplitterWindow):
         self.help_url       = ''
 
         #self.keepalive     = Keepalive(self)
-        self.connector = None
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
@@ -60,12 +58,13 @@ class Connection(wx.SplitterWindow):
         return self.main_window.currentConnection() == self
 
     def Close(self):
-        if self.input_receiver and self.input_receiver.connected:
+        if self.is_connected:
             self.output_pane.display("wxpymoo: Connection closed.\n");
         # force it again just to be sure
         #self.keepalive.Stop()
         self.connect_time = None
         self.writer.close()
+        self.reader = self.writer = None
 
     # connection.connect ([host], [port])
     #
@@ -77,19 +76,26 @@ class Connection(wx.SplitterWindow):
         self.connect_time = None
 
     async def _connect(self):
-        world = self.world
-        host =     world.get('host')
-        port = int(world.get('port'))
+        world    = self.world
+        host     = world.get('host')
+        port     = int(world.get('port'))
         conntype = world.get('conntype')
 
         self.reader, self.writer = await asyncio.open_connection(host, port, ssl = True if conntype == "SSL" else False )
-        self.connect_time = 0
+        self.connect_time = time.time()
 
         prefs.set('last_world', world.get('name'))
 
         self.main_window = wx.GetApp().GetTopWindow()
 
         self.mcp = MCPCore(self)
+
+        if self.world.get('auto_login'):
+            login_script = self.world.get('login_script')
+            if login_script:
+                login_script = re.sub('%u', self.world.get('username', ''), login_script)
+                login_script = re.sub('%p', self.world.get('password', ''), login_script)
+            self.output(login_script + "\n")
 
         # TODO - 'if world.connection.keepalive'
         #self.keepalive.Start()
@@ -104,16 +110,12 @@ class Connection(wx.SplitterWindow):
         self.writer.write(stuff.encode('latin1'))
 
     def reconnect(self):
-        if self.connector: self.Close()
+        if self.writer: self.Close()
         self.connect(self.world)
 
-    def connected(self):
-        if self.world.get('auto_login'):
-            login_script = self.world.get('login_script')
-            if login_script:
-                login_script = re.sub('%u', self.world.get('username', ''), login_script)
-                login_script = re.sub('%p', self.world.get('password', ''), login_script)
-            self.output(login_script + "\n")
+    def is_connected(self):
+        return True if self.writer else False
+
 
 class Keepalive(wx.EvtHandler):
     ######################
