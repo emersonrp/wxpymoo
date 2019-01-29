@@ -57,7 +57,6 @@ class MCPCore:
     def debug(self, info):
         info = re.sub('\n$', '', info)
         # DebugMCP window monkey-patches this when it shows itself
-        # TODO - we might want one debug window per-connection-window
         print(self.connection.world.get('name') + ": " + info)
 
     def output_filter(self, output_pane, data):
@@ -87,7 +86,7 @@ class MCPCore:
 
         # multiline message handling.  This is awful.
         if message_name == '*':
-            m = re.match(r'^(\S*) ([^:]*): (.*)', rest)
+            m = re.match(r'^(\S*) ([^:]*): ?(.*)', rest)
             tag, field, value = m.group(1,2,3)
 
             message = self.multiline_messages[tag]
