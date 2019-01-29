@@ -85,6 +85,8 @@ class Connection(wx.SplitterWindow):
         self.reader, self.writer = await asyncio.open_connection(host, port, ssl = True if conntype == "SSL" else False )
         self.connect_time = 0
 
+        prefs.set('last_world', world.get('name'))
+
         self.main_window = wx.GetApp().GetTopWindow()
 
         self.mcp = MCPCore(self)
