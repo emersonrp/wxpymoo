@@ -217,7 +217,6 @@ class TabCompletion(wx.PopupWindow):
         sizer.Add(self.completion_list, 1, wx.ALL|wx.EXPAND, 2)
         self.SetSizer(sizer)
 
-
     def pick_completion(self):
         current = self.completion_list.GetFirstSelected()
         return self.begin_pos, self.completion_list.GetItemText(current)
@@ -289,7 +288,9 @@ class TabCompletion(wx.PopupWindow):
                 if h > avail_height:
                     w = w + 15
 
-                self.SetSize((w + 10, avail_height))
+                adj = 1
+                if platform == "windows": adj = 10
+                self.SetSize((w + adj, avail_height))
                 self.Layout()
 
                 # find the x and y location to pop up the menu
@@ -317,11 +318,15 @@ class CompletionList(wx.ListCtrl):
             style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
         )
 
+        self.parent = parent
+
         self.SetTextColour(Theme.fetch().get('foreground'))
         self.SetBackgroundColour(Theme.fetch().get('background'))
 
         font = wx.Font(prefs.get('font'))
         self.SetFont(font)
+
+        self.Bind(wx.EVT_KEY_DOWN,   self.parent.parent.check_for_interesting_keystrokes )
 
     def fill(self, completions):
         self.ClearAll()
@@ -337,10 +342,7 @@ class CompletionList(wx.ListCtrl):
             height += self.GetItemRect(idx).height
 
         self.SetColumnWidth(0,-1)
-
-        width = self.GetColumnWidth(0) + 5
-
-        self.SetSize((width, height))
+        self.SetSize((self.GetColumnWidth(0) + 5, height))
 
         self.Select(0)
 
