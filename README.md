@@ -59,8 +59,11 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows?
 
 ## Credits
-wxpymoo contains wxasync (https://github.com/sirk390/wxasync), which is (c) 2018 Christian Bodt
-and generously provided under the MIT License.
+wxpymoo contains:
+* [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt
+* [EnhancedStatusBar](http://xoomer.virgilio.it/infinity77/main/EnhancedStatusBar.html) (c) 2005 Andrea Gavana and Nitro
+
+wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by Andrew Wilson.
 
 ## Dependencies
 * [Python](http://www.python.org) 3.7

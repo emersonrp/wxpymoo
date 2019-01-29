@@ -4,6 +4,7 @@ import prefs
 import re
 from window.basepane import BasePane
 from utility import platform
+from theme import Theme
 
 class InputPane(BasePane):
 
@@ -210,7 +211,7 @@ class TabCompletion(wx.PopupWindow):
         self.completion_list = CompletionList(self)
         self.last_completed = None
         self.connection = connection
-        self.SetBackgroundColour(prefs.get('fgcolour'))
+        self.SetBackgroundColour(Theme.fetch().get('foreground'))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.completion_list, 1, wx.ALL|wx.EXPAND, 2)
@@ -288,7 +289,7 @@ class TabCompletion(wx.PopupWindow):
                 if h > avail_height:
                     w = w + 15
 
-                self.SetSize((w + 5, avail_height))
+                self.SetSize((w + 10, avail_height))
                 self.Layout()
 
                 # find the x and y location to pop up the menu
@@ -297,7 +298,7 @@ class TabCompletion(wx.PopupWindow):
                 # temporarily move the cursor back to begin_pos so we can 
                 # find out where, along the 'x' axis, the text being completed
                 # actually begins
-                self.parent.SetInsertionPoint(long(begin_pos))
+                self.parent.SetInsertionPoint(int(begin_pos))
                 x_pos += self.parent.GetCaret().GetPosition()[0]
                 self.parent.SetInsertionPointEnd()
 
@@ -316,8 +317,8 @@ class CompletionList(wx.ListCtrl):
             style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
         )
 
-        self.SetTextColour(prefs.get('fgcolour'))
-        self.SetBackgroundColour(prefs.get('bgcolour'))
+        self.SetTextColour(Theme.fetch().get('foreground'))
+        self.SetBackgroundColour(Theme.fetch().get('background'))
 
         font = wx.Font(prefs.get('font'))
         self.SetFont(font)
@@ -328,16 +329,16 @@ class CompletionList(wx.ListCtrl):
         self.InsertColumn(0, '')
 
         for i,c in enumerate(completions):
-            self.InsertStringItem(i,c)
+            self.InsertItem(i,c)
 
         # hoops to jump through to shrink-wrap the list
-        height = 0
-        for idx in xrange(self.GetItemCount()):
+        height = 10
+        for idx in range(self.GetItemCount()):
             height += self.GetItemRect(idx).height
 
         self.SetColumnWidth(0,-1)
 
-        width = self.GetColumnWidth(0)
+        width = self.GetColumnWidth(0) + 5
 
         self.SetSize((width, height))
 
