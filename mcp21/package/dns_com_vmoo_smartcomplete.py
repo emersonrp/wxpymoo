@@ -14,6 +14,10 @@ class MCPPackage(MCPPackageBase):
 
         mcp.register(self, ['dns-com-vmoo-smartcomplete-result'])
 
+    def mcp_negotiate_end(self):
+        # TODO - is there a less intrusive way to do this?
+        self.mcp.connection.input_pane.tab_completion.completers = self
+
     def request(self, callback, prefix, suffix = ""):
         request_id = str(wx.NewId())
         self.mcp.server_notify('dns-com-vmoo-smartcomplete-request', {

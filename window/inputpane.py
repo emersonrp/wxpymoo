@@ -208,6 +208,7 @@ class TabCompletion(wx.PopupWindow):
         self.verbs = []
         self.names = []
         self.parent = parent
+        self.completers = None
         self.completion_list = CompletionList(self)
         self.last_completed = None
         self.connection = connection
@@ -263,8 +264,9 @@ class TabCompletion(wx.PopupWindow):
             return
 
         #... otherwise, carry on
-        # TODO -- prolly the mcp package should .Initialize and install itself into TabCompletion
-        self.parent.connection.mcp.packages['dns-com-vmoo-smartcomplete'].request(self.popup_completions, to_complete)
+        # TODO - so far we only have the one possible completer but maybe later we'll select from options
+        if self.completers:
+            self.completers.request(self.popup_completions, to_complete)
 
     def popup_completions(self, begin_pos, to_complete, completions):
 
