@@ -24,7 +24,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
     * dns-com-awns-serverinfo
     * dns-com-awns-status (partial)
     * dns-com-vmoo-client
-    * dns-com-vmoo-smartcomplete (partial)
+    * dns-com-vmoo-smartcomplete
     * dns-org-mud-moo-simpleedit
 * Multiple connections supported via tabbed interface
 * SSL support per-world
@@ -80,6 +80,6 @@ Windows / Mac users:
 
 Fedora users:
 * Clone this repo
-* sudo dnf install python wxPython
+* sudo dnf install python3 python3-wxpython4
 * cd wxpymoo; python3 wxpymoo.py
 
