@@ -36,8 +36,6 @@ class OutputPane(BasePane):
         self.Bind(wx.EVT_SIZE                        , self.on_size)
         self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
         self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
-        self.Bind(wx.EVT_MIDDLE_DOWN                 , self.connection.input_pane.paste_from_selection )
-        self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED , self.copy_from_selection )
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 
     def register_filter(self, filter_callback):
@@ -55,7 +53,7 @@ class OutputPane(BasePane):
         font_width, font_height = self.font_size()
         self_size               = self.GetSize()
 
-        new_cols = math.floor(self_size.width  / font_width) - 4  # "- 4" to allow for margins
+        new_cols = math.floor(self_size.width  / font_width) - 3  # "- 3" to allow for margins
         new_rows = math.floor(self_size.height / font_height)
 
         if (new_cols != self.cols) or (new_rows != self.rows):
@@ -66,12 +64,6 @@ class OutputPane(BasePane):
 
         wx.CallAfter( self.ScrollIfAppropriate )
         evt.Skip()
-
-    def copy_from_selection(self, evt):
-        uxcp = prefs.get('use_x_copy_paste') == 'True'
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
-        self.Copy()
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
     def process_url_click(self, evt):
         url = evt.GetString()

@@ -22,10 +22,6 @@ class InputPane(BasePane):
         self.Bind(wx.EVT_TEXT,       self.onTextChange )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
 
-        if (prefs.get('use_x_copy_paste') == 'True'):
-            self.Bind(wx.EVT_MIDDLE_DOWN                , self.paste_from_selection )
-            self.Bind(rtc.EVT_RICHTEXT_SELECTION_CHANGED, self.copy_from_selection )
-
         self.Clear()
         self.restyle_thyself()
 
@@ -83,10 +79,10 @@ class InputPane(BasePane):
 #            print("HOME!")
 #            self.SetInsertionPoint(0)
 
-        # Alt-[#] to switch directly to a tab -- includes 1234567890-= keys
+        # Cmd-[#] to switch directly to a tab -- includes 1234567890-= keys
         # this is a little confusing because the tab indices are zero-based, so 
         # we want key [1] to turn into a 0.
-        elif evt.AltDown() and (k in (49,50,51,52,53,54,55,56,57,48,45,61)):
+        elif evt.CmdDown() and (k in (49,50,51,52,53,54,55,56,57,48,45,61)):
 
             # for [1]-[9], we want indices 0-8, so subtract 49 from k to get that
             page_index = k - 49
@@ -102,8 +98,8 @@ class InputPane(BasePane):
 
             self.tabs.last_selection = self.tabs.SetSelection(page_index)
 
-        # Alt-Left / Alt-Right to switch tabs
-        elif (evt.AltDown() and (k == wx.WXK_LEFT or k == wx.WXK_RIGHT)):
+        # Cmd-Left / Cmd-Right to switch tabs
+        elif (evt.CmdDown() and (k == wx.WXK_LEFT or k == wx.WXK_RIGHT)):
             self.tabs.AdvanceSelection(k == wx.WXK_RIGHT)
 
         elif k == ord('W') and evt.CmdDown():  # Ctrl-W

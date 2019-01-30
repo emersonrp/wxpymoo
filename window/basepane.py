@@ -20,8 +20,39 @@ class BasePane(rtc.RichTextCtrl):
         self.fg_colour = self.theme.get('foreground')
         self.bg_colour = self.theme.get('background')
 
+        self.is_dragging = False
+
         self.Clear()
         self.restyle_thyself()
+
+        self.Bind(wx.EVT_MIDDLE_DOWN                 , self.paste_with_middle_mouse )
+        self.Bind(wx.EVT_LEFT_UP                     , self.left_mouse_up)
+        self.Bind(wx.EVT_LEFT_DOWN                   , self.left_mouse_down)
+        self.Bind(wx.EVT_MOTION                      , self.mouse_moved)
+
+    # reinventing xmouse, one event at a time.
+    def mouse_moved(self, evt):
+        self.is_dragging = evt.Dragging()
+        evt.Skip(True)
+
+    def left_mouse_up(self, evt):
+        if self.is_dragging:
+            self.is_dragging = False
+            if prefs.get('use_x_copy_paste'):
+                if platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+                if self.CanCopy(): self.Copy()
+                if platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
+        evt.Skip(True)
+
+    # treat selectin in input/output as mutually exclusive
+    def left_mouse_down(self, evt):
+        for pane in (self.connection.output_pane, self.connection.input_pane):
+            if not self == pane:
+                pane.SelectNone()
+        evt.Skip(True)
+
+    def paste_with_middle_mouse(self,evt):
+        if prefs.get('use_x_copy_paste'): self.connection.input_pane.paste_from_selection()
 
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()

@@ -47,9 +47,13 @@ class PrefsEditor(wx.Dialog):
         gp.autoconnect_checkbox = wx.CheckBox(gp, -1, 'Autoconnect to last world at startup')
         gp.autoconnect_checkbox.SetValue( True if prefs.get('autoconnect_last_world') == 'True' else False )
 
+        gp.xmouse_checkbox = wx.CheckBox(gp, -1, 'Use X-style mouse copy/paste behavior')
+        gp.xmouse_checkbox.SetValue( True if prefs.get('use_x_copy_paste') == 'True' else False )
+
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         gp.panel_sizer.Add(gp.save_size_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.autoconnect_checkbox, flag = wx.ALL, border = 10)
+        gp.panel_sizer.Add(gp.xmouse_checkbox, flag = wx.ALL, border = 10)
 
         gp.SetSizer(gp.panel_sizer)
         return gp
