@@ -46,6 +46,16 @@ class WorldsList(wx.Dialog):
         self.ssh_username       = wx.TextCtrl(self)
         self.ssh_loc_host       = wx.TextCtrl(self)
 
+        # UI to show that ssh isn't implemented yet.
+        self.ssh_unimp_box      = wx.Panel()
+        self.ssh_unimplemented  = wx.StaticText(self, label = "(SSH not implemented yet)")
+        self.ssh_unimplemented.SetForegroundColour("#999999")
+        self.ssh_username_label.SetForegroundColour("#999999")
+        self.ssh_loc_host_label.SetForegroundColour("#999999")
+        self.ssh_username.Disable();
+        self.ssh_loc_host.Disable();
+        # end ssh-disable temp UI tweaks
+
         self.auto_login_check   = wx.CheckBox(self, label   = "Auto-Login")
         self.login_script_label = wx.StaticText(self, label = "Login Script:")
         self.login_script       = wx.TextCtrl(self)
@@ -63,6 +73,10 @@ class WorldsList(wx.Dialog):
             (self.host              , 0, wx.EXPAND                              , 0),
             (port_label             , 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
             (port_sizer             , 0, wx.EXPAND                              , 0),
+        # UI to show that ssh isn't implemented yet.
+            (self.ssh_unimp_box     , 0, wx.EXPAND                              , 0),
+            (self.ssh_unimplemented , 0, wx.ALIGN_LEFT| wx.ALIGN_CENTER_VERTICAL, 0),
+        # end ssh-disable temp UI tweaks
             (self.ssh_username_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
             (self.ssh_username      , 0, wx.EXPAND                              , 0),
             (self.ssh_loc_host_label, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0),
@@ -175,6 +189,13 @@ class WorldsList(wx.Dialog):
     def on_save (self, evt):
         world = worlds[self.world_picker.GetStringSelection()]
 
+        # ssh is not yet implemented.  Warn people.
+        if self.conntype.GetStringSelection() == "SSH Fwd":
+            wx.MessageDialog(self, "SSH Forwarding is not implemented.  Choose another connection type",
+                    "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
+            evt.Skip()
+            return
+
         world['host'] = self.host.GetValue()
         world['port'] = self.port.GetValue()
         world['conntype'] = self.conntype.GetStringSelection()
@@ -241,6 +262,8 @@ class WorldsList(wx.Dialog):
     def show_fields_if_appropriate(self, evt = None):
 
         show_ssh = self.conntype.GetSelection() == conntypes.index('SSH Fwd')
+        self.ssh_unimp_box.Show(show_ssh)
+        self.ssh_unimplemented.Show(show_ssh)
         self.ssh_username_label.Show(show_ssh)
         self.ssh_loc_host_label.Show(show_ssh)
         self.ssh_username.Show(show_ssh)
