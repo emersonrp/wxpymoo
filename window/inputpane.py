@@ -22,8 +22,18 @@ class InputPane(BasePane):
         self.Bind(wx.EVT_TEXT,       self.onTextChange )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
 
+        self.AddClearAllToMenu()
+
         self.Clear()
         self.restyle_thyself()
+
+    def doClear(self, evt): self.Clear()
+    def AddClearAllToMenu(self):
+        menu = self.GetContextMenu()
+        selectall, selectall_pos = menu.FindChildItem(menu.FindItem("Select All"))
+        clear_input = menu.Insert(selectall_pos, -1, "Clear Input", "Clears all text from the input")
+        self.Bind(wx.EVT_MENU, self.doClear, clear_input)
+        self.SetContextMenu(menu)
 
     def paste_from_selection(self, evt = None):
         uxcp = prefs.get('use_x_copy_paste') == 'True'
