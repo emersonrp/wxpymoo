@@ -72,13 +72,14 @@ wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by 
 * [wxPython](http://www.wxpython.org) 4.0+
 
 Windows / Mac users:
-    * Clone this repo
-    * Go to the Python link above, get the latest version of Python
-    * Install it
-    * Open a terminal, type "pip install wxPython"
-    * Double-click "wxpymoo.py" inside the wxpymoo directory
+* Clone this repo
+* Go to the Python link above, get the latest version of Python
+* Install it
+* Open a terminal, type "pip install wxPython"
+* Double-click "wxpymoo.py" inside the wxpymoo directory
 
 Fedora users:
-    * Clone this repo
-    * sudo dnf install python wxPython
-    * cd wxpymoo; python3 wxpymoo.py
+* Clone this repo
+* sudo dnf install python wxPython
+* cd wxpymoo; python3 wxpymoo.py
+
