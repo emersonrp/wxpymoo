@@ -138,64 +138,8 @@ class OutputPane(BasePane):
                         codes = [int(c) for c in bit.split(';')]
                         while codes:
                             command, payload = ansi_codes[codes.pop(0)]
-                            if command == 'control':
-                                if payload == 'normal':
-                                    self.EndAllStyles()
-                                    self.intensity = ''
-                                    self.inverse = False
-                                    self.fg_colour = self.theme.get('foreground')
-                                    self.bg_colour = self.theme.get('background')
-                                    self.set_current_colours()
-                                elif payload == 'bright':
-                                    self.intensity = 'bright'
-                                    self.set_current_colours()
-                                elif payload == 'dim':
-                                    self.intensity = 'dim'
-                                    self.set_current_colours()
-                                elif payload == 'italic':    self.BeginItalic()
-                                elif payload == 'underline': self.BeginUnderline()
-                                elif payload == 'blink':
-                                    print('Got an ANSI "blink"')
-                                    # TODO - create timer
-                                    # apply style name
-                                    # periodically switch foreground color to background
-                                elif payload == 'inverse':
-                                    self.inverse = True
-                                    self.set_current_colours()
-                                elif payload == 'conceal':
-                                    print('Got an ANSI "conceal"')
-                                elif payload == 'strike':
-                                    font = self.GetFont()
-                                    font.SetStrikethrough(True)
-                                    self.BeginFont(font)
-                                elif payload == 'normal_weight':
-                                    self.intensity = ''
-                                    self.set_current_colours()
-                                elif payload == "no_italic":    self.EndItalic()
-                                elif payload == 'no_underline': self.EndUnderline()
-                                elif payload == 'no_blink':
-                                    print('Got an ANSI "no_blink"')
-                                    # TODO - remove blink-code-handles style
-                                elif payload == "no_conceal":
-                                    print('Got an ANSI "no_conceal"')
-                                elif payload == 'no_strike':
-                                    font = self.GetFont()
-                                    font.SetStrikethrough(False)
-                                    self.BeginFont(font)
 
-                                elif payload == 'framed':
-                                    print('Got an ANSI "framed"')
-                                elif payload == 'encircled':
-                                    print('Got an ANSI "encircled"')
-                                elif payload == 'overline':
-                                    print('Got an ANSI "overline"')
-
-                                elif payload == 'no_framed_encircled':
-                                    print('Got an ANSI "no_framed_encircled"')
-                                elif payload == 'no_overline':
-                                    print('Got an ANSI "no_overline"')
-
-                            elif command == 'foreground' or command == "background":
+                            if command == 'foreground' or command == "background":
                                 if payload == "extended":
                                     subtype = codes.pop(0)
                                     # 24-bit color
@@ -209,11 +153,38 @@ class OutputPane(BasePane):
                                 else:
                                     colour = payload
 
-                                if command == "foreground":
-                                    self.fg_colour = colour
-                                else:
-                                    self.bg_colour = colour
+                                if command == "foreground" : self.fg_colour = colour
+                                else                       : self.bg_colour = colour
                                 self.set_current_colours()
+
+                            elif command == 'control':
+                                switcher = {
+                                    'normal'              : self.doansi_normal,
+                                    'bright'              : self.doansi_bright,
+                                    'dim'                 : self.doansi_dim,
+                                    'italic'              : self.BeginItalic,
+                                    'underline'           : self.BeginUnderline,
+                                    'blink'               : self.doansi_blink,
+                                    'inverse'             : self.doansi_inverse,
+                                    'conceal'             : self.doansi_conceal,
+                                    'strike'              : self.doansi_strike,
+                                    'normal_weight'       : self.doansi_normal_weight,
+                                    'no_italic'           : self.EndItalic,
+                                    'no_underline'        : self.EndUnderline,
+                                    'no_blink'            : self.doansi_no_blink,
+                                    'no_conceal'          : self.doansi_no_conceal,
+                                    'no_strike'           : self.doansi_no_strike,
+                                    'framed'              : self.doansi_framed,
+                                    'encircled'           : self.doansi_encircled,
+                                    'overline'            : self.doansi_overline,
+                                    'no_framed_encircled' : self.doansi_no_framed_encircled,
+                                    'no_overline'         : self.doansi_no_overline,
+                                    'default_fg'          : self.doansi_default_fg,
+                                    'default_bg'          : self.doansi_default_bg,
+                                }
+                                ansifunc = switcher.get(payload, lambda: "Unknown ANSI sequence")
+                                ansifunc()
+
                             else:
                                 print("unknown ANSI command:", command)
                     else:
@@ -243,14 +214,60 @@ class OutputPane(BasePane):
         self.Thaw()
         if not line == None: self.WriteText("\n")
 
-    def foreground_colour(self):
-        return self.theme.Colour(self.fg_colour, self.intensity)
+    ### ANSI HANDLERS
+    def doansi_normal(self):
+        self.EndAllStyles()
+        self.intensity = ''
+        self.inverse = False
+        self.fg_colour = self.theme.get('foreground')
+        self.bg_colour = self.theme.get('background')
+        self.set_current_colours()
+    def doansi_bright(self):
+        self.intensity = 'bright'
+        self.set_current_colours()
+    def doansi_dim(self):
+        self.intensity = 'dim'
+        self.set_current_colours()
+    def doansi_blink(self):
+        print('Got an ANSI "blink"')
+        # TODO - create timer
+        # apply style name
+        # periodically switch foreground color to background
+    def doansi_inverse(self):
+        self.inverse = True
+        self.set_current_colours()
+    def doansi_strike(self):
+        font = self.GetFont()
+        font.SetStrikethrough(True)
+        self.BeginFont(font)
+    def doansi_normal_weight(self):
+        self.intensity = ''
+        self.set_current_colours()
+    def doansi_no_blink(self):
+        print('Got an ANSI "no_blink"')
+        # TODO - remove blink-code-handles style
+    def doansi_no_strike(self):
+        font = self.GetFont()
+        font.SetStrikethrough(False)
+        self.BeginFont(font)
+    def doansi_default_fg(self):
+        self.fg_colour = self.theme.get('foreground')
+        self.set_current_colours()
+    def doansi_default_bg(self):
+        self.bg_colour = self.theme.get('background')
+        self.set_current_colours()
+    def doansi_conceal(self)             : print('Got an ANSI "conceal"')
+    def doansi_no_conceal(self)          : print('Got an ANSI "no_conceal"')
+    def doansi_framed(self)              : print('Got an ANSI "framed"')
+    def doansi_encircled(self)           : print('Got an ANSI "encircled"')
+    def doansi_overline(self)            : print('Got an ANSI "overline"')
+    def doansi_no_framed_encircled(self) : print('Got an ANSI "no_framed_encircled"')
+    def doansi_no_overline(self)         : print('Got an ANSI "no_overline"')
 
-    def background_colour(self):
-        return self.theme.Colour(self.bg_colour)
 
-    def lookup_colour(self, color):
-        return self.theme.Colour(color, self.intensity)
+    def foreground_colour(self)    : return self.theme.Colour(self.fg_colour, self.intensity)
+    def background_colour(self)    : return self.theme.Colour(self.bg_colour)
+    def lookup_colour(self, color) : return self.theme.Colour(color, self.intensity)
 
     def set_current_colours(self):
         current = rtc.RichTextAttr()
@@ -354,7 +371,6 @@ class OutputPane(BasePane):
     def _send_file(self, id, content):
         for l in content:
             self.connection.output(l + "\n")
-    ########### LM LOCALEDIT
 
 
 ansi_codes = {
@@ -377,27 +393,28 @@ ansi_codes = {
     28    : [ 'control' , 'no_conceal'    ],
     29    : [ 'control' , 'no_strike'     ],
 
-    30    : [ 'foreground' , 'black'    ],
-    31    : [ 'foreground' , 'red'      ],
-    32    : [ 'foreground' , 'green'    ],
-    33    : [ 'foreground' , 'yellow'   ],
-    34    : [ 'foreground' , 'blue'     ],
-    35    : [ 'foreground' , 'magenta'  ],
-    36    : [ 'foreground' , 'cyan'     ],
-    37    : [ 'foreground' , 'white'    ],
-    38    : [ 'foreground' , 'extended' ],
-    # 39 - default foreground color
+    30    : [ 'foreground' , 'black'       ],
+    31    : [ 'foreground' , 'red'         ],
+    32    : [ 'foreground' , 'green'       ],
+    33    : [ 'foreground' , 'yellow'      ],
+    34    : [ 'foreground' , 'blue'        ],
+    35    : [ 'foreground' , 'magenta'     ],
+    36    : [ 'foreground' , 'cyan'        ],
+    37    : [ 'foreground' , 'white'       ],
+    38    : [ 'foreground' , 'extended'    ],
+    39    : [ 'control'    , 'default_fg ' ],
 
-    40    : [ 'background' , 'black'    ],
-    41    : [ 'background' , 'red'      ],
-    42    : [ 'background' , 'green'    ],
-    43    : [ 'background' , 'yellow'   ],
-    44    : [ 'background' , 'blue'     ],
-    45    : [ 'background' , 'magenta'  ],
-    46    : [ 'background' , 'cyan'     ],
-    47    : [ 'background' , 'white'    ],
-    48    : [ 'background' , 'extended' ],
-    # 49 - default background color
+    40    : [ 'background' , 'black'       ],
+    41    : [ 'background' , 'red'         ],
+    42    : [ 'background' , 'green'       ],
+    43    : [ 'background' , 'yellow'      ],
+    44    : [ 'background' , 'blue'        ],
+    45    : [ 'background' , 'magenta'     ],
+    46    : [ 'background' , 'cyan'        ],
+    47    : [ 'background' , 'white'       ],
+    48    : [ 'background' , 'extended'    ],
+    49    : [ 'control'    , 'default_bg ' ],
+
     # 50 - reserved
     51    : [ 'control' , 'framed' ],
     52    : [ 'control' , 'encircled' ],
