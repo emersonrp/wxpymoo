@@ -55,7 +55,7 @@ class OutputPane(BasePane):
         font_width, font_height = self.font_size()
         self_size               = self.GetSize()
 
-        new_cols = math.floor(self_size.width  / font_width) - 2  # "-2" to allow for margins
+        new_cols = math.floor(self_size.width  / font_width) - 4  # "- 4" to allow for margins
         new_rows = math.floor(self_size.height / font_height)
 
         if (new_cols != self.cols) or (new_rows != self.rows):
