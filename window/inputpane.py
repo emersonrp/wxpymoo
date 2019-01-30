@@ -21,11 +21,22 @@ class InputPane(BasePane):
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.onTextChange )
         self.Bind(wx.EVT_KEY_DOWN,   self.check_for_interesting_keystrokes )
+        self.Bind(wx.EVT_CHAR_HOOK,  self.do_keyboard_copy )
 
         self.AddClearAllToMenu()
 
         self.Clear()
         self.restyle_thyself()
+
+    def do_keyboard_copy(self, evt):
+        if evt.CmdDown():
+            k = evt.GetKeyCode()
+            if k == 67:
+                self.GetTopLevelParent().handleCopy(evt)
+                return
+            #if k == 86: print("That was a Cmd-V")
+            #if k == 88: print("That was a Cmd-X")
+        evt.Skip()
 
     def doClear(self, evt): self.Clear()
     def AddClearAllToMenu(self):
