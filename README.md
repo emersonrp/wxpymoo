@@ -16,6 +16,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Basic but functional command history.
 * Tab-complete, currently fed from dns-com-vmoo-smartcomplete
 * ANSI color/style codes are well-supported, including 24-bit color.
+* multiple color themes
 * Partial [MCP/2.1](http://www.moo.mud.org/mcp/mcp2.html) implementation -- mcp-negotiate is implemented;  mcp-cord only partially.
 * MCP packages:
     * dns-com-awns-displayurl
@@ -38,11 +39,11 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Add proper prefs and world/connection handling (85% done)
 * Pondering schemes to scrape online MOO lists to offer suggestions. (70% done)
 * Start rolling binary packages for all platforms once it's remotely useful to anyone but me.
-* Customizable colors / themes (currently you can have any colors you want as long as they're solarized-dark.)
 * Per-world settings?  Colors, fonts?
 * Finish MCP 2.1 implementation.
 * Object browser, like MacMOOSE but hopefully nicer.
 * Implement "SSH Forwarding" connection type.
+* color theme editor
 
 ## Blue-sky
 * HTML help, using jtext?
@@ -62,6 +63,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 wxpymoo contains:
 * [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt
 * [EnhancedStatusBar](http://xoomer.virgilio.it/infinity77/main/EnhancedStatusBar.html) (c) 2005 Andrea Gavana and Nitro
+* The color themes were lovingly lifted from [Terminal Sexy](http://terminal.sexy) by George Czabania
 
 wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by Andrew Wilson.
 
