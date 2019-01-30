@@ -1,7 +1,9 @@
 import wx
 import prefs
+import ast
+import re
 
-ansi_color_codes = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+ansi_colour_codes = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
 
 # TODO -- make more themes
 # TODO -- put themes into the config file
@@ -12,26 +14,12 @@ ansi_color_codes = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'
 all_themes = {}
 _default_themes = {
     'ANSI'           : {
-        'black'      : '#000000',
-        'red'        : '#ff0000',
-        'green'      : '#00f000',
-        'yellow'     : '#ffff00',
-        'blue'       : '#0000ff',
-        'magenta'    : '#ff00ff',
-        'cyan'       : '#00ffff',
-        'white'      : '#ffffff',
+        'colours' : ['#000000', '#ff0000', '#00f000', '#ffff00', '#0000ff', '#ff00ff', '#00ffff', '#ffffff',],
         'foreground' : '#bbbbbb',
         'background' : '#000000',
     },
     'solarized'      : {
-        'black'      : '#073642',
-        'red'        : '#dc322f',
-        'green'      : '#859900',
-        'yellow'     : '#b58900',
-        'blue'       : '#268bd2',
-        'magenta'    : '#d33682',
-        'cyan'       : '#2aa198',
-        'white'      : '#eee8d5',
+        'colours' : ['#073642', '#dc322f', '#859900', '#b58900', '#268bd2', '#d33682', '#2aa198', '#eee8d5',],
         'foreground' : '#93a1a1',
         'background' : '#002b36',
     },
@@ -52,13 +40,25 @@ class Theme(dict):
             self[k] = init[k]
 
     def Colour(self, colour, intensity = ''):
-        hexcolour = self.get(colour) or colour
-        if intensity:
-            r, g, b = self.hex_to_rgb(hexcolour)
-            mult = 1.33 if (intensity == "bright") else 0.66
+        css_colour = colour
+        is_hex_already = re.match(r'^#[0-9a-f]+$', colour, re.IGNORECASE)
+        if not is_hex_already:
+            index = ansi_colour_codes.index(colour)
+            colour_list = self.get('colours')
+            css_colour = colour_list[index]
 
-            hexcolour = self.rgb_to_hex(self.redist_rgb(r * mult, g * mult, b * mult))
+        mult = 1
+        if intensity == 'bright':
+            # if we have a predefined bright version, use that, otherwise just mult the existing one
+            if (not is_hex_already) and len(colour_list) > 8:
+                css_colour = colour_list[index + 8]
+            else:
+                mult = 1.33
+        elif intensity == 'dim':
+            mult = 0.66
 
+        r, g, b = self.hex_to_rgb(css_colour)
+        hexcolour = self.rgb_to_hex(self.redist_rgb(r * mult, g * mult, b * mult))
         return hexcolour
 
     # this is from Adaephon http://stackoverflow.com/a/27165165
@@ -67,8 +67,8 @@ class Theme(dict):
             intensity = ''
             if index > 7: # bright
                 intensity = 'bright'
-            color = self.Colour(ansi_color_codes[index], intensity)
-            rgb_R, rgb_G, rgb_B = self.hex_to_rgb(color)
+            colour = self.Colour(ansi_colour_codes[index], intensity)
+            rgb_R, rgb_G, rgb_B = self.hex_to_rgb(colour)
         elif index > 15 and index < 232:
             index_R = ((index - 16) // 36)
             rgb_R = 55 + index_R * 40 if index_R > 0 else 0
@@ -79,7 +79,7 @@ class Theme(dict):
         elif index >= 232:
             rgb_R = rgb_G = rgb_B = (index - 232) * 10 + 8
         else:
-            print("bad 256 index: " + str(index))
+            print('bad 256 index: ' + str(index))
 
         return self.rgb_to_hex((rgb_R, rgb_G, rgb_B))
 
@@ -118,12 +118,14 @@ def Initialize():
             _config.SetPath(themename)
 
             theme = {}
-            # loop data lines inside each world....
-            e_more, dataname, e_index = _config.GetFirstEntry()
+            # loop data lines inside each theme....
+            e_more, keyname, e_index = _config.GetFirstEntry()
             while e_more:
-                theme[dataname] = _config.Read(dataname)
-                e_more, dataname, e_index = _config.GetNextEntry(e_index)
+                theme[keyname] = _config.Read(keyname)
+                e_more, keyname, e_index = _config.GetNextEntry(e_index)
 
+            # turn the list of colours back into a list
+            theme['colours'] = ast.literal_eval(theme['colours'])
             all_themes[themename] = Theme(theme)
 
             # carry on, back to the top for the next world
@@ -136,7 +138,7 @@ def Initialize():
             _config.SetPath(name)
 
             for key, val in theme.items():
-                _config.Write(key, val)
+                _config.Write(key, str(val))
 
             _config.SetPath('/Themes/')
 
