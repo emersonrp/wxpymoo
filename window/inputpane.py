@@ -36,13 +36,13 @@ class InputPane(BasePane):
         self.SetContextMenu(menu)
 
     def paste_from_selection(self, evt = None):
-        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        uxcp = prefs.get('use_x_copy_paste')
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Paste()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
 
     def copy_from_selection(self, evt = None):
-        uxcp = prefs.get('use_x_copy_paste') == 'True'
+        uxcp = prefs.get('use_x_copy_paste')
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
         if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)

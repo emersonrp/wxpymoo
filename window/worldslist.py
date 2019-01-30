@@ -235,7 +235,7 @@ class WorldsList(wx.Dialog):
 
         self.conntype.SetStringSelection(world.get("conntype", "Direct"))
 
-        self.auto_login_check.SetValue(world.get("auto_login", False) == 'True')
+        self.auto_login_check.SetValue(world.get("auto_login", False))
         self.login_script.SetValue(world.get("login_script", "connect %u %p"))
         self.username.SetValue( world.get("username", ""))
         self.password.SetValue( world.get("password", ""))
@@ -253,9 +253,9 @@ class WorldsList(wx.Dialog):
         self.ssh_username.SetValue(world.get("ssh_username", ""))
         self.ssh_loc_host.SetValue(world.get("ssh_loc_host", ""))
 
-        self.mcp_check.SetValue(world.get('use_mcp', '') == 'True')
-        self.login_dialog_check.SetValue(world.get('use_login_dialog', '') == 'True')
-        self.shortlist_check.SetValue(world.get('on_shortlist', '') == 'True')
+        self.mcp_check.SetValue(world.get('use_mcp', ''))
+        self.login_dialog_check.SetValue(world.get('use_login_dialog', ''))
+        self.shortlist_check.SetValue(world.get('on_shortlist', ''))
 
         self.show_fields_if_appropriate()
 

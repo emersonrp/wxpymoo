@@ -42,13 +42,13 @@ class PrefsEditor(wx.Dialog):
     def createGeneralPanel(self):
         gp = wx.Panel(self.book)
         gp.save_size_checkbox = wx.CheckBox(gp, -1, 'Save Window Size')
-        gp.save_size_checkbox.SetValue( True if prefs.get('save_window_size') == 'True' else False )
+        gp.save_size_checkbox.SetValue( prefs.get('save_window_size') )
 
         gp.autoconnect_checkbox = wx.CheckBox(gp, -1, 'Autoconnect to last world at startup')
-        gp.autoconnect_checkbox.SetValue( True if prefs.get('autoconnect_last_world') == 'True' else False )
+        gp.autoconnect_checkbox.SetValue( prefs.get('autoconnect_last_world') )
 
         gp.xmouse_checkbox = wx.CheckBox(gp, -1, 'Use X-style mouse copy/paste behavior')
-        gp.xmouse_checkbox.SetValue( True if prefs.get('use_x_copy_paste') == 'True' else False )
+        gp.xmouse_checkbox.SetValue( prefs.get('use_x_copy_paste') )
 
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         gp.panel_sizer.Add(gp.save_size_checkbox, flag = wx.ALL, border = 10)
@@ -77,7 +77,7 @@ class PrefsEditor(wx.Dialog):
         fcp.theme = prefs.get('theme')
         fcp.theme_picker.SetSelection(fcp.theme_picker.FindString(fcp.theme))
 
-        if prefs.get('use_ansi') == "True":
+        if prefs.get('use_ansi'):
             fcp.ansi_checkbox.SetValue(True)
             fcp.theme_picker.Enable()
         else:
@@ -153,7 +153,7 @@ It's super effective!
 
         # Mock up ANSI if ANSI pref is on
         # TODO - maybe actually just shove ANSI-code-ful stuff through the actual output_panel ANSIfier?
-        if fp.ansi_checkbox.GetValue() == True:
+        if fp.ansi_checkbox.GetValue():
             textattr.SetTextColour(theme.Colour('blue'))
             fp.sample.SetStyle(1,    8, textattr)
 

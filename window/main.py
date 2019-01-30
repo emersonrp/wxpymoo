@@ -39,7 +39,7 @@ class Main(wx.Frame):
 
         self.addEvents()
 
-        if prefs.get('autoconnect_last_world') == 'True':
+        if prefs.get('autoconnect_last_world'):
             world = worlds.get(prefs.get('last_world'))
             if world:
                 self.openWorld(world)

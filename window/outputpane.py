@@ -86,7 +86,7 @@ class OutputPane(BasePane):
         return True
 
     def ScrollIfAppropriate(self):
-        if (self.is_at_bottom() or prefs.get('scroll_on_output') == 'True'):
+        if (self.is_at_bottom() or prefs.get('scroll_on_output')):
             self.ShowPosition(self.GetLastPosition())
             self.Refresh()
 
@@ -104,11 +104,11 @@ class OutputPane(BasePane):
                 if line == None: break  # output_filter must return None / void, if it handled it
             if not line: continue
 
-            #if (True or prefs.get('render_emoji') == 'True'):
+            #if (True or prefs.get('render_emoji'):
                 # TODO - preference?  "if (we detect an emoji)?"
                 #line = emoji.emojize(line, use_aliases = True)
 
-            if prefs.get('use_ansi') == 'True':
+            if prefs.get('use_ansi'):
                 # Dear lord this is sorta ugly
 
                 # snip and ring bells
@@ -181,7 +181,7 @@ class OutputPane(BasePane):
                                 print("unknown ANSI command:", command)
                     else:
                         # is a text-only chunk, check for URLs
-                        if prefs.get('highlight_urls') == 'True':
+                        if prefs.get('highlight_urls'):
                             matches = utility.URL_REGEX.split(bit)
                             for chunk in matches:
                                 if chunk is None: continue
@@ -203,6 +203,8 @@ class OutputPane(BasePane):
                                     self.WriteText(chunk)
                         else:
                             self.WriteText(bit)
+            else:
+                self.WriteText(line)
         self.Thaw()
         if not line == None: self.WriteText("\n")
 

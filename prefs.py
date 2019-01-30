@@ -38,10 +38,14 @@ def Initialize():
         if not get(key):
             set(key, str(def_val))
 
-def get(val): return _config.Read(val)
-def set(param, val):
-    global _config
+def get(key):
+    val =  _config.Read(key)
+    # ugly string -> Boolean handling.  Hope we never have a value actually named "True" or "False"
+    if val == "True":  val = True
+    if val == "False": val = False
+    return val
 
+def set(param, val):
     _config.Write(param, str(val))
     _config.Flush()
 

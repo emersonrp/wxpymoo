@@ -48,6 +48,9 @@ def Initialize():
             e_more, dataname, e_index = _config.GetFirstEntry()
             while e_more:
                 worlddata[dataname] = _config.Read(dataname)
+                # ew boolean handling.  Maybe go thru prefs to do this in one place
+                if worlddata[dataname] == "True" : worlddata[dataname] = True
+                if worlddata[dataname] == "False": worlddata[dataname] = False
                 e_more, dataname, e_index = _config.GetNextEntry(e_index)
 
             # build the World object

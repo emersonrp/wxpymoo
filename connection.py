@@ -81,7 +81,7 @@ class Connection(wx.SplitterWindow):
         port     = int(world.get('port'))
         conntype = world.get('conntype')
 
-        self.reader, self.writer = await asyncio.open_connection(host, port, ssl = True if conntype == "SSL" else False )
+        self.reader, self.writer = await asyncio.open_connection(host, port, ssl = (conntype == "SSL"))
         self.connect_time = time.time()
 
         prefs.set('last_world', world.get('name'))
