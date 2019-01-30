@@ -35,7 +35,6 @@ class Main(wx.Frame):
             if prefs.get('window_height'): h = int(prefs.get('window_height'))
         self.SetSize((w, h))
 
-        #self.tabs = wx.Notebook(self)
         self.tabs = MOONotebook(self)
 
         self.addEvents()
@@ -44,6 +43,8 @@ class Main(wx.Frame):
             world = worlds.get(prefs.get('last_world'))
             if world:
                 self.openWorld(world)
+        else:
+            wx.CallAfter(self.showWorldsList)
 
     def openWorld(self, world):
         conn = Connection(self)
@@ -163,7 +164,7 @@ class Main(wx.Frame):
 
     ### DIALOGS AND SUBWINDOWS
 
-    def showWorldsList(self, evt):
+    def showWorldsList(self, evt = None):
         if self.worlds_list is None: self.worlds_list = WorldsList(self)
         self.worlds_list.Show()
 
