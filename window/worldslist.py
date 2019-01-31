@@ -47,7 +47,7 @@ class WorldsList(wx.Dialog):
         self.ssh_loc_host       = wx.TextCtrl(self)
 
         # UI to show that ssh isn't implemented yet.
-        self.ssh_unimp_box      = wx.Panel()
+        self.ssh_unimp_box      = wx.StaticText(self, label = "")
         self.ssh_unimplemented  = wx.StaticText(self, label = "(SSH not implemented yet)")
         self.ssh_unimplemented.SetForegroundColour("#999999")
         self.ssh_username_label.SetForegroundColour("#999999")
