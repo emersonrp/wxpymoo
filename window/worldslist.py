@@ -253,9 +253,9 @@ class WorldsList(wx.Dialog):
         self.ssh_username.SetValue(world.get("ssh_username", ""))
         self.ssh_loc_host.SetValue(world.get("ssh_loc_host", ""))
 
-        self.mcp_check.SetValue(world.get('use_mcp', ''))
-        self.login_dialog_check.SetValue(world.get('use_login_dialog', ''))
-        self.shortlist_check.SetValue(world.get('on_shortlist', ''))
+        self.mcp_check.SetValue(world.get('use_mcp', False))
+        self.login_dialog_check.SetValue(world.get('use_login_dialog', False))
+        self.shortlist_check.SetValue(world.get('on_shortlist', False))
 
         self.show_fields_if_appropriate()
 
