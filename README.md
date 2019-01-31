@@ -69,17 +69,20 @@ wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by 
 
 ## Dependencies
 * [Python](http://www.python.org) 3.7
-* [wxPython](http://www.wxpython.org) 4.0+
+* [wxPython](http://www.wxpython.org) 4.0.4+
 
-Windows / Mac users:
+### Windows / Mac users:
 * Clone this repo
 * Go to the Python link above, get the latest version of Python
 * Install it
-* Open a terminal, type "pip install wxPython"
+* Open a terminal, type <code>pip install wxPython</code>
 * Double-click "wxpymoo.py" inside the wxpymoo directory
 
-Fedora users:
+### Fedora users:
+Fedora 30 will contain wxPython 4.0.4, so unless you're on Rawhide or 30, we have to install it from source.  I know, I hate me too.
 * Clone this repo
-* sudo dnf install python3 python3-wxpython4
-* cd wxpymoo; python3 wxpymoo.py
+* <i>(Fedora 29 and below)</i> <code>sudo dnf install python3-devel gcc gcc-c++ gtk3-devel gtkglext-devel gstreamer-devel gstreamer-plugins-base-devel webkit2gtk3-devel</code>
+* <i>(Fedora 29 and below)</i> <code>sudo pip3 install wxPython</code>
+* <i>(Fedora 30 / Rawhide)</i> <code>sudo dnf install python3 python3-wxpython4</code>
+* <code>cd wxpymoo; python3 wxpymoo.py</code>
 
