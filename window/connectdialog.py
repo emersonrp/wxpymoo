@@ -3,14 +3,13 @@ from worlds import World
 
 class ConnectDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, name = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
+        wx.Dialog.__init__(self, parent, title = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
 
         self.parent = parent
 
         self.host = wx.TextCtrl(self)
-        self.port = wx.SpinCtrl(self)
-        self.port.SetRange(1, 65535)
-        self.port.SetValue(7777)
+        self.port = wx.TextCtrl(self)
+        self.port.SetValue("7777")
 
         input_sizer = wx.FlexGridSizer(2, 2, 0, 0)
         input_sizer.AddGrowableCol( True )
@@ -31,23 +30,37 @@ class ConnectDialog(wx.Dialog):
 
         self.FindWindowById(wx.ID_OK).Enable(False)
 
+        self.host.Bind(wx.EVT_SET_FOCUS, self.SelectAllText)
+        self.port.Bind(wx.EVT_SET_FOCUS, self.SelectAllText)
+
         self.Bind(wx.EVT_BUTTON, self.connect_please, id = wx.ID_OK)
         self.host.Bind(wx.EVT_KEY_UP, self.check_fields)
+        self.port.Bind(wx.EVT_KEY_UP, self.check_fields)
 
         self.check_fields(None);
+
+    def Show(self):
+        self.Centre(wx.BOTH)
+        self.host.SetFocus()
+        super(wx.Dialog, self).Show()
+
+    def SelectAllText(self, evt):
+        evt.GetEventObject().SelectAll()
+        evt.Skip()
 
     def check_fields(self, evt):
         test_host = self.host.GetValue()
         enable_button = False
 
-        # host needs to have something at all in it.
-        if test_host:
-            self.host.SetBackgroundColour(wx.WHITE)
-            enable_button = True
-        else:
-            yellow = wx.Colour(255,255,0)
-            if yellow:
-                self.host.SetBackgroundColour(yellow)
+        # both need to have something at all in it.
+        for i in [self.host, self.port]:
+            if i.GetValue() == "":
+                yellow = wx.Colour(255,255,0)
+                if yellow:
+                    i.SetBackgroundColour(yellow)
+            else:
+                i.SetBackgroundColour(wx.WHITE)
+                enable_button = True
         # deactivate the button if we're not aok with the values
         self.FindWindowById(wx.ID_OK).Enable(enable_button)
 
@@ -58,9 +71,9 @@ class ConnectDialog(wx.Dialog):
         if host and port:
             # TODO - make a notion of 'save the current world to worlds file'
             new_world = World({
+                'name' : host + ":" + port,
                 'host' : host,
                 'port' : port,
-                'name' : 'New Connection',
             })
             self.parent.openWorld(new_world)
 
