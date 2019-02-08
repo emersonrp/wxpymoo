@@ -29,6 +29,8 @@ class World(dict):
         _config.SetPath('/')
         _config.Flush()
 
+        wx.GetApp().GetTopWindow().rebuildShortlist()
+
 worlds    = collections.OrderedDict({})
 _defaults = {}
 _config   = None

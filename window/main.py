@@ -21,12 +21,13 @@ class Main(wx.Frame):
         self.status_bar = StatusBar(self)
         self.SetStatusBar(self.status_bar)
 
-        self.buildMenu()
-
         self.about_info     = None
         self.connect_dialog = None
         self.prefs_editor   = None
         self.worlds_list    = None
+        self.shortlist      = []
+
+        self.buildMenu()
 
         h = 600
         w = 800
@@ -69,18 +70,6 @@ class Main(wx.Frame):
         Worlds_reconnect = WorldsMenu.Append(-1, "&Reconnect", "Close and re-open the connection to the current world")
         Worlds_quit      = WorldsMenu.Append(wx.ID_EXIT)
 
-        # TODO - on world save, rebuild shortlist.
-        shortlist = []
-        for worldname, world in worlds.items():
-            if world.get('on_shortlist'):
-                shortlist.append(worldname)
-
-        if shortlist:
-            WorldsMenu.AppendSeparator()
-            for world in sorted(shortlist):
-                menuitem = WorldsMenu.Append(-1, world)
-                self.Bind(wx.EVT_MENU, partial(self.connect_to_shortlist, world), menuitem)
-
         EditMenu = wx.Menu()
         Edit_cut   = EditMenu.Append(wx.ID_CUT)
         Edit_copy  = EditMenu.Append(wx.ID_COPY)
@@ -106,6 +95,8 @@ class Main(wx.Frame):
 
         self.SetMenuBar(MenuBar)
 
+        self.rebuildShortlist()
+
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU, self.showWorldsList,      Worlds_worlds    )
         self.Bind(wx.EVT_MENU, self.showConnectDialog,   Worlds_connect   )
@@ -129,6 +120,26 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.onSize)
         self.tabs.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.status_bar.UpdateConnectionStatus)
         self.tabs.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED, self.tabs.showOrHideTabs)
+
+    def rebuildShortlist(self):
+        shortlist = []
+        for worldname, world in worlds.items():
+            if world.get('on_shortlist'):
+                shortlist.append(worldname)
+
+        # remove any existing shortlist
+        for menuitem in self.shortlist:
+            menuitem.GetMenu().Delete(menuitem)
+        self.shortlist = []
+
+        if shortlist:
+            mb = self.GetMenuBar()
+            WorldsMenu = mb.GetMenu(mb.FindMenu("Worlds"))
+            self.shortlist.append(WorldsMenu.AppendSeparator())
+            for world in sorted(shortlist):
+                menuitem = WorldsMenu.Append(-1, world)
+                self.shortlist.append(menuitem)
+                self.Bind(wx.EVT_MENU, partial(self.connect_to_shortlist, world), menuitem)
 
     def closeConnection(self, evt):
         if self.currentConnection():
