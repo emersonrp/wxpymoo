@@ -43,6 +43,8 @@ class Main(wx.Frame):
             world = worlds.get(prefs.get('last_world'))
             if world:
                 self.openWorld(world)
+            else:
+                wx.CallAfter(self.showWorldsList)
         else:
             wx.CallAfter(self.showWorldsList)
 
