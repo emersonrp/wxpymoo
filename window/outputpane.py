@@ -9,6 +9,7 @@ import prefs
 import utility
 from editor import Editor
 from window.basepane import BasePane
+from filters.ansi import fansi_replace
 
 #import webbrowser, re, math, emoji
 import webbrowser, re, math
@@ -110,6 +111,16 @@ class OutputPane(BasePane):
 
             if prefs.get('use_ansi'):
                 # Dear lord this is sorta ugly
+
+                # TODO -- let's make this whole thing an external filter that
+                # returns text chunks and TextAttrs to blat at the screen.  For
+                # now, we can still do it line-by-line, but eventually we might
+                # want to be properly character-based/VT supporting.
+
+                # For now, we'll stick the FANSI character poop into an
+                # external filter.
+                if self.connection.world.get("use_fansi"):
+                    line = fansi_replace(line)
 
                 # snip and ring bells
                 # TODO -- "if beep is enabled in the prefs"

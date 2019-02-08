@@ -102,12 +102,14 @@ class WorldsList(wx.Dialog):
 
         self.mcp_check          = wx.CheckBox(self, label = "MCP 2.1")
         self.login_dialog_check = wx.CheckBox(self, label = "Use Login Dialog")
-        self.shortlist_check    = wx.CheckBox(self, label = "On Short List")
+        self.shortlist_check    = wx.CheckBox(self, label = "Favorite")
+        self.fansi_check        = wx.CheckBox(self, label = "Use FANSI")
         checkbox_sizer     = wx.GridSizer(3, 2, 0, 0)
         checkbox_sizer.AddMany([
             (self.mcp_check         , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
             (self.login_dialog_check, 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
             (self.shortlist_check   , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
+            (self.fansi_check       , 0, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5),
         ])
 
         new_button   = wx.Button(self, label = "New")
@@ -216,6 +218,7 @@ class WorldsList(wx.Dialog):
         world['use_mcp'] = self.mcp_check.GetValue()
         world['use_login_dialog'] = self.login_dialog_check.GetValue()
         world['on_shortlist'] = self.shortlist_check.GetValue()
+        world['use_fansi'] = self.fansi_check.GetValue()
 
         world.save() # TODO - error checking, like at all
 
@@ -256,6 +259,7 @@ class WorldsList(wx.Dialog):
         self.mcp_check.SetValue(world.get('use_mcp', False))
         self.login_dialog_check.SetValue(world.get('use_login_dialog', False))
         self.shortlist_check.SetValue(world.get('on_shortlist', False))
+        self.fansi_check.SetValue(world.get('use_fansi', False))
 
         self.show_fields_if_appropriate()
 

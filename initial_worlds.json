@@ -1,11 +1,20 @@
 [
     {
+        "name" : "8BitMUSH",
+        "host" : "8bit.fansi.org",
+        "port" : "4201",
+        "url" : "http://ansiart.com",
+        "theme" : "social",
+        "use_fansi" : "True",
+        "description" : "<p>8BitMUSH is a collaborative virtual world, based upon text-based artwork (16-color ANSI Art, 256-color FANSI Art, and colorless ASCII Art.) Every player is encouraged to extend the world with their own creations, and explore the creations of others. The community is very social, with a unique culture and over 10 years of history.</p> <p>The virtual world is based around a colorful megatropolis called ANSI City, with a surrounding suburbia and various other landscapes to explore and build upon. The virtual economy allows for players to run their own companies, invest in a stock market, and buy and sell products from various shops and vendors. Many projects and games have been coded on 8Bit using MUSHCode, the in-game programming language, including arcade games, toys, board games, interactive-fiction puzzles, a space system and much more. There are also tools to create content without writing any code, and a vibrant social community."
+    },
+    {
         "name" : "AnsibleMOO",
         "host" : "ansiblemoo.org",
         "port" : "6000",
         "url" : "http://www.ansiblemoo.org/",
         "theme" : "RPG sci-fi",
-        "description" : "Ansible is an online text-based role-playing game, set in the Orson Scott Card novel, Ender's Game."
+        "description" : "<p>Ansible is an online text-based role-playing game, set in the Orson Scott Card novel, Ender's Game.</p>"
     },
     {
         "name" : "Arthnor",
@@ -46,11 +55,21 @@
         "description" : "<p>This MOO is run by the <a href=\"http://cmc.uib.no/\">cyber/media/culture (cmc) project</a> at the <a href=\"http://www.uib.no\">University of Bergen</a>.  Two major projects live here:</p><ul><li>The Midsummer Night's Dream project. This project aims to create a MOO environment for teaching, learning about and exploring English literature in general and Shakespeare's A Midsummer Night's Dream in particular. This area of the MOO allows students to wander through versions of the fictional landscape in Shakespeare's play and to explore the Globe theatre and the surrounding streets of Southwark as they were in Shakespeare's time. Discussion areas and teaching facilities are also being made available.</p><p>pURLmoo, an experimental project administrated by John Cayley and others. In pURLmoo language is pushed to its limits and writers test the possibilities of words in MOOs.</li>"
     },
     {
+        "name" : "ChatMUD",
+        "host" : "chatmud.com",
+        "port" : "7443",
+        "conntype" : "SSL",
+        "url" : "https://chatmud.com",
+        "theme" : "social",
+        "description" : "We're an up and coming social MOO. We have an active and vibrant community of like-minded MOO admins, developers, and builders. A great deal of cross-pollination has taken place, and it's rapidly become a place for fellow MOO coders to talk about MOO and flex their programming and building muscles."
+    },
+    {
         "name" : "Cybersphere",
         "host" : "cs.netsville.com",
         "port" : "7777",
         "url" : "http://www.cybersphere.net",
         "theme" : "RPG",
+        "use_fansi" : "True",
         "description" : "<p>CyberSphere is an RPG MOO set in a dark American future. Your virtual journey begins in New Carthage, the denizens of which range from the benign eccentric to the malicious psychotic. Shadowed alleys conceal dark secrets, and gleaming towers of urban wealth hide fantastic conspiracies.</p> <p>Past the skeletal buildings of the anarchic New Carthage outskirts, beyond its armored city wall, a vast Wasteland of post-apocalyptic Hell awaits the truly brave. Its glowing sands crawl with the horrific mutant champions of natural selection, and are stained with the blood of the weak.</p> <p> Delta-winged shuttles crisscross the scarred planet as reconstruction continues under the control of emergent superpowers in a new world order: mega-corporations and crime syndicates. Bangkok harbors shadowy black markets of cybernetic technology, while orbital colonies turn serenely on axes of money, power, and privilege.</p> <p> As the physical landscape still smoulders from the ravages of global wars and environmental disasters, an alternate reality glows brightly in the worldwide matrix network. Deckers and console jockeys swim the depths of this data sea, knights rendered in chrome on battlefields formed in the cognitive non-space of a collective consciousness.</p><p>The pulse-pounding excitement of our virtual world is but a keystroke away."
     },
     {
