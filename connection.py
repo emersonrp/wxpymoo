@@ -25,6 +25,8 @@ class Connection(wx.SplitterWindow):
         self.home_url       = ''
         self.help_url       = ''
 
+        self.reader = self.writer = None
+
         #self.keepalive     = Keepalive(self)
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
