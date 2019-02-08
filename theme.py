@@ -47,6 +47,7 @@ class Theme(dict):
             intensity = ''
             if index > 7: # bright
                 intensity = 'bright'
+                index = index - 8
             colour = self.Colour(ansi_colour_codes[index], intensity)
             rgb_R, rgb_G, rgb_B = self.hex_to_rgb(colour)
         elif index > 15 and index < 232:
