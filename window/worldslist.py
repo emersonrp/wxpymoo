@@ -2,7 +2,7 @@ import wx
 import wx.html
 
 import prefs
-from worlds import worlds
+from worlds import worlds, World
 from connection import Connection
 
 import webbrowser
@@ -21,10 +21,10 @@ class WorldsList(wx.Dialog):
 
         self.parent = parent
 
+        self.new_world_name_dialog = wx.TextEntryDialog( self, "Enter New World's Name", "New World")
+
         worlds_label      = wx.StaticText(self, label = "World:")
         self.world_picker = wx.Choice(self, style     = wx.CB_SORT )
-
-        for world in worlds: self.world_picker.Append(world)
 
         host_label = wx.StaticText(self, label = "Host:")
         port_label = wx.StaticText(self, label = "Port:")
@@ -154,16 +154,6 @@ class WorldsList(wx.Dialog):
         main_sizer.Add(self.world_details_box, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
         main_sizer.Add(main_button_sizer     , 0, wx.EXPAND | wx.ALL            , 5)
 
-        last_world_name = prefs.get('last_world')
-        last_world = self.world_picker.FindString(last_world_name)
-        # if we no longer have that world, go back to the top of the list
-        if last_world < 0:
-            last_world_name = self.world_picker.GetString(0)
-            last_world = self.world_picker.FindString(last_world_name)
-
-        self.world_picker.SetSelection(last_world)
-        self.fill_thyself()
-
         self.SetSizerAndFit(main_sizer)
         self.Layout()
 
@@ -175,6 +165,21 @@ class WorldsList(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.on_connect, id = wx.ID_OK)
 
         self.show_fields_if_appropriate()
+
+    def Show(self, val = True):
+        self.world_picker.Clear()
+        for world in worlds: self.world_picker.Append(world)
+        last_world_name = prefs.get('last_world')
+        last_world = self.world_picker.FindString(last_world_name)
+        # if we no longer have that world, go back to the top of the list
+        if last_world < 0:
+            last_world_name = self.world_picker.GetString(0)
+            last_world = self.world_picker.FindString(last_world_name)
+
+        self.world_picker.SetSelection(last_world)
+        self.fill_thyself()
+
+        super(WorldsList, self).Show(val)
 
 
     def select_world(self, evt):
@@ -226,8 +231,20 @@ class WorldsList(wx.Dialog):
         # repopulate with the data from the World as last saved
         self.fill_thyself()
 
-    def on_new  (self, evt):
-        print("TODO: got a 'new' button click")
+    def on_new(self, evt):
+        if self.new_world_name_dialog.ShowModal() == wx.ID_CANCEL:
+            return
+        worldname = self.new_world_name_dialog.GetValue()
+
+        if worlds.get(worldname) == None:
+            worlds[worldname] = World({ "name" : worldname })
+            new_world = self.world_picker.Append(worldname)
+            self.world_picker.SetSelection(self.world_picker.FindString(worldname))
+            self.fill_thyself()
+        else:
+            wx.MessageDialog(self, "The world \"" + worldname + "\" already exists.",
+                "Error", wx.OK|wx.ICON_ERROR).ShowModal()
+            self.on_new(evt)
 
     def fill_thyself(self):
         selected_world = self.world_picker.GetStringSelection()
