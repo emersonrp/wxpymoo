@@ -144,7 +144,6 @@ class Main(wx.Frame):
     def closeConnection(self, evt):
         if self.currentConnection():
             self.currentConnection().Close()
-            self.tabs.DeletePage(self.tabs.GetSelection())
 
     def reconnectConnection(self, evt):
         self.currentConnection().reconnect()

@@ -1,6 +1,7 @@
 import wx
 import time
 import re
+import sys
 from wxasync import StartCoroutine
 import asyncio
 
@@ -61,11 +62,11 @@ class Connection(wx.SplitterWindow):
 
     def Close(self):
         if self.is_connected:
-            self.output_pane.display("wxpymoo: Connection closed.\n");
+            self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
         # force it again just to be sure
         #self.keepalive.Stop()
         self.connect_time = None
-        self.writer.close()
+        if self.writer: self.writer.close()
         self.reader = self.writer = None
 
     # connection.connect ([host], [port])
@@ -83,7 +84,23 @@ class Connection(wx.SplitterWindow):
         port     = int(world.get('port'))
         conntype = world.get('conntype')
 
-        self.reader, self.writer = await asyncio.open_connection(host, port, ssl = (conntype == "SSL"))
+        try:
+            wait = wx.BusyCursor()
+            self.reader, self.writer = await asyncio.wait_for(
+                asyncio.open_connection(host, port, ssl = (conntype == "SSL")),
+                timeout = 15)
+        except Exception as inst:
+            self.Close()
+            message = "Connection error: " + str(inst)
+            if inst.__class__ == asyncio.TimeoutError:
+                message = "Connection to " + host + ":" + str(port) + " timed out."
+            else:
+                print("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
+            wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
+            return
+        finally:
+            del wait
+
         self.connect_time = time.time()
 
         prefs.set('last_world', world.get('name'))
