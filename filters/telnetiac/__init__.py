@@ -148,6 +148,9 @@ MSDP = chr(69)
 from filters.telnetiac.mssp import handle_mssp
 MSSP = chr(70)
 
+# MCCP - MUD Client Compression Protocol
+MCCP = chr(86)
+
 # GMCP - Generic MUD Communication Protocol
 GMCP = chr(201)
 
@@ -204,6 +207,9 @@ def handle_iac_do_negotiation(cmd, opt, conn):
         if opt == TTYPE:
             print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
             conn.output(IAC + WILL + TTYPE)
+        elif opt == NEW_ENVIRON:
+            print("Got IAC DO NEW_ENVIRON;  Sending IAC WONT NEW_ENVIRON")
+            conn.output(IAC + WONT + NEW_ENVIRON)
         elif opt == NAWS:
             print("Got IAC DO NAWS; Sending IAC WILL NAWS + x/y info")
             conn.iac['NAWS'] = True
@@ -230,10 +236,18 @@ def handle_iac_will_negotiation(cmd, opt, conn):
         if opt == MSSP:
             print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
             conn.output(IAC + DO + MSSP)
+        elif opt == MSDP:
+            # TODO - support this eventually
+            print("Got IAC WILL MSDP;  Sending IAC DONT MSDP")
+            conn.output(IAC + DONT + MSDP)
         elif opt == GMCP:
             # TODO - support this eventually
             print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
             conn.output(IAC + DONT + GMCP)
+        elif opt == MCCP:
+            # Prolly won't support this one.
+            print("Got IAC WILL MCCP;  Sending IAC DONT MCCP")
+            conn.output(IAC + DONT + MCCP)
         else:
             print("Got an unhandled negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)

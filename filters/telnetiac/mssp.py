@@ -4,7 +4,6 @@ MSSP_VAR = chr(1)
 MSSP_VAL = chr(2)
 
 def handle_mssp(payload, conn):
-    print("handling MSSP request for " + str(payload))
     getting_var = 0
     getting_val = 0
     bucket = ''

@@ -25,7 +25,7 @@ def handle_ttype(payload, conn):
     conn.ttype_reply = getattr(conn, 'ttype_reply', 0)
     reply = replies[conn.ttype_reply]
 
-    print("GOT IAC TTYPE subrequest;  Sending " + reply)
+    print("Got IAC TTYPE subrequest;  Sending " + reply)
     conn.output(IAC + SB + TTYPE + chr(0) + reply + IAC + SE)
 
     # Bump to the next element, but start over if we run off the end.
