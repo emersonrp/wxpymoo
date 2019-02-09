@@ -139,14 +139,19 @@ PRAGMA_HEARTBEAT = chr(140) # TELOPT PRAGMA HEARTBEAT
 EXOPL = chr(255) # Extended-Options-List
 NOOPT = chr(0)
 
+from filters.telnetiac.mtts import handle_ttype
+############# MU* PROTOCOLS
+# MSDP - MUD Server Data Protocol
+MSDP = chr(69)
 
 # MSSP - MUD Server Status Protocol
-MSSP     = chr(70)
-MSSP_VAR = chr(1)
-MSSP_VAL = chr(2)
+from filters.telnetiac.mssp import handle_mssp
+MSSP = chr(70)
 
 # GMCP - Generic MUD Communication Protocol
 GMCP = chr(201)
+
+
 
 def process_line(output_pane, line):
     buf = ['','']
@@ -188,32 +193,44 @@ def process_line(output_pane, line):
             iacseq = ''
             opt = c
             if cmd in (DO, DONT):
-                handle_iac_do_negotiation(opt, conn)
+                handle_iac_do_negotiation(cmd, opt, conn)
             elif cmd in (WILL, WONT):
-                handle_iac_will_negotiation(opt, conn)
+                handle_iac_will_negotiation(cmd, opt, conn)
     # end loop
     return buf[0]
 
-def handle_iac_do_negotiation(opt, conn):
-    if opt == TTYPE:
-        print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
-        conn.output(IAC + WILL + TTYPE)
+def handle_iac_do_negotiation(cmd, opt, conn):
+    if cmd == DO:
+        if opt == TTYPE:
+            print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
+            conn.output(IAC + WILL + TTYPE)
+        else:
+            print("Got an unhandled negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
+            conn.output(IAC + WONT + opt)
     else:
-        print("Got an unhandled negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
-        conn.output(IAC + WONT + opt)
+        if opt == TTYPE:
+            print("Got IAC DONT TTYPE; Resetting and sending WONT TTYPE")
+            conn.ttype_reply = 0
+            conn.output(IAC + WONT + TTYPE)
+        else:
+            print("Got an unhandled negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
+            conn.output(IAC + WONT + opt)
 
-def handle_iac_will_negotiation(opt, conn):
-    if opt == MSSP:
-        print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
-        conn.output(IAC + DO + MSSP)
-    elif opt == GMCP:
-        # TODO - support this eventually
-        print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
-        conn.output(IAC + DONT + GMCP)
+def handle_iac_will_negotiation(cmd, opt, conn):
+    if cmd == WILL:
+        if opt == MSSP:
+            print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
+            conn.output(IAC + DO + MSSP)
+        elif opt == GMCP:
+            # TODO - support this eventually
+            print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
+            conn.output(IAC + DONT + GMCP)
+        else:
+            print("Got an unhandled negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
+            conn.output(IAC + DONT + opt)
     else:
-        print("Got an unhandled negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
+        print("Got an unhandled negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
         conn.output(IAC + DONT + opt)
-    return
 
 def handle_iac_subnegotiation(sbdataq, conn):
     payload = deque(sbdataq)
@@ -226,73 +243,3 @@ def handle_iac_subnegotiation(sbdataq, conn):
         print("unhandled IAC Subnegotiation")
         print(sbdataq)
     return
-
-def handle_ttype(payload, conn):
-    # TODO - there is a notion of repeated requests with a defined "end of list" behavior.
-    print("GOT IAC TTYPE subrequest;  Sending VT100")
-    conn.output(IAC + SB + TTYPE + chr(0) + "DEC-VT100")
-
-def handle_mssp(payload, conn):
-    print("handling MSSP request for " + str(payload))
-    getting_var = 0
-    getting_val = 0
-    bucket = ''
-    extracted = {}
-    current_var = ''
-    while payload:
-        c = payload.popleft()
-        if (c == MSSP_VAR) or (c == MSSP_VAL):
-            if c == MSSP_VAR:
-                getting_var = 1
-                if bucket:
-                    if current_var:
-                        extracted[current_var].append(bucket)
-                getting_val = 0
-                current_var = ''
-            if c == MSSP_VAL:
-                getting_val = 1
-                if current_var:
-                    extracted[current_var].append(bucket)
-                else:
-                    extracted[bucket] = []
-                    current_var = bucket
-                getting_var = 0
-            bucket = ''
-        else:
-            bucket = bucket + c
-    if bucket: extracted[current_var].append(bucket)
-
-    # OK, let's mash that all back into the current world
-
-    # TODO - explicitly examine each of the official MSSP variables
-    # https://tintin.sourceforge.io/protocols/mssp/
-    # and treat each piece of info appropriately, ie, mash into our scheme,
-    # or possibly just add each of them to our scheme.
-
-    world = conn.world
-
-    got_new_info = []
-    for key in extracted:
-        worldkey = "MSSP_" + key.capitalize()
-        if not str(world.get(worldkey)) == str(extracted[key]):
-            print("Got new MSSP info: " + worldkey + " = " + str(extracted[key]))
-            print("Was: " + str(world.get(worldkey)))
-            got_new_info.append(key)
-
-    if got_new_info:
-        message = "Got new MSSP info for this world:\n\n"
-        for key in got_new_info:
-            worldkey = "MSSP_" + key.capitalize()
-            message = message + key + ":" + str(extracted[key]) + "\n"
-        message = message + "\nSave new info into world?"
-        dlg = wx.MessageDialog(wx.GetApp().GetTopWindow(), message, "New World Info", wx.YES_NO)
-        dlg.SetYesNoLabels(wx.ID_SAVE, "&Don't Save")
-        if dlg.ShowModal() == wx.ID_YES:
-            for key in extracted:
-                worldkey = "MSSP_" + key.capitalize()
-                world[worldkey] = extracted[key]
-            world.save()
-
-
-    return
-

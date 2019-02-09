@@ -3,7 +3,7 @@ import wx.richtext as rtc
 import wx.lib.newevent
 import re
 
-import telnetiac
+import filters.telnetiac
 
 import prefs
 import utility
@@ -29,7 +29,7 @@ class OutputPane(BasePane):
         self.inverse = False
 
         # output filters can register themselves
-        self.filters = [telnetiac.process_line, self.lm_localedit_filter]
+        self.filters = [filters.telnetiac.process_line, self.lm_localedit_filter]
         self.localedit_contents = None
 
         # TODO - this probably should be a preference, but for now, this is the

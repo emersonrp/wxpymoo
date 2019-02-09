@@ -1,22 +1,17 @@
 # wxpymoo
 
-wxpymoo (pronounced "wispy-moo") is a wxPython MOO client, very work-in-progress.  It's intended to run on Windows, MacOS, and Linux/etc.
+wxpymoo (pronounced "wispy-moo") is a wxPython MOO/MUD client, very work-in-progress.  It's intended to run on Windows, MacOS, and Linux/etc.
 
-This is a response to Andrew Wilson's fantastic [tkMOO-light](http://www.awns.com/tkMOO-light) MOO client being basically abandoned, tk-based, which is ugly, and coded in TCL which I find eye-stabbingly difficult to work with.  So I thought I'd see if I could reproduce the 75% of it that I use, using Perl which I understand, and Wx which looks like something even remotely from the 21st century.
+This is a response to Andrew Wilson's fantastic [tkMOO-light](http://www.awns.com/tkMOO-light) MOO client being long abandoned, tk-based, which is ugly, and coded in TCL which ouch.  So I thought I'd see if I could reproduce the 75% of it that I use, using Perl which I understand, and Wx which looks at least somewhat modern.
 
-[Which I did](https://github.com/emersonrp/WxMOO).
-
-And then I started discovering how difficult it is to package and release wxPerl applications.
+[Which I did](https://github.com/emersonrp/WxMOO).  And then I started discovering how difficult it is to package and release wxPerl applications.
 
 So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 
 ## Done
 * Connects to arbitrary host/port combinations
-* Contains a "worlds list" full of ~50 currently-active MOOs to choose from.
-* Basic but functional command history.
-* Tab-complete, currently fed from dns-com-vmoo-smartcomplete
-* ANSI color/style codes are well-supported, including 24-bit color.
-* multiple color themes
+* Contains a "worlds list" full of ~50 currently-active MOOs/MUDS/etc to choose from.
+* ANSI 16, 256, and 24-bit support, as well as [FANSI](http://fansi.org/); multiple color themes for core ANSI colors
 * Partial [MCP/2.1](http://www.moo.mud.org/mcp/mcp2.html) implementation -- mcp-negotiate is implemented;  mcp-cord only partially.
 * MCP packages:
     * dns-com-awns-displayurl
@@ -26,9 +21,12 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
     * dns-com-vmoo-client
     * dns-com-vmoo-smartcomplete
     * dns-org-mud-moo-simpleedit
+* A growing number of MUD protocols supported:  [MSSP](https://tintin.sourceforge.io/protocols/mssp/) (partial), [MTTS](https://tintin.sourceforge.io/protocols/mtts/)
 * Multiple connections supported via tabbed interface
 * SSL support per-world
-* Works at least reasonably on Linux, MacOS, Windows.
+* Works at least reasonably well on Linux, MacOS, Windows.
+* Basic but functional command history.
+* Tab-complete, currently fed from dns-com-vmoo-smartcomplete
 
 ## Immediate Concerns
 * fix output pane scroll-to-bottom behavior to dwym.
@@ -44,15 +42,14 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Object browser, like MacMOOSE but hopefully nicer.
 * Implement "SSH Forwarding" connection type.
 * color theme editor
+* Support more MUD protocols
+* More complete VT100 support
 
 ## Blue-sky
 * HTML help, using jtext?
 * MIME-based external apps, ie mplayer for audio/flac etc?  MCP package to accept MIME+data?  dns-com-vmoo-mmedia?
 * inline MOO syntax highlighting?  Like, detect the output of "@list $player:tell" and auto-highlight it?
-
-## Things not currently on the radar
-* tkMOO-light has a plugin architecture, and all sorts of third-party additions (I even wrote one, years ago).  I have no expectation that there'll be an ecosystem of developers around **this** MOO client, so I'm not actually desigining with that in mind.
-* I MOO socially, occasionally.  I don't do RPG MUDs or things like that, so I have no need for triggers and macros and so forth.  I don't even have a clear idea of what people do with them.  Convince me.
+* Character-mode?
 
 ## Guiding thoughts
 * Monospaced fonts and line-based terminal output are not mutually incompatible with intuitive, pleasant UIs.
