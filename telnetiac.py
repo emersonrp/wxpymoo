@@ -52,6 +52,7 @@ and licensed under the same terms.
 """
 
 from collections import deque
+import wx
 
 # Telnet protocol characters (don't change)
 IAC  = chr(255) # "Interpret As Command"
@@ -77,65 +78,66 @@ SB =  chr(250)  # Subnegotiation Begin
 
 # Telnet protocol options code (don't change)
 # These ones all come from arpa/telnet.h
-#BINARY = chr(0) # 8-bit data path
-#ECHO = chr(1) # echo
-#RCP = chr(2) # prepare to reconnect
-#SGA = chr(3) # suppress go ahead
-#NAMS = chr(4) # approximate message size
-#STATUS = chr(5) # give status
-#TM = chr(6) # timing mark
-#RCTE = chr(7) # remote controlled transmission and echo
-#NAOL = chr(8) # negotiate about output line width
-#NAOP = chr(9) # negotiate about output page size
-#NAOCRD = chr(10) # negotiate about CR disposition
-#NAOHTS = chr(11) # negotiate about horizontal tabstops
-#NAOHTD = chr(12) # negotiate about horizontal tab disposition
-#NAOFFD = chr(13) # negotiate about formfeed disposition
-#NAOVTS = chr(14) # negotiate about vertical tab stops
-#NAOVTD = chr(15) # negotiate about vertical tab disposition
-#NAOLFD = chr(16) # negotiate about output LF disposition
-#XASCII = chr(17) # extended ascii character set
-#LOGOUT = chr(18) # force logout
-#BM = chr(19) # byte macro
-#DET = chr(20) # data entry terminal
-#SUPDUP = chr(21) # supdup protocol
-#SUPDUPOUTPUT = chr(22) # supdup output
-#SNDLOC = chr(23) # send location
-#TTYPE = chr(24) # terminal type
-#EOR = chr(25) # end or record
-#TUID = chr(26) # TACACS user identification
-#OUTMRK = chr(27) # output marking
-#TTYLOC = chr(28) # terminal location number
-#VT3270REGIME = chr(29) # 3270 regime
-#X3PAD = chr(30) # X.3 PAD
-#NAWS = chr(31) # window size
-#TSPEED = chr(32) # terminal speed
-#LFLOW = chr(33) # remote flow control
-#LINEMODE = chr(34) # Linemode option
-#XDISPLOC = chr(35) # X Display Location
-#OLD_ENVIRON = chr(36) # Old - Environment variables
-#AUTHENTICATION = chr(37) # Authenticate
-#ENCRYPT = chr(38) # Encryption option
-#NEW_ENVIRON = chr(39) # New - Environment variables
-## the following ones come from
-## http://www.iana.org/assignments/telnet-options
-## Unfortunately, that document does not assign identifiers
-## to all of them, so we are making them up
-#TN3270E = chr(40) # TN3270E
-#XAUTH = chr(41) # XAUTH
-#CHARSET = chr(42) # CHARSET
-#RSP = chr(43) # Telnet Remote Serial Port
-#COM_PORT_OPTION = chr(44) # Com Port Control Option
-#SUPPRESS_LOCAL_ECHO = chr(45) # Telnet Suppress Local Echo
-#TLS = chr(46) # Telnet Start TLS
-#KERMIT = chr(47) # KERMIT
-#SEND_URL = chr(48) # SEND-URL
-#FORWARD_X = chr(49) # FORWARD_X
-#PRAGMA_LOGON = chr(138) # TELOPT PRAGMA LOGON
-#SSPI_LOGON = chr(139) # TELOPT SSPI LOGON
-#PRAGMA_HEARTBEAT = chr(140) # TELOPT PRAGMA HEARTBEAT
-#EXOPL = chr(255) # Extended-Options-List
-#NOOPT = chr(0)
+BINARY = chr(0) # 8-bit data path
+ECHO = chr(1) # echo
+RCP = chr(2) # prepare to reconnect
+SGA = chr(3) # suppress go ahead
+NAMS = chr(4) # approximate message size
+STATUS = chr(5) # give status
+TM = chr(6) # timing mark
+RCTE = chr(7) # remote controlled transmission and echo
+NAOL = chr(8) # negotiate about output line width
+NAOP = chr(9) # negotiate about output page size
+NAOCRD = chr(10) # negotiate about CR disposition
+NAOHTS = chr(11) # negotiate about horizontal tabstops
+NAOHTD = chr(12) # negotiate about horizontal tab disposition
+NAOFFD = chr(13) # negotiate about formfeed disposition
+NAOVTS = chr(14) # negotiate about vertical tab stops
+NAOVTD = chr(15) # negotiate about vertical tab disposition
+NAOLFD = chr(16) # negotiate about output LF disposition
+XASCII = chr(17) # extended ascii character set
+LOGOUT = chr(18) # force logout
+BM = chr(19) # byte macro
+DET = chr(20) # data entry terminal
+SUPDUP = chr(21) # supdup protocol
+SUPDUPOUTPUT = chr(22) # supdup output
+SNDLOC = chr(23) # send location
+TTYPE = chr(24) # terminal type
+EOR = chr(25) # end or record
+TUID = chr(26) # TACACS user identification
+OUTMRK = chr(27) # output marking
+TTYLOC = chr(28) # terminal location number
+VT3270REGIME = chr(29) # 3270 regime
+X3PAD = chr(30) # X.3 PAD
+NAWS = chr(31) # window size
+TSPEED = chr(32) # terminal speed
+LFLOW = chr(33) # remote flow control
+LINEMODE = chr(34) # Linemode option
+XDISPLOC = chr(35) # X Display Location
+OLD_ENVIRON = chr(36) # Old - Environment variables
+AUTHENTICATION = chr(37) # Authenticate
+ENCRYPT = chr(38) # Encryption option
+NEW_ENVIRON = chr(39) # New - Environment variables
+# the following ones come from
+# http://www.iana.org/assignments/telnet-options
+# Unfortunately, that document does not assign identifiers
+# to all of them, so we are making them up
+TN3270E = chr(40) # TN3270E
+XAUTH = chr(41) # XAUTH
+CHARSET = chr(42) # CHARSET
+RSP = chr(43) # Telnet Remote Serial Port
+COM_PORT_OPTION = chr(44) # Com Port Control Option
+SUPPRESS_LOCAL_ECHO = chr(45) # Telnet Suppress Local Echo
+TLS = chr(46) # Telnet Start TLS
+KERMIT = chr(47) # KERMIT
+SEND_URL = chr(48) # SEND-URL
+FORWARD_X = chr(49) # FORWARD_X
+
+PRAGMA_LOGON = chr(138) # TELOPT PRAGMA LOGON
+SSPI_LOGON = chr(139) # TELOPT SSPI LOGON
+PRAGMA_HEARTBEAT = chr(140) # TELOPT PRAGMA HEARTBEAT
+EXOPL = chr(255) # Extended-Options-List
+NOOPT = chr(0)
 
 
 # MSSP - MUD Server Status Protocol
@@ -186,23 +188,30 @@ def process_line(output_pane, line):
             iacseq = ''
             opt = c
             if cmd in (DO, DONT):
-                print('IAC ', cmd == DO and 'DO' or 'DONT', ord(opt))
+                handle_iac_do_negotiation(opt, conn)
             elif cmd in (WILL, WONT):
-                print('IAC ', cmd == WILL and 'WILL' or 'WONT', ord(opt))
-                handle_iac_negotiation(opt, conn)
+                handle_iac_will_negotiation(opt, conn)
     # end loop
     return buf[0]
 
-def handle_iac_negotiation(opt, conn):
+def handle_iac_do_negotiation(opt, conn):
+    if opt == TTYPE:
+        print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
+        conn.output(IAC + WILL + TTYPE)
+    else:
+        print("Got an unhandled negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
+        conn.output(IAC + WONT + opt)
+
+def handle_iac_will_negotiation(opt, conn):
     if opt == MSSP:
-        print("Sending IAC DO MSSP")
+        print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
         conn.output(IAC + DO + MSSP)
     elif opt == GMCP:
         # TODO - support this eventually
-        print("Sending IAC DONT GMCP")
+        print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
         conn.output(IAC + DONT + GMCP)
     else:
-        print("Got an unknown IAC negotiation, saying no")
+        print("Got an unhandled negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
         conn.output(IAC + DONT + opt)
     return
 
@@ -211,12 +220,20 @@ def handle_iac_subnegotiation(sbdataq, conn):
     SB_ID = payload.popleft()
     if SB_ID == MSSP:
         handle_mssp(payload, conn)
+    elif SB_ID == TTYPE:
+        handle_ttype(payload, conn)
     else:
-        print("Unknown IAC Subnegotiation")
+        print("unhandled IAC Subnegotiation")
         print(sbdataq)
     return
 
+def handle_ttype(payload, conn):
+    # TODO - there is a notion of repeated requests with a defined "end of list" behavior.
+    print("GOT IAC TTYPE subrequest;  Sending VT100")
+    conn.output(IAC + SB + TTYPE + chr(0) + "DEC-VT100")
+
 def handle_mssp(payload, conn):
+    print("handling MSSP request for " + str(payload))
     getting_var = 0
     getting_val = 0
     bucket = ''
@@ -246,19 +263,36 @@ def handle_mssp(payload, conn):
     if bucket: extracted[current_var].append(bucket)
 
     # OK, let's mash that all back into the current world
+
+    # TODO - explicitly examine each of the official MSSP variables
+    # https://tintin.sourceforge.io/protocols/mssp/
+    # and treat each piece of info appropriately, ie, mash into our scheme,
+    # or possibly just add each of them to our scheme.
+
     world = conn.world
 
+    got_new_info = []
     for key in extracted:
         worldkey = "MSSP_" + key.capitalize()
-        world[worldkey] = extracted[key]
+        if not str(world.get(worldkey)) == str(extracted[key]):
+            print("Got new MSSP info: " + worldkey + " = " + str(extracted[key]))
+            print("Was: " + str(world.get(worldkey)))
+            got_new_info.append(key)
 
-    # TODO - don't start filling up the worlds file with "new connection"
-    # just because some random server returned some MSSP
-    #
-    # TODO - probably prompt to save in this case?  This is where we start to
-    # mash the MSSP info into the world instead of off to the MSSP_Side.
-    if not world['name'] == "New Connection":
-        world.save()
+    if got_new_info:
+        message = "Got new MSSP info for this world:\n\n"
+        for key in got_new_info:
+            worldkey = "MSSP_" + key.capitalize()
+            message = message + key + ":" + str(extracted[key]) + "\n"
+        message = message + "\nSave new info into world?"
+        dlg = wx.MessageDialog(wx.GetApp().GetTopWindow(), message, "New World Info", wx.YES_NO)
+        dlg.SetYesNoLabels(wx.ID_SAVE, "&Don't Save")
+        if dlg.ShowModal() == wx.ID_YES:
+            for key in extracted:
+                worldkey = "MSSP_" + key.capitalize()
+                world[worldkey] = extracted[key]
+            world.save()
+
 
     return
 
