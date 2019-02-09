@@ -135,7 +135,10 @@ class Connection(wx.SplitterWindow):
             self.output_pane.display(line)
 
     def output(self, stuff):
-        self.writer.write(stuff.encode('latin1'))
+        if self.writer:
+            self.writer.write(stuff.encode('latin1'))
+        else:
+            print("Tried to write stuff to closed writer: " + stuff.encode('latin1'))
 
     def reconnect(self):
         if self.writer: self.Close()
