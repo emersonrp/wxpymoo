@@ -10,6 +10,8 @@ from window.outputpane import OutputPane
 from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
+from window.outputpane import EVT_ROW_COL_CHANGED
+import filters.telnetiac
 
 # the 'connection' contains both the network connection and the i/o ui
 class Connection(wx.SplitterWindow):
@@ -26,6 +28,8 @@ class Connection(wx.SplitterWindow):
         self.home_url       = ''
         self.help_url       = ''
 
+        self.iac = {}
+
         self.reader = self.writer = None
 
         #self.keepalive     = Keepalive(self)
@@ -35,8 +39,13 @@ class Connection(wx.SplitterWindow):
 
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
         self.Bind(wx.EVT_SIZE, self.HandleResize)
+        self.output_pane.Bind(EVT_ROW_COL_CHANGED , self.on_row_col_changed )
 
         mainwindow.Bind(EVT_PREFS_CHANGED, self.doPrefsChanged)
+
+    def on_row_col_changed(self, evt):
+        # This is sorta icky but math is hard
+        filters.telnetiac.handle_naws(self)
 
     def doPrefsChanged(self, evt):
         self.input_pane.restyle_thyself()

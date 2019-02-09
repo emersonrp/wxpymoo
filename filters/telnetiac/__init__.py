@@ -204,6 +204,11 @@ def handle_iac_do_negotiation(cmd, opt, conn):
         if opt == TTYPE:
             print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
             conn.output(IAC + WILL + TTYPE)
+        elif opt == NAWS:
+            print("Got IAC DO NAWS; Sending IAC WILL NAWS + x/y info")
+            conn.iac['NAWS'] = True
+            conn.output(IAC + WILL + NAWS)
+            handle_naws(conn)
         else:
             print("Got an unhandled negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
@@ -212,6 +217,10 @@ def handle_iac_do_negotiation(cmd, opt, conn):
             print("Got IAC DONT TTYPE; Resetting and sending WONT TTYPE")
             conn.ttype_reply = 0
             conn.output(IAC + WONT + TTYPE)
+        elif opt == NAWS:
+            print("Got IAC DONT NAWS; Sending IAC WONT NAWS")
+            conn.iac['NAWS'] = False
+            conn.output(IAC + WONT + NAWS)
         else:
             print("Got an unhandled negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
@@ -243,3 +252,13 @@ def handle_iac_subnegotiation(sbdataq, conn):
         print("unhandled IAC Subnegotiation")
         print(sbdataq)
     return
+
+def handle_naws(conn):
+    if conn.iac.get('NAWS') == True:
+        cols = conn.output_pane.cols
+        rows = conn.output_pane.rows
+        # XXX TODO XXX -- chr(cols/rows) means this will gack if either is >= 256
+        # The spec says 16-bit values supported but conn.output encodes to latin-1
+        # which is actually sorta the problem.
+        print("Sending IAC NAWS info:" + str(cols) + "x" + str(rows))
+        conn.output(IAC + SB + NAWS + chr(cols) + chr(rows) + IAC + SE)
