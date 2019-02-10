@@ -3,8 +3,6 @@ import wx.richtext as rtc
 import wx.lib.newevent
 import re
 
-import filters.telnetiac
-
 import prefs
 import utility
 from editor import Editor
@@ -29,8 +27,11 @@ class OutputPane(BasePane):
         self.inverse = False
 
         # output filters can register themselves
-        self.filters = [filters.telnetiac.process_line, self.lm_localedit_filter]
+        self.filters = [self.lm_localedit_filter]
         self.localedit_contents = None
+
+        # "holding bin" for line-based filters to enqueue partial lines
+        self.global_queue = ''
 
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
@@ -39,7 +40,7 @@ class OutputPane(BasePane):
         self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
         self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
 
-    def register_filter(self, filter_callback):
+    def register_filter(self, name, filter_callback):
         self.filters.append(filter_callback)
 
     # EVENT HANDLERS #######################
@@ -98,126 +99,144 @@ class OutputPane(BasePane):
     def display(self, text):
         self.SetInsertionPointEnd()
         self.Freeze()
-        for line in text.split('\n+'):
 
-            for fil in self.filters:
-                line = fil(self, line)
-                if line == None: break  # output_filter must return None / void, if it handled it
-            if not line: continue
+        if self.global_queue:
+            text = self.global_queue + text
+            self.global_queue = ''
 
-            #if (True or prefs.get('render_emoji'):
-                # TODO - preference?  "if (we detect an emoji)?"
-                #line = emoji.emojize(line, use_aliases = True)
+        # it is not clear whether this is the correct (a) thing to do, or
+        # (b) place to do it, but some wackass MUDs seem to be sending \r\n
+        # with an ANSI blob in between(!!!).  Going Unixy and just using \n
+        text = re.sub('\r', '', text)
 
-            if prefs.get('use_ansi'):
-                # Dear lord this is sorta ugly
+        # line-based filters should do their thing, returning None if they ate
+        # everything they should enqueue any partial lines they're "in the
+        # middle of" handling and be ready for the rest of the line;  then they
+        # should examine the remainder for further handling or enqueueing.
+        for fil in self.filters:
+            text = fil(self, text)
+            if text == None: return  # output_filter must return None if it handled it
 
-                # TODO -- let's make this whole thing an external filter that
-                # returns text chunks and TextAttrs to blat at the screen.  For
-                # now, we can still do it line-by-line, but eventually we might
-                # want to be properly character-based/VT supporting.
+        #if (True or prefs.get('render_emoji'):
+            # TODO - preference?  "if (we detect an emoji)?"
+            #text = emoji.emojize(text, use_aliases = True)
 
-                # For now, we'll stick the FANSI character poop into an
-                # external filter.
-                if self.connection.world.get("use_fansi"):
-                    line = fansi_replace(line)
+        if prefs.get('use_ansi'):
+            # Dear lord this is sorta ugly
 
-                # snip and ring bells
-                # TODO -- "if beep is enabled in the prefs"
-                line, count = re.subn("\007", '', line)
-                for b in range(0, count):
-                    print("DEBUG: found an ANSI beep")
-                    wx.Bell();
+            # TODO -- let's make this whole thing an external filter that
+            # returns text chunks and TextAttrs to blat at the screen.  For
+            # now, we can still do it line-by-line, but eventually we might
+            # want to be properly character-based/VT supporting.
 
-                # chop the line into text, ansi, text, ansi....
-                bits = re.split('\033\[(\d+(?:;\d+)*)m', line)
+            # For now, we'll stick the FANSI character poop into an
+            # external filter.
+            if self.connection.world.get("use_fansi"):
+                text = fansi_replace(text)
 
-                for idx, bit in enumerate(bits):
-                    if bit == '': continue
+            # snip and ring bells
+            # TODO -- "if beep is enabled in the prefs"
+            text, count = re.subn("\007", '', text)
+            for b in range(0, count):
+                print("DEBUG: found an ANSI beep")
+                wx.Bell();
 
-                    # if it's ansi...
-                    if (idx % 2):
-                        # pick apart the ANSI stuff.
-                        codes = [int(c) for c in bit.split(';')]
-                        while codes:
-                            command, payload = ansi_codes[codes.pop(0)]
+            # chop the text into text, ansi, text, ansi....
+            bits = re.split('\033\[(\d+(?:;\d+)*)m', text)
 
-                            if command == 'foreground' or command == "background":
-                                if payload == "extended":
-                                    subtype = codes.pop(0)
-                                    # 24-bit color
-                                    if subtype == 2:
-                                        colour = self.theme.rgb_to_hex((codes.pop(0), codes.pop(0), codes.pop(0)))
-                                    # 256-color
-                                    elif subtype == 5:
-                                        colour = self.theme.index256_to_hex(codes.pop(0))
-                                    else:
-                                        print("Got an unknown fg/bg ANSI subtype: " + str(subtype))
+            for idx, bit in enumerate(bits):
+                # if we're on the last bit, check whether it might be a partial ANSI blob
+                if idx == len(bits)-1:
+                    if re.search('\033', bit):
+                        print(f"I think I have a spare ANSI bit ({bit}), requeueing it")
+                        self.global_queue += bit
+                        break
+
+                if bit == '': continue
+
+                # if it's ansi...
+                if (idx % 2):
+                    # pick apart the ANSI stuff.
+                    codes = [int(c) for c in bit.split(';')]
+                    while codes:
+                        command, payload = ansi_codes[codes.pop(0)]
+
+                        if command == 'foreground' or command == "background":
+                            if payload == "extended":
+                                subtype = codes.pop(0)
+                                # 24-bit color
+                                if subtype == 2:
+                                    colour = self.theme.rgb_to_hex((codes.pop(0), codes.pop(0), codes.pop(0)))
+                                # 256-color
+                                elif subtype == 5:
+                                    colour = self.theme.index256_to_hex(codes.pop(0))
                                 else:
-                                    colour = payload
-
-                                if command == "foreground" : self.fg_colour = colour
-                                else                       : self.bg_colour = colour
-                                self.set_current_colours()
-
-                            elif command == 'control':
-                                switcher = {
-                                    'normal'              : self.doansi_normal,
-                                    'bright'              : self.doansi_bright,
-                                    'dim'                 : self.doansi_dim,
-                                    'italic'              : self.BeginItalic,
-                                    'underline'           : self.BeginUnderline,
-                                    'blink'               : self.doansi_blink,
-                                    'inverse'             : self.doansi_inverse,
-                                    'conceal'             : self.doansi_conceal,
-                                    'strike'              : self.doansi_strike,
-                                    'normal_weight'       : self.doansi_normal_weight,
-                                    'no_italic'           : self.EndItalic,
-                                    'no_underline'        : self.EndUnderline,
-                                    'no_blink'            : self.doansi_no_blink,
-                                    'no_conceal'          : self.doansi_no_conceal,
-                                    'no_strike'           : self.doansi_no_strike,
-                                    'framed'              : self.doansi_framed,
-                                    'encircled'           : self.doansi_encircled,
-                                    'overline'            : self.doansi_overline,
-                                    'no_framed_encircled' : self.doansi_no_framed_encircled,
-                                    'no_overline'         : self.doansi_no_overline,
-                                    'default_fg'          : self.doansi_default_fg,
-                                    'default_bg'          : self.doansi_default_bg,
-                                }
-                                ansifunc = switcher.get(payload, lambda: "Unknown ANSI sequence")
-                                ansifunc()
-
+                                    print("Got an unknown fg/bg ANSI subtype: " + str(subtype))
                             else:
-                                print("unknown ANSI command:", command)
-                    else:
-                        # is a text-only chunk, check for URLs
-                        if prefs.get('highlight_urls'):
-                            matches = utility.URL_REGEX.split(bit)
-                            for chunk in matches:
-                                if not chunk: continue
-                                if utility.URL_REGEX.match(chunk):
-                                    self.BeginURL(chunk)
-                                    self.BeginUnderline()
+                                colour = payload
 
-                                    current_intensity = self.intensity
-                                    self.intensity = 'normal'
-                                    self.BeginTextColour( self.lookup_colour('blue') )
-                                    self.intensity = current_intensity
+                            if command == "foreground" : self.fg_colour = colour
+                            else                       : self.bg_colour = colour
+                            self.set_current_colours()
 
-                                    self.WriteText(chunk)
+                        elif command == 'control':
+                            switcher = {
+                                'normal'              : self.doansi_normal,
+                                'bright'              : self.doansi_bright,
+                                'dim'                 : self.doansi_dim,
+                                'italic'              : self.BeginItalic,
+                                'underline'           : self.BeginUnderline,
+                                'blink'               : self.doansi_blink,
+                                'inverse'             : self.doansi_inverse,
+                                'conceal'             : self.doansi_conceal,
+                                'strike'              : self.doansi_strike,
+                                'normal_weight'       : self.doansi_normal_weight,
+                                'no_italic'           : self.EndItalic,
+                                'no_underline'        : self.EndUnderline,
+                                'no_blink'            : self.doansi_no_blink,
+                                'no_conceal'          : self.doansi_no_conceal,
+                                'no_strike'           : self.doansi_no_strike,
+                                'framed'              : self.doansi_framed,
+                                'encircled'           : self.doansi_encircled,
+                                'overline'            : self.doansi_overline,
+                                'no_framed_encircled' : self.doansi_no_framed_encircled,
+                                'no_overline'         : self.doansi_no_overline,
+                                'default_fg'          : self.doansi_default_fg,
+                                'default_bg'          : self.doansi_default_bg,
+                            }
+                            ansifunc = switcher.get(payload, lambda: "Unknown ANSI sequence")
+                            ansifunc()
 
-                                    self.EndTextColour()
-                                    self.EndUnderline()
-                                    self.EndURL()
-                                else:
-                                    self.WriteText(chunk)
                         else:
-                            self.WriteText(bit)
-            else:
-                self.WriteText(line)
+                            print("unknown ANSI command:", command)
+                else:
+                    # is a text-only chunk, check for URLs
+                    if prefs.get('highlight_urls'):
+                        matches = utility.URL_REGEX.split(bit)
+                        for chunk in matches:
+                            if not chunk: continue
+                            if utility.URL_REGEX.match(chunk):
+                                self.BeginURL(chunk)
+                                self.BeginUnderline()
+
+                                current_intensity = self.intensity
+                                self.intensity = 'normal'
+                                self.BeginTextColour( self.lookup_colour('blue') )
+                                self.intensity = current_intensity
+
+                                self.WriteText(chunk)
+
+                                self.EndTextColour()
+                                self.EndUnderline()
+                                self.EndURL()
+                            else:
+                                self.WriteText(chunk)
+                    else:
+                        self.WriteText(bit)
+        else:
+            self.WriteText(text)
+
         self.Thaw()
-        if not line == None: self.WriteText("\n")
 
     ### ANSI HANDLERS
     def doansi_normal(self):
@@ -287,39 +306,39 @@ class OutputPane(BasePane):
 
     def ansi_test(self):
         self.Freeze()
-        self.display("")
-        self.display("--- ANSI TEST BEGIN ---")
-        self.display("System Colors:")
+        self.display("\n")
+        self.display("--- ANSI TEST BEGIN ---\n")
+        self.display("System Colors:\n")
 
         fg_cube = bg_cube = ''
 
         for c in range(0,7):
             fg_cube += "\033[3" + str(c) + "m*\033[0m"
             bg_cube += "\033[4" + str(c) + "m \033[0m"
-        self.display(fg_cube + "    " + bg_cube)
+        self.display(fg_cube + "    " + bg_cube + "\n")
         fg_cube = bg_cube = ''
 
-        self.display("")
-        self.display("Color cube, 6x6x6")
+        self.display("\n")
+        self.display("Color cube, 6x6x6\n")
         for g in range(0,6):
             for b in range(0,6):
                 for r in range(0,6):
                     c = ((r * 36) + (g * 6) + b) + 16
                     fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
                     bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
-            self.display(fg_cube + "    " + bg_cube)
+            self.display(fg_cube + "    " + bg_cube + "\n")
             fg_cube = bg_cube = ''
 
-        self.display("")
-        self.display("Greyscale ramp:")
+        self.display("\n")
+        self.display("Greyscale ramp:\n")
         for c in range(232,255):
             fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
             bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
-        self.display(fg_cube + "    " + bg_cube)
+        self.display(fg_cube + "    " + bg_cube + "\n")
         fg_cube = bg_cube = ''
 
-        self.display("")
-        self.display("Some random 24-bit color samples:")
+        self.display("\n")
+        self.display("Some random 24-bit color samples:\n")
         from random import randint
         line = ""
         for i in range(0,6):
@@ -330,30 +349,37 @@ class OutputPane(BasePane):
                 fg_bg = 48 if (j % 2) else 38
 
                 line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
-            self.display(line)
+            self.display(line + "\n")
             line = ""
-        self.display("")
-        self.display("--- ANSI TEST END ---")
-        self.display("")
+        self.display("\n")
+        self.display("--- ANSI TEST END ---\n")
+        self.display("\n")
         self.Thaw()
 
     ########### LM LOCALEDIT
-    def lm_localedit_filter(self, _, line):
+    def lm_localedit_filter(self, _, data):
+        return_val = ''
         # Are we in the middle of an ongoing localedit blast?
-        if self.localedit_contents:
-            self.localedit_contents.append(line.rstrip())
-            if re.match('^\.$', line):
-                self.send_localedit_to_editor()
-                self.localedit_contents = None
-            return None
-        # Check for precisely "#$# edit name: xxxxxx upload: xxxxx"
-        else:
-            if LOCALEDIT_LINE.match(line):
-                self.localedit_contents = [line.rstrip()]
-                return None
+        line, p, rest = data.partition('\n')
+        while p:
+            if self.localedit_contents:
+                line = line.rstrip()
+                self.localedit_contents.append(line)
+                if re.match('\.$', line):
+                    self.send_localedit_to_editor()
+                    self.localedit_contents = None
+            else:
+                # Check for precisely "#$# edit name: xxxxxx upload: xxxxx"
+                if LOCALEDIT_LINE.match(line):
+                    line = line.rstrip()
+                    self.localedit_contents = [line]
+                else:
+                    # Nope?  OK, pass back the line for the next lucky winner to play with
+                    return_val += line + "\n"
 
-        # Nope?  OK, pass back the line for the next lucky winner to play with
-        return line
+            line, p, rest = rest.partition('\n')
+
+        return return_val + line
 
     def send_localedit_to_editor(self):
         invocation = self.localedit_contents[0]

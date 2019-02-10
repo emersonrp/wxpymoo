@@ -36,7 +36,7 @@ class MCPCore:
 
         MCP(self) # initialize the 'mcp' core package
 
-        conn.output_pane.register_filter(self.output_filter)
+        conn.output_pane.register_filter('mcp', self.output_filter)
 
         # walk the packages directory, and instantiate everything we find there.
         # this relies on each package having a class called "MCPPackage" that's a
@@ -60,66 +60,86 @@ class MCPCore:
         print(self.connection.world.get('name') + ": " + info)
 
     def output_filter(self, output_pane, data):
-        # MCP spec, 2.1:
-        # A received network line that begins with the characters #$# is translated
-        # to an out-of-band (MCP message) line consisting of exactly the same
-        # characters.  A received network line that begins with the characters #$"
-        # must be translated to an in-band line consisting of the network line with
-        # the prefix #$" removed.  Any other received network line translates to an
-        # in-band line consisting of exactly the same characters.
 
-        data, matches = utility.QUOTE_PREFIX.subn('', data)  # did we have the quote prefix?
-        if matches > 0: return data                  # we did, and removed it.  Return the line
+        return_val = ''
 
-        data, matches = utility.OOB_PREFIX.subn('', data) # did we have the oob prefix?
-        if matches == 0: return data              # we did not, so return the line and bail
+        # peel off whole lines and examine them.  See below for partial lines' fate.
+        line, p, rest = data.partition('\n')
+        while p:
 
-        # now we have only lines that started with utility.OOB_PREFIX, which has been trimmed
-        self.debug("S->C: #$#" + data)
+            line = line.rstrip()
 
-        m = re.match(r'(\S+)\s*(.*)', data)
+            # MCP spec, 2.1:
+            # A received network line that begins with the characters #$# is translated
+            # to an out-of-band (MCP message) line consisting of exactly the same
+            # characters.  A received network line that begins with the characters #$"
+            # must be translated to an in-band line consisting of the network line with
+            # the prefix #$" removed.  Any other received network line translates to an
+            # in-band line consisting of exactly the same characters.
 
-        message_name, rest = m.group(1,2)
+            line, matches = utility.QUOTE_PREFIX.subn('', line)  # did we have the quote prefix?
+            if matches > 0:
+                return_val += line + "\n" # we did, and removed it.  Add the line
+                line, p, rest = rest.partition('\n')
+                continue
 
-        # if we haven't started yet, and the message isn't a startup negotiation...
-        if (not self.mcp_active and message_name != 'mcp'): return
+            line, matches = utility.OOB_PREFIX.subn('', line) # did we have the oob prefix?
+            if matches == 0:
+                return_val += line + "\n" # we did not, so add the line and bail
+                line, p, rest = rest.partition('\n')
+                continue
 
-        # multiline message handling.  This is awful.
-        if message_name == '*':
-            m = re.match(r'^(\S*) ([^:]*): ?(.*)', rest)
-            tag, field, value = m.group(1,2,3)
+            # now we have only a line that started with utility.OOB_PREFIX, which has been trimmed
+            self.debug("S->C: #$#" + line)
 
-            message = self.multiline_messages[tag]
-            message._data_tag = tag
+            m = re.match(r'(\S+)\s*(.*)', line)
 
-            if not field in message.data: message.data[field] = []
+            message_name, payload = m.group(1,2)
+            # if we haven't started yet, and the message isn't a startup negotiation...
+            if not (not self.mcp_active and message_name != 'mcp'):
 
-            message.data[field].append(value)
+                # multiline message handling.  This is awful.
+                if message_name == '*':
+                    m = re.match(r'^(\S*) ([^:]*): ?(.*)', payload)
+                    tag, field, value = m.group(1,2,3)
 
-        elif message_name == ':':
-            m = re.match(r'^(\S+)', rest)
-            tag = m.group(1)
-            message = self.multiline_messages[tag]
-            message.multi_in_progress = False
-        else:
-            message = self.parse(rest)
+                    message = self.multiline_messages[tag]
+                    message._data_tag = tag
 
-        # check auth
-        if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != self.mcp_auth_key):
-            self.debug("mcp - auth failed")
-            return
+                    if not field in message.data: message.data[field] = []
 
-        message.message = message.message or message_name
+                    message.data[field].append(value)
 
-        if message.multi_in_progress:
-            if not message._data_tag in self.multiline_messages:
-                self.multiline_messages[message._data_tag] = message
-        else:
-            # don't dispatch multilines in progress
-            self.dispatch(message)
+                elif message_name == ':':
+                    m = re.match(r'^(\S+)', payload)
+                    tag = m.group(1)
+                    message = self.multiline_messages[tag]
+                    message.multi_in_progress = False
+                else:
+                    message = self.parse(payload)
 
-        # return void/falsy/None so the output widget skips this line
-        return
+                # check auth
+                if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != self.mcp_auth_key):
+                    self.debug("mcp - auth failed")
+                else:
+                    message.message = message.message or message_name
+
+                    if message.multi_in_progress:
+                        if not message._data_tag in self.multiline_messages:
+                            self.multiline_messages[message._data_tag] = message
+                    else:
+                        # don't dispatch multilines in progress
+                        self.dispatch(message)
+
+            line, p, rest = rest.partition('\n')
+
+        # if we have partial line, is it an MCP-prefixed line?  If so, stash it away to await the rest.
+        if line and (utility.QUOTE_PREFIX.search(line) or utility.OOB_PREFIX.search(line)):
+            output_pane.global_queue += line
+            line = ''
+
+        # return anything we've stashed in return_val for display, plus dangling leftovers
+        return return_val + line
 
     def parse(self, raw):
 
@@ -129,7 +149,7 @@ class MCPCore:
 
         message = Message()
 
-        if not re.search(r':$', first):
+        if not re.search(':$', first):
             message.auth_key = first
             first_re = '^' + re.escape(first) + '\s+'
             raw = re.sub(first_re, '', raw)
@@ -138,7 +158,7 @@ class MCPCore:
 
         for keyval in keyvals:
             keyword, value = keyval
-            m = re.match(r'^(.+)(\*)', keyword)
+            m = re.match('^(.+)(\*)', keyword)
             if m:
                 keyword, splat = m.group(1,2)
 

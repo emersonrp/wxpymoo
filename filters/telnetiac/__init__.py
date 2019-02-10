@@ -55,135 +55,135 @@ from collections import deque
 import wx
 
 # Telnet protocol characters (don't change)
-IAC  = chr(255) # "Interpret As Command"
-DONT = chr(254)
-DO   = chr(253)
-WONT = chr(252)
-WILL = chr(251)
-theNULL = chr(0)
+IAC  = bytes([255]) # "Interpret As Command"
+DONT = bytes([254])
+DO   = bytes([253])
+WONT = bytes([252])
+WILL = bytes([251])
+theNULL = bytes([0])
 
-SE  = chr(240)  # Subnegotiation End
-NOP = chr(241)  # No Operation
-DM  = chr(242)  # Data Mark
-BRK = chr(243)  # Break
-IP  = chr(244)  # Interrupt process
-AO  = chr(245)  # Abort output
-AYT = chr(246)  # Are You There
-EC  = chr(247)  # Erase Character
-EL  = chr(248)  # Erase Line
-GA  = chr(249)  # Go Ahead
-SB =  chr(250)  # Subnegotiation Begin
+SE  = bytes([240])  # Subnegotiation End
+NOP = bytes([241])  # No Operation
+DM  = bytes([242])  # Data Mark
+BRK = bytes([243])  # Break
+IP  = bytes([244])  # Interrupt process
+AO  = bytes([245])  # Abort output
+AYT = bytes([246])  # Are You There
+EC  = bytes([247])  # Erase Character
+EL  = bytes([248])  # Erase Line
+GA  = bytes([249])  # Go Ahead
+SB =  bytes([250])  # Subnegotiation Begin
 
 # IAC
 
 # Telnet protocol options code (don't change)
 # These ones all come from arpa/telnet.h
-BINARY = chr(0) # 8-bit data path
-ECHO = chr(1) # echo
-RCP = chr(2) # prepare to reconnect
-SGA = chr(3) # suppress go ahead
-NAMS = chr(4) # approximate message size
-STATUS = chr(5) # give status
-TM = chr(6) # timing mark
-RCTE = chr(7) # remote controlled transmission and echo
-NAOL = chr(8) # negotiate about output line width
-NAOP = chr(9) # negotiate about output page size
-NAOCRD = chr(10) # negotiate about CR disposition
-NAOHTS = chr(11) # negotiate about horizontal tabstops
-NAOHTD = chr(12) # negotiate about horizontal tab disposition
-NAOFFD = chr(13) # negotiate about formfeed disposition
-NAOVTS = chr(14) # negotiate about vertical tab stops
-NAOVTD = chr(15) # negotiate about vertical tab disposition
-NAOLFD = chr(16) # negotiate about output LF disposition
-XASCII = chr(17) # extended ascii character set
-LOGOUT = chr(18) # force logout
-BM = chr(19) # byte macro
-DET = chr(20) # data entry terminal
-SUPDUP = chr(21) # supdup protocol
-SUPDUPOUTPUT = chr(22) # supdup output
-SNDLOC = chr(23) # send location
-TTYPE = chr(24) # terminal type
-EOR = chr(25) # end or record
-TUID = chr(26) # TACACS user identification
-OUTMRK = chr(27) # output marking
-TTYLOC = chr(28) # terminal location number
-VT3270REGIME = chr(29) # 3270 regime
-X3PAD = chr(30) # X.3 PAD
-NAWS = chr(31) # window size
-TSPEED = chr(32) # terminal speed
-LFLOW = chr(33) # remote flow control
-LINEMODE = chr(34) # Linemode option
-XDISPLOC = chr(35) # X Display Location
-OLD_ENVIRON = chr(36) # Old - Environment variables
-AUTHENTICATION = chr(37) # Authenticate
-ENCRYPT = chr(38) # Encryption option
-NEW_ENVIRON = chr(39) # New - Environment variables
+BINARY = bytes([0]) # 8-bit data path
+ECHO = bytes([1]) # echo
+RCP = bytes([2]) # prepare to reconnect
+SGA = bytes([3]) # suppress go ahead
+NAMS = bytes([4]) # approximate message size
+STATUS = bytes([5]) # give status
+TM = bytes([6]) # timing mark
+RCTE = bytes([7]) # remote controlled transmission and echo
+NAOL = bytes([8]) # negotiate about output line width
+NAOP = bytes([9]) # negotiate about output page size
+NAOCRD = bytes([10]) # negotiate about CR disposition
+NAOHTS = bytes([11]) # negotiate about horizontal tabstops
+NAOHTD = bytes([12]) # negotiate about horizontal tab disposition
+NAOFFD = bytes([13]) # negotiate about formfeed disposition
+NAOVTS = bytes([14]) # negotiate about vertical tab stops
+NAOVTD = bytes([15]) # negotiate about vertical tab disposition
+NAOLFD = bytes([16]) # negotiate about output LF disposition
+XASCII = bytes([17]) # extended ascii character set
+LOGOUT = bytes([18]) # force logout
+BM = bytes([19]) # byte macro
+DET = bytes([20]) # data entry terminal
+SUPDUP = bytes([21]) # supdup protocol
+SUPDUPOUTPUT = bytes([22]) # supdup output
+SNDLOC = bytes([23]) # send location
+TTYPE = bytes([24]) # terminal type
+EOR = bytes([25]) # end or record
+TUID = bytes([26]) # TACACS user identification
+OUTMRK = bytes([27]) # output marking
+TTYLOC = bytes([28]) # terminal location number
+VT3270REGIME = bytes([29]) # 3270 regime
+X3PAD = bytes([30]) # X.3 PAD
+NAWS = bytes([31]) # window size
+TSPEED = bytes([32]) # terminal speed
+LFLOW = bytes([33]) # remote flow control
+LINEMODE = bytes([34]) # Linemode option
+XDISPLOC = bytes([35]) # X Display Location
+OLD_ENVIRON = bytes([36]) # Old - Environment variables
+AUTHENTICATION = bytes([37]) # Authenticate
+ENCRYPT = bytes([38]) # Encryption option
+NEW_ENVIRON = bytes([39]) # New - Environment variables
 # the following ones come from
 # http://www.iana.org/assignments/telnet-options
 # Unfortunately, that document does not assign identifiers
 # to all of them, so we are making them up
-TN3270E = chr(40) # TN3270E
-XAUTH = chr(41) # XAUTH
-CHARSET = chr(42) # CHARSET
-RSP = chr(43) # Telnet Remote Serial Port
-COM_PORT_OPTION = chr(44) # Com Port Control Option
-SUPPRESS_LOCAL_ECHO = chr(45) # Telnet Suppress Local Echo
-TLS = chr(46) # Telnet Start TLS
-KERMIT = chr(47) # KERMIT
-SEND_URL = chr(48) # SEND-URL
-FORWARD_X = chr(49) # FORWARD_X
+TN3270E = bytes([40]) # TN3270E
+XAUTH = bytes([41]) # XAUTH
+CHARSET = bytes([42]) # CHARSET
+RSP = bytes([43]) # Telnet Remote Serial Port
+COM_PORT_OPTION = bytes([44]) # Com Port Control Option
+SUPPRESS_LOCAL_ECHO = bytes([45]) # Telnet Suppress Local Echo
+TLS = bytes([46]) # Telnet Start TLS
+KERMIT = bytes([47]) # KERMIT
+SEND_URL = bytes([48]) # SEND-URL
+FORWARD_X = bytes([49]) # FORWARD_X
 
-PRAGMA_LOGON = chr(138) # TELOPT PRAGMA LOGON
-SSPI_LOGON = chr(139) # TELOPT SSPI LOGON
-PRAGMA_HEARTBEAT = chr(140) # TELOPT PRAGMA HEARTBEAT
-EXOPL = chr(255) # Extended-Options-List
-NOOPT = chr(0)
+PRAGMA_LOGON = bytes([138]) # TELOPT PRAGMA LOGON
+SSPI_LOGON = bytes([139]) # TELOPT SSPI LOGON
+PRAGMA_HEARTBEAT = bytes([140]) # TELOPT PRAGMA HEARTBEAT
+EXOPL = bytes([255]) # Extended-Options-List
+NOOPT = bytes([0])
 
 from filters.telnetiac.mtts import handle_ttype
 
 ############# MU* PROTOCOLS
 # MSDP - MUD Server Data Protocol
-MSDP = chr(69)
+MSDP = bytes([69])
 
 # MSSP - MUD Server Status Protocol
 from filters.telnetiac.mssp import handle_mssp
-MSSP = chr(70)
+MSSP = bytes([70])
 
 # MCCP - MUD Client Compression Protocol
-MCCP1 = chr(85)
-MCCP2 = chr(86)
+MCCP1 = bytes([85])
+MCCP2 = bytes([86])
 
 # MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
-MSP = chr(90)
+MSP = bytes([90])
 
 # MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)
-MXP = chr(91)
+MXP = bytes([91])
 
 # ZMP - Zenith MUD Protocol (http://discworld.starturtle.net/external/protocols/zmp.html)
-ZMP = chr(93)
+ZMP = bytes([93])
 
 # ATCP - Achaea Telnet Client Protocol (https://www.ironrealms.com/rapture/manual/files/FeatATCP-txt.html)
-ATCP = chr(200)
+ATCP = bytes([200])
 
 # GMCP - Generic MUD Communication Protocol (http://www.gammon.com.au/gmcp)
-GMCP = chr(201)
+GMCP = bytes([201])
 
 
-def process_line(output_pane, line):
-    buf = ['','']
-    iacseq  = ''
-    sbdataq = ''
+def process_line(conn, line):
+    buf = [b'',b'']
+    iacseq  = b''
+    sbdataq = b''
     sb = 0
     option_callback = None
-    conn = output_pane.connection
     for c in line:
-        if not iacseq:
+        c = bytes([c])
+        if len(iacseq) == 0:
             if c == theNULL:
                 continue
-            if c == "\021":
+            if c == b"\021":
                 continue
             if c != IAC:
-                buf[sb] = buf[sb] + c
+                buf[sb] += c
                 continue
             else:
                 iacseq += c
@@ -192,21 +192,21 @@ def process_line(output_pane, line):
             if c in (DO, DONT, WILL, WONT):
                 iacseq += c
                 continue
-            iacseq = ''
+            iacseq = b''
             if c == IAC:
                 buf[sb] = buf[sb] + c
             else:
                 if c == SB: # SB ... SE start.
                     sb = 1
-                    sbdataq = ''
+                    sbdataq = b''
                 elif c == SE:
                     sb = 0
                     sbdataq = sbdataq + buf[1]
-                    buf[1] = ''
+                    buf[1] = b''
                     handle_iac_subnegotiation(sbdataq, conn)
         elif len(iacseq) == 2:
-            cmd = iacseq[1]
-            iacseq = ''
+            cmd = bytes([iacseq[1]])
+            iacseq = b''
             opt = c
             if cmd in (DO, DONT):
                 handle_iac_do_negotiation(cmd, opt, conn)
@@ -288,7 +288,7 @@ def handle_iac_will_negotiation(cmd, opt, conn):
 
 def handle_iac_subnegotiation(sbdataq, conn):
     payload = deque(sbdataq)
-    SB_ID = payload.popleft()
+    SB_ID = bytes([payload.popleft()])
     if SB_ID == MSSP:
         handle_mssp(payload, conn)
     elif SB_ID == TTYPE:
@@ -302,8 +302,20 @@ def handle_naws(conn):
     if conn.iac.get('NAWS') == True:
         cols = conn.output_pane.cols
         rows = conn.output_pane.rows
-        # XXX TODO XXX -- chr(cols/rows) means this will gack if either is >= 256
-        # The spec says 16-bit values supported but conn.output encodes to latin-1
-        # which is actually sorta the problem.
-        print("Sending IAC NAWS info:" + str(cols) + "x" + str(rows))
-        conn.output(IAC + SB + NAWS + chr(cols) + chr(rows) + IAC + SE)
+        # Someday in the 45th century someone will be running this antique code on
+        # a millon x million character terminal of some kind.  Anyway we're allowed 16 bits
+        if cols > 65535: cols = 65535
+        if rows > 65535: rows = 65535
+        c1, c2 = divmod(cols, 256)
+        colsbytes = bytes([c1]) + bytes([c2])
+        r1, r2 = divmod(rows, 256)
+        rowsbytes = bytes([r1]) + bytes([r2])
+
+        # if we have a 255, IAC requires we send it twice
+        if c1 == 255: colsbytes = bytes([c1]) + colsbytes
+        if c2 == 255: colsbytes = colsbytes + bytes([c2])
+        if r1 == 255: rowsbytes = bytes([r1]) + rowsbytes
+        if r2 == 255: rowsbytes = rowsbytes + bytes([r2])
+
+        print(f"Sending IAC NAWS info: {c1} {c2} x {r1} {r2}")
+        conn.output(IAC + SB + NAWS + colsbytes + rowsbytes + IAC + SE)

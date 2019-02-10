@@ -10,7 +10,7 @@ def handle_mssp(payload, conn):
     extracted = {}
     current_var = ''
     while payload:
-        c = payload.popleft()
+        c = chr(payload.popleft())
         if (c == MSSP_VAR) or (c == MSSP_VAL):
             if c == MSSP_VAR:
                 getting_var = 1
@@ -45,8 +45,7 @@ def handle_mssp(payload, conn):
     for key in extracted:
         worldkey = "MSSP_" + key.capitalize()
         if not str(world.get(worldkey)) == str(extracted[key]):
-            print("Got new MSSP info: " + worldkey + " = " + str(extracted[key]))
-            print("Was: " + str(world.get(worldkey)))
+            print(f"Got new MSSP info: {worldkey} = {extracted[key]} (Was: {world.get(worldkey)})")
             got_new_info.append(key)
 
     # XXX temporarily stopping the dialog / save madness

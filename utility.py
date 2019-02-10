@@ -10,8 +10,8 @@ elif _platform == 'win32':
 elif _platform == 'darwin':
     platform = 'mac'
 
-OOB_PREFIX   = re.compile('^#\$#')
-QUOTE_PREFIX = re.compile('^#\$"')
+OOB_PREFIX   = re.compile(r'^#\$#', re.MULTILINE)
+QUOTE_PREFIX = re.compile(r'^#\$"', re.MULTILINE)
 
 # This regex adapted from one found at
 # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
