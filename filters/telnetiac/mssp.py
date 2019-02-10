@@ -49,6 +49,9 @@ def handle_mssp(payload, conn):
             print("Was: " + str(world.get(worldkey)))
             got_new_info.append(key)
 
+    # XXX temporarily stopping the dialog / save madness
+    return
+
     if got_new_info:
         message = "Got new MSSP info for this world:\n\n"
         for key in got_new_info:

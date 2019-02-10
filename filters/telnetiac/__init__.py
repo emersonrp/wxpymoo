@@ -140,6 +140,7 @@ EXOPL = chr(255) # Extended-Options-List
 NOOPT = chr(0)
 
 from filters.telnetiac.mtts import handle_ttype
+
 ############# MU* PROTOCOLS
 # MSDP - MUD Server Data Protocol
 MSDP = chr(69)
@@ -149,11 +150,23 @@ from filters.telnetiac.mssp import handle_mssp
 MSSP = chr(70)
 
 # MCCP - MUD Client Compression Protocol
-MCCP = chr(86)
+MCCP1 = chr(85)
+MCCP2 = chr(86)
 
-# GMCP - Generic MUD Communication Protocol
+# MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
+MSP = chr(90)
+
+# MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)
+MXP = chr(91)
+
+# ZMP - Zenith MUD Protocol (http://discworld.starturtle.net/external/protocols/zmp.html)
+ZMP = chr(93)
+
+# ATCP - Achaea Telnet Client Protocol (https://www.ironrealms.com/rapture/manual/files/FeatATCP-txt.html)
+ATCP = chr(200)
+
+# GMCP - Generic MUD Communication Protocol (http://www.gammon.com.au/gmcp)
 GMCP = chr(201)
-
 
 
 def process_line(output_pane, line):
@@ -215,8 +228,15 @@ def handle_iac_do_negotiation(cmd, opt, conn):
             conn.iac['NAWS'] = True
             conn.output(IAC + WILL + NAWS)
             handle_naws(conn)
+        elif opt == MXP:
+            # TODO - support this eventually
+            print("Got IAC DO MXP;  Sending IAC WONT MXP")
+            conn.output(IAC + WONT + MXP)
+        elif opt == ATCP:
+            print("Got IAC DO ATCP;  Sending IAC WONT ATCP")
+            conn.output(IAC + WONT + ATCP)
         else:
-            print("Got an unhandled negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
+            print("Got an *unknown* negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
     else:
         if opt == TTYPE:
@@ -228,31 +248,42 @@ def handle_iac_do_negotiation(cmd, opt, conn):
             conn.iac['NAWS'] = False
             conn.output(IAC + WONT + NAWS)
         else:
-            print("Got an unhandled negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
+            print("Got an *unknown* negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
 
 def handle_iac_will_negotiation(cmd, opt, conn):
     if cmd == WILL:
-        if opt == MSSP:
-            print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
-            conn.output(IAC + DO + MSSP)
-        elif opt == MSDP:
+        if opt == MSDP:
             # TODO - support this eventually
             print("Got IAC WILL MSDP;  Sending IAC DONT MSDP")
             conn.output(IAC + DONT + MSDP)
+        elif opt == MSSP:
+            print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
+            conn.output(IAC + DO + MSSP)
+        elif opt == MCCP1:
+            # TODO - support this eventually
+            print("Got IAC WILL MCCP1;  Sending IAC DONT MCCP1")
+            conn.output(IAC + DONT + MCCP1)
+        elif opt == MCCP2:
+            # TODO - support this eventually
+            print("Got IAC WILL MCCP2;  Sending IAC DONT MCCP2")
+            conn.output(IAC + DONT + MCCP2)
+        elif opt == MSP:
+            # TODO - support this eventually
+            print("Got IAC WILL MSP;  Sending IAC DONT MSP")
+            conn.output(IAC + DONT + MSP)
+        elif opt == ZMP:
+            print("Got IAC WILL ZMP;  Sending IAC DONT ZMP")
+            conn.output(IAC + DONT + ZMP)
         elif opt == GMCP:
             # TODO - support this eventually
             print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
             conn.output(IAC + DONT + GMCP)
-        elif opt == MCCP:
-            # Prolly won't support this one.
-            print("Got IAC WILL MCCP;  Sending IAC DONT MCCP")
-            conn.output(IAC + DONT + MCCP)
         else:
-            print("Got an unhandled negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
+            print("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
     else:
-        print("Got an unhandled negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
+        print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
         conn.output(IAC + DONT + opt)
 
 def handle_iac_subnegotiation(sbdataq, conn):
