@@ -195,7 +195,7 @@ class OutputPane(BasePane):
                         if prefs.get('highlight_urls'):
                             matches = utility.URL_REGEX.split(bit)
                             for chunk in matches:
-                                if chunk is None: continue
+                                if not chunk: continue
                                 if utility.URL_REGEX.match(chunk):
                                     self.BeginURL(chunk)
                                     self.BeginUnderline()
