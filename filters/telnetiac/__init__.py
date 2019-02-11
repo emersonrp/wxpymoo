@@ -175,8 +175,23 @@ def process_line(conn, line):
     sbdataq = b''
     sb = 0
     option_callback = None
-    for c in line:
-        c = bytes([c])
+
+    # if we're compressing, decompress us back into a wad of bytes here.
+    if conn.iac.get('MCCP'):
+        # TODO - try / except in case something breaks.
+        # From the MCCP site:
+        #
+        # If any stream errors are seen on the decompressing side, they should
+        # be treated as fatal errors, closing the connection. It is unlikely
+        # that the compressing side will be transmitting useful information
+        # after a compression error.
+        line = conn.decompressor.decompress(line)
+        # Re-queue leftover compressed data
+        conn.filter_queue = conn.decompressor.unused_data
+
+    line = deque(line)
+    while len(line):
+        c = bytes([line.popleft()])
         if len(iacseq) == 0:
             if c == theNULL:
                 continue
@@ -203,7 +218,11 @@ def process_line(conn, line):
                     sb = 0
                     sbdataq = sbdataq + buf[1]
                     buf[1] = b''
-                    handle_iac_subnegotiation(sbdataq, conn)
+                    result = handle_iac_subnegotiation(sbdataq, conn)
+                    if result == "requeue":
+                        print("Time to requeue!")
+                        conn.filter_queue = line
+                        return
         elif len(iacseq) == 2:
             cmd = bytes([iacseq[1]])
             iacseq = b''
@@ -260,14 +279,14 @@ def handle_iac_will_negotiation(cmd, opt, conn):
         elif opt == MSSP:
             print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
             conn.output(IAC + DO + MSSP)
-        elif opt == MCCP1:
-            # TODO - support this eventually
-            print("Got IAC WILL MCCP1;  Sending IAC DONT MCCP1")
-            conn.output(IAC + DONT + MCCP1)
-        elif opt == MCCP2:
-            # TODO - support this eventually
-            print("Got IAC WILL MCCP2;  Sending IAC DONT MCCP2")
-            conn.output(IAC + DONT + MCCP2)
+        elif opt == MCCP1 or opt == MCCP2:
+            if conn.iac.get('MCCP'):
+                answer = DONT
+                print("Got IAC WILL MCCP; Already compressing, Sending IAC DONT MCCP")
+            else:
+                answer = DO
+                print("Got IAC WILL MCCP;  Sending IAC DO MCCP")
+            conn.output(IAC + answer + opt)
         elif opt == MSP:
             # TODO - support this eventually
             print("Got IAC WILL MSP;  Sending IAC DONT MSP")
@@ -293,10 +312,17 @@ def handle_iac_subnegotiation(sbdataq, conn):
         handle_mssp(payload, conn)
     elif SB_ID == TTYPE:
         handle_ttype(payload, conn)
+    elif SB_ID == MCCP1 or SB_ID == MCCP2:
+        handle_mccp(payload, conn)
     else:
         print("unhandled IAC Subnegotiation")
         print(sbdataq)
     return
+
+def handle_mccp(payload, conn):
+    conn.iac['MCCP'] = True
+    return('requeue')
+
 
 def handle_naws(conn):
     if conn.iac.get('NAWS') == True:

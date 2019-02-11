@@ -1,6 +1,8 @@
 import wx
 import time
 import sys
+import zlib
+
 from wxasync import StartCoroutine
 import asyncio
 
@@ -29,8 +31,13 @@ class Connection(wx.SplitterWindow):
         self.home_url       = ''
         self.help_url       = ''
 
+        self.decompressor = zlib.decompressobj()
+
         # bin for Telnet IAC commands to stash any status info (on/off, etc)
         self.iac = {}
+
+        # re-queue stuff for re-processing (ie if we turn on compression)
+        self.filter_queue = b''
 
         self.reader = self.writer = None
 
@@ -74,9 +81,9 @@ class Connection(wx.SplitterWindow):
             self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
         # force it again just to be sure
         #self.keepalive.Stop()
-        self.connect_time = None
         if self.writer: self.writer.close()
-        self.reader = self.writer = None
+        self.filter_queue = b''
+        self.connect_time = self.reader = self.writer = None
 
     # TODO - we need to cram charset into worlds more deterministically
     def charset(self):
@@ -131,6 +138,10 @@ class Connection(wx.SplitterWindow):
         while True:
             data = await self.reader.read(65535)
             if not data: break
+
+            if self.filter_queue:
+                data = self.filter_queue + data
+                self.filter_queue = b''
 
             # Do the initial telnet filtering here, while we're still in 'bytes' mode
             data = filters.telnetiac.process_line(self, data)

@@ -21,7 +21,10 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
     * dns-com-vmoo-client
     * dns-com-vmoo-smartcomplete
     * dns-org-mud-moo-simpleedit
-* A growing number of MUD protocols supported:  [MSSP](https://tintin.sourceforge.io/protocols/mssp/) (partial), [MTTS](https://tintin.sourceforge.io/protocols/mtts/)
+* A growing number of MUD protocols supported:
+    * [MSSP](https://tintin.sourceforge.io/protocols/mssp/) (partial),
+    * [MTTS](https://tintin.sourceforge.io/protocols/mtts/)
+    * [MCCP](http://www.gammon.com.au/mccp/protocol.html)
 * Multiple connections supported via tabbed interface
 * SSL support per-world
 * Works at least reasonably well on Linux, MacOS, Windows.
