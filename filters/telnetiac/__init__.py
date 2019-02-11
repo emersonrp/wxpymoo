@@ -299,13 +299,20 @@ def handle_iac_will_negotiation(cmd, opt, conn):
             # TODO - support this eventually
             print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
             conn.output(IAC + DONT + GMCP)
+        elif opt == ECHO:
+            print("Got IAC WILL ECHO")
+            conn.iac['ECHO'] = False
         else:
             print("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
-    else:
-        print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
-        conn.output(IAC + DONT + opt)
-
+    elif cmd == WONT:
+        if opt == ECHO:
+            print("Got IAC WONT ECHO")
+            conn.iac['ECHO'] = True
+        else:
+            print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
+            conn.output(IAC + DONT + opt)
+    
 def handle_iac_subnegotiation(sbdataq, conn):
     payload = deque(sbdataq)
     SB_ID = bytes([payload.popleft()])
