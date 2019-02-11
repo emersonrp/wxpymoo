@@ -65,6 +65,8 @@ class InputPane(BasePane):
             self.cmd_history.add(stuff)
             self.connection.output(stuff + "\n")
             self.Clear()
+            if prefs.get('local_echo'):
+                self.connection.output_pane.display(">" + stuff)
 
     def check_for_interesting_keystrokes(self, evt):
         k = evt.GetKeyCode()
