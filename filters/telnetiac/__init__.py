@@ -195,8 +195,9 @@ def process_line(conn, line):
         if len(iacseq) == 0:
             if c == theNULL:
                 continue
-            if c == b"\021":
-                continue
+            # This was removing some stuff 8BitMUSH uses for art.  Why is this here?
+            #if c == b"\021":
+                #continue
             if c != IAC:
                 buf[sb] += c
                 continue
