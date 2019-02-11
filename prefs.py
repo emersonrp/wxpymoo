@@ -17,6 +17,7 @@ _defaults   = {
     'highlight_urls'         : True,
     'save_mcp_window_size'   : True,
     'autoconnect_last_world' : True,
+    'local_echo'             : False,
 
     'mcp_window_width'  : 600,
     'mcp_window_height' : 400,
@@ -57,6 +58,7 @@ def update(pw):
     set('save_window_size',       pw.general_page.save_size_checkbox.GetValue() )
     set('autoconnect_last_world', pw.general_page.autoconnect_checkbox.GetValue() )
     set('use_x_copy_paste',       pw.general_page.xmouse_checkbox.GetValue() )
+    set('local_echo',             pw.general_page.local_echo_checkbox.GetValue() )
 
     set('font',     pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
     set('use_ansi', pw.fonts_page.ansi_checkbox.GetValue() )
