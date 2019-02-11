@@ -312,7 +312,7 @@ class OutputPane(BasePane):
 
         fg_cube = bg_cube = ''
 
-        for c in range(0,7):
+        for c in range(0,8):
             fg_cube += "\033[3" + str(c) + "m*\033[0m"
             bg_cube += "\033[4" + str(c) + "m \033[0m"
         self.display(fg_cube + "    " + bg_cube + "\n")
