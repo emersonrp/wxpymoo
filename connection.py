@@ -145,6 +145,7 @@ class Connection(wx.SplitterWindow):
 
             # Do the initial telnet filtering here, while we're still in 'bytes' mode
             data = filters.telnetiac.process_line(self, data)
+            if not data: continue
 
             data = data.decode(self.charset())
 
