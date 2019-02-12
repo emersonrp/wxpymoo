@@ -8,6 +8,7 @@ import asyncio
 
 from window.inputpane import InputPane
 from window.outputpane import OutputPane
+from window.statusbar import StatusBar
 from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
@@ -23,6 +24,8 @@ class Connection(wx.SplitterWindow):
 
         self.input_pane     = InputPane(self, self)
         self.output_pane    = OutputPane(self, self)
+        self.status_bar     = StatusBar(mainwindow)
+
         self.main_window    = wx.GetApp().GetTopWindow()
 
         # these two are set with dns_com_awns_serverinfo but hypothetically
@@ -70,8 +73,7 @@ class Connection(wx.SplitterWindow):
         self.output_pane.ScrollIfAppropriate()
 
     def ShowMessage(self, message):
-        if self.IsCurrentConnection():
-            self.main_window.GetStatusBar().AddStatus(message)
+        self.status_bar.AddStatus(message)
 
     def IsCurrentConnection(self):
         return self.main_window.currentConnection() == self

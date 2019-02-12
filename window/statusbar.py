@@ -32,13 +32,18 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.update_timer.Restart(1000)
         conn = self.parent.currentConnection()
         if not conn:
-            self.connected_time.SetLabel('')
-            self.connected_time.SetToolTip(None)
-            self.connection_status.SetBackgroundColour(wx.RED)
             return
 
-        self.connection_status.SetBackgroundColour(wx.GREEN if conn.is_connected() else wx.RED)
-        self.connection_status.Refresh()
+        if conn.is_connected():
+            self.connection_status.SetBackgroundColour(wx.GREEN)
+            self.connection_status.Refresh()
+        else:
+            self.connection_status.SetBackgroundColour(wx.RED)
+            self.connection_status.Refresh()
+            self.connected_time.SetLabel('')
+            self.connected_time.SetToolTip(None)
+            return
+
 
         if conn.connect_time:
             if not self.connected_time.GetToolTip():

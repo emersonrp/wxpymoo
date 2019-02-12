@@ -4,7 +4,6 @@ from connection import Connection
 from window.connectdialog import ConnectDialog
 from window.debugmcp import DebugMCP
 from window.prefseditor import PrefsEditor
-from window.statusbar import StatusBar
 from window.worldslist import WorldsList
 from functools import partial
 
@@ -17,9 +16,6 @@ class Main(wx.Frame):
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, title=title)
-
-        self.status_bar = StatusBar(self)
-        self.SetStatusBar(self.status_bar)
 
         self.about_info     = None
         self.connect_dialog = None
@@ -118,8 +114,8 @@ class Main(wx.Frame):
 
     def addEvents(self):
         self.Bind(wx.EVT_SIZE, self.onSize)
-        self.tabs.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.status_bar.UpdateConnectionStatus)
-        self.tabs.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED, self.tabs.showOrHideTabs)
+        self.Bind(     wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onTabChanged)
+        self.tabs.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED,  self.tabs.showOrHideTabs)
 
     def rebuildShortlist(self):
         shortlist = []
@@ -159,6 +155,9 @@ class Main(wx.Frame):
             prefs.set('window_height', str(size.GetHeight()))
         self.Layout()
         evt.Skip()
+
+    def onTabChanged(self, evt):
+        self.SetStatusBar(self.currentConnection().status_bar)
 
     def handleCopy(self, evt):
         c = self.currentConnection()
