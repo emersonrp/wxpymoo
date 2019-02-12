@@ -115,7 +115,6 @@ class Main(wx.Frame):
     def addEvents(self):
         self.Bind(wx.EVT_SIZE, self.onSize)
         self.Bind(     wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onTabChanged)
-        self.tabs.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED,  self.tabs.showOrHideTabs)
 
     def rebuildShortlist(self):
         shortlist = []
@@ -145,8 +144,7 @@ class Main(wx.Frame):
         self.currentConnection().reconnect()
 
     def currentConnection(self):
-        if (self.tabs.GetSelection() != wx.NOT_FOUND):
-            return self.tabs.GetPage(self.tabs.GetSelection())
+        return self.tabs.GetCurrentPage()
 
     def onSize(self, evt):
         if prefs.get('save_window_size'):
@@ -157,7 +155,14 @@ class Main(wx.Frame):
         evt.Skip()
 
     def onTabChanged(self, evt):
-        self.SetStatusBar(self.currentConnection().status_bar)
+        current_status = self.GetStatusBar()
+        if current_status:
+            current_status.Hide()
+            self.SetStatusBar(None)
+        new_status = self.currentConnection().status_bar
+        self.SetStatusBar(new_status)
+        new_status.Show()
+        new_status.UpdateConnectionStatus()
 
     def handleCopy(self, evt):
         c = self.currentConnection()
@@ -201,6 +206,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.AddDeveloper('C Bodt (https://github.com/sirk390)')
+            info.AddDeveloper('Andrea Gavana (http://xoomer.virgilio.it/infinity77/)')
             info.SetCopyright('(c) 2013-2019')
             info.SetWebSite('https://emersonrp.github.io/wxpymoo/')
             info.SetName('wxpymoo')
@@ -218,6 +224,13 @@ class MOONotebook(AuiNotebook):
     def __init__(self, parent):
         AuiNotebook.__init__(self, parent, style =
                 wx.aui.AUI_NB_TAB_FIXED_WIDTH|wx.aui.AUI_NB_CLOSE_ON_ALL_TABS|wx.aui.AUI_NB_DEFAULT_STYLE)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE,  self.onPageClose)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED, self.showOrHideTabs)
+
+    def onPageClose(self, evt = None):
+        status_bar = self.GetCurrentPage().status_bar
+        status_bar.update_timer.Stop()
+        status_bar.Destroy()
 
     def showOrHideTabs(self, evt = None):
         self.SetTabCtrlHeight(-1 if self.GetPageCount() > 1 else 0)
