@@ -4,7 +4,7 @@ SB   = bytes([250])  # Subnegotiation Begin
 NAWS = bytes([31]) # window size
 
 def handle_naws(conn):
-    if conn.iac.get('NAWS') == True:
+    if 'NAWS' in conn.features:
         cols = conn.output_pane.cols
         rows = conn.output_pane.rows
         # Someday in the 45th century someone will be running this antique code on

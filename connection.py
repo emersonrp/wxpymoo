@@ -22,12 +22,6 @@ class Connection(wx.SplitterWindow):
         self.world          = None
         self.debug_mcp      = None
 
-        self.input_pane     = InputPane(self, self)
-        self.output_pane    = OutputPane(self, self)
-        self.status_bar     = StatusBar(mainwindow)
-
-        self.main_window    = wx.GetApp().GetTopWindow()
-
         # these two are set with dns_com_awns_serverinfo but hypothetically
         # -could- come from the saved world also
         # EDIT: and/or from MSSP, which should also be mashed into the world
@@ -37,12 +31,17 @@ class Connection(wx.SplitterWindow):
         self.decompressor = zlib.decompressobj()
 
         # bin for Telnet IAC commands to stash any status info (on/off, etc)
-        self.iac = {}
+        self.features = set()
 
         # re-queue stuff for re-processing (ie if we turn on compression)
         self.filter_queue = b''
 
         self.reader = self.writer = None
+
+        self.input_pane  = InputPane(self, self)
+        self.output_pane = OutputPane(self, self)
+        self.status_bar  = StatusBar(mainwindow, self)
+        self.main_window = wx.GetApp().GetTopWindow()
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
@@ -72,6 +71,16 @@ class Connection(wx.SplitterWindow):
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
 
+    def ActivateFeature(self, feature, on = True):
+        if on:
+            self.features.add(feature)
+        else:
+            self.features.discard(feature)
+        self.UpdateStatus()
+
+    def UpdateStatus(self):
+        self.status_bar.LayoutWidgets()
+
     def ShowMessage(self, message):
         self.status_bar.AddStatus(message)
 
@@ -85,6 +94,7 @@ class Connection(wx.SplitterWindow):
         #self.keepalive.Stop()
         if self.writer: self.writer.close()
         self.filter_queue = b''
+        self.features.clear()
         self.connect_time = self.reader = self.writer = None
 
     # TODO - we need to cram charset into worlds more deterministically
@@ -123,6 +133,9 @@ class Connection(wx.SplitterWindow):
             return
         finally:
             del wait
+
+        if conntype == "SSL":
+            self.ActivateFeature('SSL')
 
         self.connect_time = time.time()
 

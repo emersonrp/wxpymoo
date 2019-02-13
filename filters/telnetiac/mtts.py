@@ -1,6 +1,6 @@
 # This handles the TTYPE request per the MTTS spec (https://tintin.sourceforge.io/protocols/mtts/)
 
-TTYPE = chr(24)  # terminal type
+MTTS = chr(24)  # terminal type
 IAC   = chr(255) # "Interpret As Command"
 SE    = chr(240) # Subnegotiation End
 SB    = chr(250) # Subnegotiation Begin
@@ -20,15 +20,15 @@ SB    = chr(250) # Subnegotiation Begin
 
 replies = [ 'WXPYMOO', 'VT100-TRUECOLOR', 'MTTS 271', 'MTTS 271' ]
 
-def handle_ttype(payload, conn):
+def handle_mtts(payload, conn):
 
-    conn.ttype_reply = getattr(conn, 'ttype_reply', 0)
-    reply = replies[conn.ttype_reply]
+    conn.mtts_reply = getattr(conn, 'mtts_reply', 0)
+    reply = replies[conn.mtts_reply]
 
-    print("Got IAC TTYPE subrequest;  Sending " + reply)
-    conn.output(IAC + SB + TTYPE + chr(0) + reply + IAC + SE)
+    print("Got IAC MTTS subrequest;  Sending " + reply)
+    conn.output(IAC + SB + MTTS + chr(0) + reply + IAC + SE)
 
     # Bump to the next element, but start over if we run off the end.
-    conn.ttype_reply += 1
-    if conn.ttype_reply > len(replies)-1:
-        conn.ttype_reply = 0
+    conn.mtts_reply += 1
+    if conn.mtts_reply > len(replies)-1:
+        conn.mtts_reply = 0

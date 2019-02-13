@@ -85,8 +85,8 @@ NAWS     = bytes([31]) # window size
 
 # MTTS - MUD Terminal Type Standard (https://tintin.sourceforge.io/protocols/mtts/)
 #    (specific implementation of arpa Telnet IAC TTYPE command)
-from filters.telnetiac.mtts import handle_ttype
-TTYPE = bytes([24]) # terminal type
+from filters.telnetiac.mtts import handle_mtts
+MTTS = bytes([24]) # terminal type
 
 # MSDP - MUD Server Data Protocol
 MSDP = bytes([69])
@@ -123,7 +123,7 @@ def process_line(conn, line):
     option_callback = None
 
     # if we're compressing, decompress us back into a wad of bytes here.
-    if conn.iac.get('MCCP'):
+    if 'MCCP' in conn.features:
         # TODO - try / except in case something breaks.
         # From the MCCP site:
         #
@@ -183,15 +183,16 @@ def process_line(conn, line):
 
 def handle_iac_do_negotiation(cmd, opt, conn):
     if cmd == DO:
-        if opt == TTYPE:
-            print("Got IAC DO TTYPE;  Sending IAC WILL TTYPE")
-            conn.output(IAC + WILL + TTYPE)
+        if opt == MTTS:
+            print("Got IAC DO MTTS;  Sending IAC WILL MTTS")
+            conn.ActivateFeature('MTTS')
+            conn.output(IAC + WILL + MTTS)
         elif opt == NEW_ENVIRON:
             print("Got IAC DO NEW_ENVIRON;  Sending IAC WONT NEW_ENVIRON")
             conn.output(IAC + WONT + NEW_ENVIRON)
         elif opt == NAWS:
             print("Got IAC DO NAWS; Sending IAC WILL NAWS + x/y info")
-            conn.iac['NAWS'] = True
+            conn.ActivateFeature('NAWS')
             conn.output(IAC + WILL + NAWS)
             handle_naws(conn)
         elif opt == MXP:
@@ -205,13 +206,13 @@ def handle_iac_do_negotiation(cmd, opt, conn):
             print("Got an *unknown* negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
     else:
-        if opt == TTYPE:
-            print("Got IAC DONT TTYPE; Resetting and sending WONT TTYPE")
-            conn.ttype_reply = 0
-            conn.output(IAC + WONT + TTYPE)
+        if opt == MTTS:
+            print("Got IAC DONT MTTS; Resetting and sending WONT MTTS")
+            conn.mtts_reply = 0
+            conn.output(IAC + WONT + MTTS)
         elif opt == NAWS:
             print("Got IAC DONT NAWS; Sending IAC WONT NAWS")
-            conn.iac['NAWS'] = False
+            conn.ActivateFeature('NAWS', False)
             conn.output(IAC + WONT + NAWS)
         else:
             print("Got an *unknown* negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
@@ -226,8 +227,9 @@ def handle_iac_will_negotiation(cmd, opt, conn):
         elif opt == MSSP:
             print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
             conn.output(IAC + DO + MSSP)
+            conn.ActivateFeature('MSSP')
         elif opt == MCCP1 or opt == MCCP2:
-            if conn.iac.get('MCCP'):
+            if 'MCCP' in conn.features:
                 answer = DONT
                 print("Got IAC WILL MCCP; Already compressing, Sending IAC DONT MCCP")
             else:
@@ -264,11 +266,11 @@ def handle_iac_subnegotiation(sbdataq, conn):
     SB_ID = bytes([payload.popleft()])
     if SB_ID == MSSP:
         handle_mssp(payload, conn)
-    elif SB_ID == TTYPE:
+    elif SB_ID == MTTS:
         handle_ttype(payload, conn)
     elif SB_ID == MCCP1 or SB_ID == MCCP2:
         # Turn on the compression flag on the connection and requeue all remaning bytes
-        conn.iac['MCCP'] = True
+        conn.ActivateFeature('MCCP')
         return('requeue')
     else:
         print("unhandled IAC Subnegotiation")
