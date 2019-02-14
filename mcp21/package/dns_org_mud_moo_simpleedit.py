@@ -19,6 +19,7 @@ class MCPPackage(MCPPackageBase):
 
     def dns_org_mud_moo_simpleedit_content(self, msg):
         editor = Editor({
+            'reference': msg.data['reference'],
             'filetype' : msg.data['type'],
             'content'  : msg.data['content'],
             'callback' : self._send_file

@@ -394,6 +394,7 @@ class OutputPane(BasePane):
             type = "text"
 
         editor = Editor({
+            'reference': name,
             'filetype' : type,
             'content'  : self.localedit_contents,
             'callback' : self._send_file

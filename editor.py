@@ -10,6 +10,7 @@ class Editor(wx.EvtHandler):
         self.filetype   = opts['filetype']
         self.content    = opts['content']
         self.callback   = opts['callback']
+        self.reference  = opts['reference'] or 'wxpymoo'
         self.watchTimer = wx.Timer(self, -1)
 
         # if it's a known type, give it an extension to give the editor a hint
@@ -17,7 +18,8 @@ class Editor(wx.EvtHandler):
         else:                           extension = '.txt'
 
         # Create the tmpfile...
-        tempfd, self.tmpfilename = tempfile.mkstemp(prefix="wxpymoo_", suffix=extension)
+        tempfd, self.tmpfilename = tempfile.mkstemp(
+                prefix = self.reference+"_", suffix = extension)
         tmpfile = open(self.tmpfilename, 'w')
 
         # ...write to it...
