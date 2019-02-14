@@ -5,7 +5,13 @@ import datetime, time
 import EnhancedStatusBar as ESB
 from utility import platform
 
+# get the images once at compile time
+icons = {}
 iconpath = os.path.join(wx.GetApp().path, "icons")
+for icon_file in os.listdir(iconpath):
+    feature, _ = icon_file.split('.')
+    icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
+
 class StatusBar(ESB.EnhancedStatusBar):
 
     def __init__(self, parent, connection):
@@ -19,8 +25,14 @@ class StatusBar(ESB.EnhancedStatusBar):
         # "feature icons" container
         self.feature_tray = wx.Window(self)
         self.feature_sizer = wx.BoxSizer()
-        self.feature_tray.SetSizer(self.feature_sizer)
         self.feature_icons = {}
+        for i,w in icons.items():
+            icon = wx.StaticBitmap(self.feature_tray, -1, w)
+            self.feature_sizer.Add(icon, 0, wx.EXPAND|wx.SHAPED)
+            icon.SetToolTip(i + " enabled")
+            icon.Hide()
+            self.feature_icons[i] = icon
+        self.feature_tray.SetSizerAndFit(self.feature_sizer)
 
         # connected-time widget
         self.conn_time = wx.StaticText(self, label = "--:--:--:--", style = wx.ALIGN_CENTER_HORIZONTAL)
@@ -78,20 +90,9 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.conn_time.SetLabel('')
 
         # Iterate the features, add icons
-        for feature in self.connection.features:
-            if not self.feature_icons.get(feature):
-                filename = os.path.join(iconpath, feature+".png")
-                if os.path.isfile(filename):
-                    print(f"Adding icon for {feature}")
-                    icon = wx.StaticBitmap(self.feature_tray, -1,
-                        wx.Image(filename).ConvertToBitmap())
-                    #icon.SetToolTip(feature + " enabled")
-                    self.feature_icons[feature] = icon
-                    self.feature_sizer.Add(icon, 0, wx.EXPAND|wx.SHAPED)
-                    print(self.feature_sizer)
-                    print(self.feature_sizer.GetSize())
-                else:
-                    print(f"No icon file for connection feature '{feature}'")
+        for f, i in self.feature_icons.items():
+            i.Show(True if f in self.connection.features else False)
+        self.feature_tray.Fit()
 
         self.SetStatusWidths(
             [-1,
@@ -99,6 +100,8 @@ class StatusBar(ESB.EnhancedStatusBar):
                 conn_time_size.Width + 3,
                 self.GetSize().height + 2
             ])
+
+        self.OnSize(None)
 
     def AddStatus(self, status):
         self.SetStatusText(status, 2)
