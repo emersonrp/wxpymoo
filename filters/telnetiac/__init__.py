@@ -280,7 +280,7 @@ def handle_iac_subnegotiation(sbdataq, conn):
     if SB_ID == MSSP:
         handle_mssp(payload, conn)
     elif SB_ID == MTTS:
-        handle_ttype(payload, conn)
+        handle_mtts(payload, conn)
     elif SB_ID == MCCP1 or SB_ID == MCCP2:
         # Turn on the compression flag on the connection and requeue all remaning bytes
         conn.ActivateFeature('MCCP')
