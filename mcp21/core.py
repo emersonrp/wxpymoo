@@ -268,6 +268,7 @@ class MCP(MCPPackageBase):
         self.mcp.mcp_auth_key = key
         self.mcp.server_send("#$#mcp authentication-key: "+key+" version: 2.1 to: 2.1")
 
+        self.mcp.connection.ActivateFeature('MCP')
         self.mcp.start_mcp()
 
     def Initialize(wuh): pass

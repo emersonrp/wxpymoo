@@ -35,6 +35,8 @@ class MCPPackage(MCPPackageBase):
         if ver:
             self.mcp.debug("activating " + pkg)
             self.mcp.packages[pkg].activated = ver
+            package_list = '\n\t'.join(self.mcp.packages.keys())
+            self.mcp.connection.UpdateIcon('MCP', 'MCP enabled\nActive packages:\n\t' + package_list)
 
     def do_mcp_negotiate_end(self):
         deactivate_packages = []

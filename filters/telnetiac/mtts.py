@@ -28,6 +28,8 @@ def handle_mtts(payload, conn):
     print("Got IAC MTTS subrequest;  Sending " + reply)
     conn.output(IAC + SB + MTTS + chr(0) + reply + IAC + SE)
 
+    conn.UpdateIcon('MTTS', f'MTTS Enabled: {reply}')
+
     # Bump to the next element, but start over if we run off the end.
     conn.mtts_reply += 1
     if conn.mtts_reply > len(replies)-1:

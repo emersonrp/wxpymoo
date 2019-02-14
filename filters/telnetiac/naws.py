@@ -25,3 +25,4 @@ def handle_naws(conn):
         print(f"Sending IAC NAWS info: {c1} {c2} x {r1} {r2}")
         conn.output(IAC + SB + NAWS + colsbytes + rowsbytes + IAC + SE)
 
+        conn.UpdateIcon('NAWS', f'NAWS enabled: {cols}x{rows}')
