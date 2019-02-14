@@ -59,6 +59,9 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * There are many wheels out there that have been invented well already.  My MOO client doesn't need its own built-in text editor.  Lather, rinse, repeat.
 * Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows?
 
+## Contributors
+* [lisdude](https://github.com/lisdude)
+
 ## Credits
 wxpymoo contains:
 * [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt

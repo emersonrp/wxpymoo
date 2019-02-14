@@ -205,6 +205,7 @@ class Main(wx.Frame):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
+            info.AddDeveloper('lisdude (https://github.com/lisdude)')
             info.AddDeveloper('C Bodt (https://github.com/sirk390)')
             info.AddDeveloper('Andrea Gavana (http://xoomer.virgilio.it/infinity77/)')
             info.SetCopyright('(c) 2013-2019')
