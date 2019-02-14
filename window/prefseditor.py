@@ -50,10 +50,14 @@ class PrefsEditor(wx.Dialog):
         gp.xmouse_checkbox = wx.CheckBox(gp, -1, 'Use X-style mouse copy/paste behavior')
         gp.xmouse_checkbox.SetValue( prefs.get('use_x_copy_paste') )
 
+        gp.local_echo_checkbox = wx.CheckBox(gp, -1, 'Echo Typed Commands')
+        gp.local_echo_checkbox.SetValue( prefs.get('local_echo') )
+
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         gp.panel_sizer.Add(gp.save_size_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.autoconnect_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.xmouse_checkbox, flag = wx.ALL, border = 10)
+        gp.panel_sizer.Add(gp.local_echo_checkbox, flag = wx.ALL, border = 10)
 
         gp.SetSizer(gp.panel_sizer)
         return gp
