@@ -131,7 +131,20 @@ def process_line(conn, line):
         # be treated as fatal errors, closing the connection. It is unlikely
         # that the compressing side will be transmitting useful information
         # after a compression error.
+
+        # count up the bytes to update the status icon
+        zbytes = len(line)
         line = conn.decompressor.decompress(line)
+        ubytes = len(line)
+        zbytes -= len(conn.decompressor.unused_data)
+
+        conn.compressed_bytes   += zbytes
+        conn.uncompressed_bytes += ubytes
+
+        percent = 100 - round(conn.compressed_bytes * 100 / conn.uncompressed_bytes,1)
+
+        conn.UpdateIcon('MCCP', f'MCCP enabled\n{conn.compressed_bytes} compressed bytes\n{conn.uncompressed_bytes} uncompressed bytes\n{percent}% compression')
+
         # Re-queue leftover compressed data
         conn.filter_queue = conn.decompressor.unused_data
 
@@ -271,6 +284,7 @@ def handle_iac_subnegotiation(sbdataq, conn):
     elif SB_ID == MCCP1 or SB_ID == MCCP2:
         # Turn on the compression flag on the connection and requeue all remaning bytes
         conn.ActivateFeature('MCCP')
+        conn.compressed_bytes = conn.uncompressed_bytes = 0
         return('requeue')
     else:
         print("unhandled IAC Subnegotiation")

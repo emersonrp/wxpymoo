@@ -81,6 +81,10 @@ class Connection(wx.SplitterWindow):
     def UpdateStatus(self):
         self.status_bar.LayoutWidgets()
 
+    def UpdateIcon(self, icon, message):
+        icon = self.status_bar.feature_icons.get(icon)
+        if icon: icon.SetToolTip(message)
+
     def ShowMessage(self, message):
         self.status_bar.AddStatus(message)
 
