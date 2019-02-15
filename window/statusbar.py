@@ -124,3 +124,4 @@ class FeatureIcon(wx.Panel):
             self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             for c in self.GetChildren():
                 c.Bind(evt, handler)
+        super(FeatureIcon, self).Bind(evt, handler)
