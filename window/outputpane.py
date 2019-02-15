@@ -190,6 +190,7 @@ class OutputPane(BasePane):
                                 'inverse'             : self.doansi_inverse,
                                 'conceal'             : self.doansi_conceal,
                                 'strike'              : self.doansi_strike,
+                                'double_underline'    : self.doansi_double_underline,
                                 'normal_weight'       : self.doansi_normal_weight,
                                 'no_italic'           : self.EndItalic,
                                 'no_underline'        : self.EndUnderline,
@@ -204,7 +205,7 @@ class OutputPane(BasePane):
                                 'default_fg'          : self.doansi_default_fg,
                                 'default_bg'          : self.doansi_default_bg,
                             }
-                            ansifunc = switcher.get(payload, lambda: "Unknown ANSI sequence")
+                            ansifunc = switcher.get(payload, lambda: print("Unknown ANSI control sequence"))
                             ansifunc()
 
                         else:
@@ -280,6 +281,7 @@ class OutputPane(BasePane):
     def doansi_default_bg(self):
         self.bg_colour = self.theme.get('background')
         self.set_current_colours()
+    def doansi_double_underline(self)    : print('Got an ANSI "double_underline"')
     def doansi_conceal(self)             : print('Got an ANSI "conceal"')
     def doansi_no_conceal(self)          : print('Got an ANSI "no_conceal"')
     def doansi_framed(self)              : print('Got an ANSI "framed"')
@@ -351,9 +353,30 @@ class OutputPane(BasePane):
                 line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
             self.display(line + "\n")
             line = ""
+
+        self.display("\n")
+        self.display("Non-color ANSI codes (* = not yet supported):\n")
+        self.display("\033[1m"  + "bright" + "\033[22m" + "         ")
+        self.display("\033[2m"  + "dim" + "\033[22m" + "            ")
+        self.display("\033[3m"  + "italic" + "\033[23m" + "         ")
+        self.display("\033[4m"  + "underline" + "\033[24m" + "      ")
+        self.display("\n")
+        self.display("\033[5m"  + "blink*" + "\033[25m" + "         ")
+        self.display("\033[7m"  + "inverse" + "\033[0m" +  "        ")
+        self.display("\033[8m"  + "conceal*" + "\033[28m" + "       ")
+        self.display("\033[9m"  + "strike" + "\033[29m" + "         ")
+        self.display("\n")
+        self.display("\033[21m" + "dbl_underline*" + "\033[0m" +  " ")
+        self.display("\033[51m" + "framed*" + "\033[54m" + "        ")
+        self.display("\033[52m" + "encircled*" + "\033[54m" + "     ")
+        self.display("\033[53m" + "overline*" + "\033[55m" + "      ")
+        self.display("\n")
+
+
         self.display("\n")
         self.display("--- ANSI TEST END ---\n")
         self.display("\n")
+
         self.Thaw()
 
     ########### LM LOCALEDIT
@@ -418,6 +441,7 @@ ansi_codes = {
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
+    21    : [ 'control' , 'double_underline' ],
     22    : [ 'control' , 'normal_weight' ],
     23    : [ 'control' , 'no_italic'     ],
     24    : [ 'control' , 'no_underline'  ],

@@ -75,7 +75,7 @@ class Main(wx.Frame):
 
         WindowMenu = wx.Menu()
         Window_debugmcp = WindowMenu.Append(-1, "&Debug MCP", "")
-        Window_ansi_test = WindowMenu.Append(-1, "&ANSI Color Test", "")
+        Window_ansi_test = WindowMenu.Append(-1, "&ANSI Code Test", "")
 
         HelpMenu = wx.Menu()
         Help_help  = HelpMenu.Append(wx.ID_HELP)
