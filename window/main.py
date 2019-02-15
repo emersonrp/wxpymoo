@@ -2,7 +2,6 @@ import wx
 import wx.adv
 from connection import Connection
 from window.connectdialog import ConnectDialog
-from window.debugmcp import DebugMCP
 from window.prefseditor import PrefsEditor
 from window.worldslist import WorldsList
 from functools import partial
@@ -195,8 +194,7 @@ class Main(wx.Frame):
 
     def toggleDebugMCP(self, evt):
         conn = self.currentConnection()
-        if conn.debug_mcp is None: conn.debug_mcp = DebugMCP(self, conn)
-        conn.debug_mcp.toggle_visible()
+        if conn.debug_mcp: conn.debug_mcp.toggle_visible()
 
     def showHelp(self, evt):
         pass

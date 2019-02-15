@@ -56,8 +56,11 @@ class MCPCore:
 
     def debug(self, info):
         info = re.sub('\n$', '', info)
-        # DebugMCP window monkey-patches this when it shows itself
-        print(self.connection.world.get('name') + ": " + info)
+        debug_mcp_window = self.connection.debug_mcp
+        if debug_mcp_window:
+            debug_mcp_window.display(info)
+        else:
+            print(self.connection.world.get('name') + ": " + info)
 
     def output_filter(self, output_pane, data):
 

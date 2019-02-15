@@ -6,13 +6,14 @@ import zlib
 from wxasync import StartCoroutine
 import asyncio
 
-from window.inputpane import InputPane
-from window.outputpane import OutputPane
-from window.statusbar import StatusBar
+from window.inputpane  import InputPane
+from window.outputpane import OutputPane, EVT_ROW_COL_CHANGED
+from window.statusbar  import StatusBar
+from window.debugmcp   import DebugMCP
+
 from mcp21.core import MCPCore
 import prefs
 from prefs import EVT_PREFS_CHANGED
-from window.outputpane import EVT_ROW_COL_CHANGED
 import filters.telnetiac
 
 # the 'connection' contains both the network connection and the i/o ui
@@ -20,7 +21,6 @@ class Connection(wx.SplitterWindow):
     def __init__(self, mainwindow):
         wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
         self.world          = None
-        self.debug_mcp      = None
 
         # these two are set with dns_com_awns_serverinfo but hypothetically
         # -could- come from the saved world also
@@ -146,6 +146,7 @@ class Connection(wx.SplitterWindow):
         prefs.set('last_world', world.get('name'))
 
         self.mcp = MCPCore(self)
+        self.debug_mcp = DebugMCP(self.main_window, self)
 
         if self.world.get('auto_login'):
             login_script = self.world.get('login_script')
