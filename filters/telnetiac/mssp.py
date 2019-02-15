@@ -43,6 +43,8 @@ def handle_mssp(payload, conn):
 
     got_new_info = []
     for key in extracted:
+        if conn.mssp_info:
+            conn.mssp_info.add_message({str(key) : str(extracted[key])})
         worldkey = "MSSP_" + key.capitalize()
         if not str(world.get(worldkey)) == str(extracted[key]):
             print(f"Got new MSSP info: {worldkey} = {extracted[key]} (Was: {world.get(worldkey)})")

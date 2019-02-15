@@ -10,6 +10,7 @@ from window.inputpane  import InputPane
 from window.outputpane import OutputPane, EVT_ROW_COL_CHANGED
 from window.statusbar  import StatusBar
 from window.debugmcp   import DebugMCP
+from window.msspinfo   import MSSPInfo
 
 from mcp21.core import MCPCore
 import prefs
@@ -32,6 +33,10 @@ class Connection(wx.SplitterWindow):
 
         # bin for Telnet IAC commands to stash any status info (on/off, etc)
         self.features = set()
+        self.feature_init_callback = {
+            'MCP' : self.mcp_init_callback,
+            'MSSP' : self.mssp_init_callback,
+        }
 
         # re-queue stuff for re-processing (ie if we turn on compression)
         self.filter_queue = b''
@@ -74,6 +79,8 @@ class Connection(wx.SplitterWindow):
     def ActivateFeature(self, feature, on = True):
         if on:
             self.features.add(feature)
+            if self.feature_init_callback.get(feature):
+                self.feature_init_callback[feature]()
         else:
             self.features.discard(feature)
         self.UpdateStatus()
@@ -122,7 +129,7 @@ class Connection(wx.SplitterWindow):
         conntype = world.get('conntype')
 
         try:
-            wait = wx.BusyCursor()
+            wx.BeginBusyCursor()
             self.reader, self.writer = await asyncio.wait_for(
                 asyncio.open_connection(host, port, ssl = (conntype == "SSL")),
                 timeout = 15)
@@ -136,7 +143,7 @@ class Connection(wx.SplitterWindow):
             wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
             return
         finally:
-            del wait
+            wx.EndBusyCursor()
 
         if conntype == "SSL":
             self.ActivateFeature('SSL')
@@ -146,7 +153,6 @@ class Connection(wx.SplitterWindow):
         prefs.set('last_world', world.get('name'))
 
         self.mcp = MCPCore(self)
-        self.debug_mcp = DebugMCP(self.main_window, self)
 
         if self.world.get('auto_login'):
             login_script = self.world.get('login_script')
@@ -185,3 +191,10 @@ class Connection(wx.SplitterWindow):
 
     def is_connected(self):
         return True if self.writer else False
+
+    ### feature init callbacks
+    def mcp_init_callback(self):
+        self.debug_mcp = DebugMCP(self.main_window, self)
+
+    def mssp_init_callback(self):
+        self.mssp_info = MSSPInfo(self)

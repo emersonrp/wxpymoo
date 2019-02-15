@@ -56,7 +56,7 @@ class MCPCore:
 
     def debug(self, info):
         info = re.sub('\n$', '', info)
-        debug_mcp_window = self.connection.debug_mcp
+        debug_mcp_window = getattr(self.connection, 'debug_mcp', None)
         if debug_mcp_window:
             debug_mcp_window.display(info)
         else:

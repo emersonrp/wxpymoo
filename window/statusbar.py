@@ -27,9 +27,8 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.feature_sizer = wx.BoxSizer()
         self.feature_icons = {}
         for i,w in icons.items():
-            icon = wx.StaticBitmap(self.feature_tray, -1, w)
+            icon = FeatureIcon(self.feature_tray, i, w)
             self.feature_sizer.Add(icon, 0, wx.EXPAND|wx.SHAPED)
-            icon.SetToolTip(i + " enabled")
             icon.Hide()
             self.feature_icons[i] = icon
         self.feature_tray.SetSizerAndFit(self.feature_sizer)
@@ -112,3 +111,16 @@ class StatusBar(ESB.EnhancedStatusBar):
 
     def ClearStatus(self):
         self.SetStatusText('', 2)
+
+class FeatureIcon(wx.Panel):
+    def __init__(self, parent, i, w):
+        wx.Panel.__init__(self, parent)
+        wx.StaticBitmap(self, -1, w)
+        self.SetToolTip(i + " enabled")
+
+    # Bind mouse events to the bitmaps inside the panel, add "hand" cursor
+    def Bind(self, evt, handler):
+        if evt == wx.EVT_LEFT_UP:
+            self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+            for c in self.GetChildren():
+                c.Bind(evt, handler)
