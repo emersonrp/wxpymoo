@@ -76,7 +76,8 @@ class PrefsEditor(wx.Dialog):
 
         fcp.theme_picker = wx.Choice(fcp, choices = Theme.all_theme_names())
 
-        fcp.ansi_checkbox = wx.CheckBox(fcp, -1, 'Use ANSI colors')
+        fcp.ansi_checkbox       = wx.CheckBox(fcp, -1, 'Use ANSI colors')
+        fcp.ansi_blink_checkbox = wx.CheckBox(fcp, -1, 'Honor ANSI blink')
         # TODO - get and set these two at display time not create time
         fcp.theme = prefs.get('theme')
         fcp.theme_picker.SetSelection(fcp.theme_picker.FindString(fcp.theme))
@@ -89,8 +90,9 @@ class PrefsEditor(wx.Dialog):
             fcp.theme_picker.Disable()
 
         ansi_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        ansi_sizer.Add(fcp.ansi_checkbox, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
-        ansi_sizer.Add(fcp.theme_picker,  0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
+        ansi_sizer.Add(fcp.ansi_checkbox,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
+        ansi_sizer.Add(fcp.ansi_blink_checkbox, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
+        ansi_sizer.Add(fcp.theme_picker,        0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         panel_sizer.Add(fcp.sample,  0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)

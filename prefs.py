@@ -14,6 +14,7 @@ _defaults   = {
     'input_height'     : 25,
 
     'use_ansi'               : True,
+    'use_ansi_blink'         : True,
     'highlight_urls'         : True,
     'save_mcp_window_size'   : True,
     'autoconnect_last_world' : True,
@@ -60,8 +61,9 @@ def update(pw):
     set('use_x_copy_paste',       pw.general_page.xmouse_checkbox.GetValue() )
     set('local_echo',             pw.general_page.local_echo_checkbox.GetValue() )
 
-    set('font',     pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-    set('use_ansi', pw.fonts_page.ansi_checkbox.GetValue() )
+    set('font',           pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+    set('use_ansi',       pw.fonts_page.ansi_checkbox.GetValue() )
+    set('use_ansi_blink', pw.fonts_page.ansi_blink_checkbox.GetValue() )
 
     set('theme',    pw.fonts_page.theme_picker.GetStringSelection() )
 

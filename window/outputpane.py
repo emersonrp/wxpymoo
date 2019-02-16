@@ -23,10 +23,15 @@ class OutputPane(BasePane):
         )
 
         # state toggles for ANSI processing
-        self.intensity = ''
-        self.conceal = self.inverse = False
+        self.intensity        = ''
+        self.conceal          = self.inverse          = False
+        self.blink            = self.fast_blink       = False
+        self.blink_timer      = self.fast_blink_timer = False
+        self.blink_chars      = []
+        self.fast_blink_chars = []
+
         self.initial_style = rtc.RichTextAttr()
-        self.initial_style.SetLeftIndent(0, 10)
+        self.initial_style.SetLeftIndent(10, 50) # TODO make this a pref?
         self.current_style = self.initial_style
 
         # output filters can register themselves
@@ -190,6 +195,7 @@ class OutputPane(BasePane):
                                 'italic'              : self.doansi_italic,
                                 'underline'           : self.doansi_underline,
                                 'blink'               : self.doansi_blink,
+                                'fast_blink'          : self.doansi_fast_blink,
                                 'inverse'             : self.doansi_inverse,
                                 'conceal'             : self.doansi_conceal,
                                 'strike'              : self.doansi_strike,
@@ -250,11 +256,19 @@ class OutputPane(BasePane):
         self.conceal = self.inverse = False
         self.fg_colour = self.theme.get('foreground')
         self.bg_colour = self.theme.get('background')
-    def doansi_bright(self):    self.intensity = 'bright'
-    def doansi_dim(self):       self.intensity = 'dim'
-    def doansi_italic(self):    self.current_style.SetFontStyle(wx.FONTSTYLE_ITALIC)
-    def doansi_underline(self): self.current_style.SetFontUnderlined(True)
-    def doansi_blink(self):     print('Got an ANSI "blink"')
+        self.doansi_no_blink()
+    def doansi_bright(self):     self.intensity = 'bright'
+    def doansi_dim(self):        self.intensity = 'dim'
+    def doansi_italic(self):     self.current_style.SetFontStyle(wx.FONTSTYLE_ITALIC)
+    def doansi_underline(self):  self.current_style.SetFontUnderlined(True)
+    def doansi_blink(self):
+        if prefs.get('use_ansi_blink'):
+            self.blink = True
+            self.blink_start = self.GetInsertionPoint()
+    def doansi_fast_blink(self):
+        if prefs.get('use_ansi_blink'):
+            self.fast_blink = True
+            self.fast_blink_start = self.GetInsertionPoint()
     def doansi_inverse(self):    self.inverse = True
     def doansi_strike(self):
         font = self.GetFont()
@@ -263,7 +277,23 @@ class OutputPane(BasePane):
     def doansi_normal_weight(self): self.intensity = ''
     def doansi_no_italic(self):     self.current_style.SetFontStyle(wx.FONTSTYLE_NORMAL)
     def doansi_no_underline(self):  self.current_style.SetFontUnderlined(False)
-    def doansi_no_blink(self):      print('Got an ANSI "no_blink"')
+    def doansi_no_blink(self):
+        if not prefs.get('use_ansi_blink'): return
+        end = self.GetInsertionPoint()
+        if self.blink:
+            if self.blink_start:
+                for c in range(self.blink_start, end):
+                    s = wx.TextAttr()
+                    self.GetStyle(c,s)
+                    self.blink_chars.append((c, s.GetTextColour(), s.GetBackgroundColour()))
+            self.blink_start = self.blink = False
+        if self.fast_blink:
+            if self.fast_blink_start:
+                for c in range(self.fast_blink_start, end):
+                    s = wx.TextAttr()
+                    self.GetStyle(c,s)
+                    self.fast_blink_chars.append((c, s.GetTextColour(), s.GetBackgroundColour()))
+            self.fast_blink_start = self.fast_blink = False
     def doansi_no_strike(self):
         font = self.GetFont()
         font.SetStrikethrough(False)
@@ -302,6 +332,28 @@ class OutputPane(BasePane):
             self.current_style.SetTextColour      (self.foreground_colour())
             self.current_style.SetBackgroundColour(self.background_colour())
         self.BeginStyle(self.current_style)
+
+        if self.blink_chars:
+            if not self.blink_timer:      self.blink_timer      = wx.CallLater(1000, self.do_blink)
+        if self.fast_blink_chars:
+            if not self.fast_blink_timer: self.fast_blink_timer = wx.CallLater(400,  self.do_fast_blink)
+
+    def do_blink(self):
+        self._do_blink(self.blink_chars)
+        self.blink_timer = wx.CallLater(800, self.do_blink)
+
+    def do_fast_blink(self):
+        self._do_blink(self.fast_blink_chars)
+        self.fast_blink_timer = wx.CallLater(400, self.do_fast_blink)
+
+    def _do_blink(self, chars):
+        self.Freeze()
+        s = wx.TextAttr()
+        for c,fg,bg in chars:
+            self.GetStyle(c,s)
+            s.SetTextColour(fg if (s.GetTextColour() == bg) else bg)
+            self.SetStyle(c,c+1,s)
+        self.Thaw()
 
     def ansi_test(self):
         self.Freeze()
@@ -357,8 +409,9 @@ class OutputPane(BasePane):
         self.display("\033[2m"  + "dim" + "\033[22m" + "            ")
         self.display("\033[3m"  + "italic" + "\033[23m" + "         ")
         self.display("\033[4m"  + "underline" + "\033[24m" + "      ")
+        self.display("\033[5m"  + "blink" + "\033[25m" + "          ")
         self.display("\n")
-        self.display("\033[5m"  + "blink*" + "\033[25m" + "         ")
+        self.display("\033[6m"  + "fast blink" + "\033[25m" + "     ")
         self.display("\033[7m"  + "inverse" + "\033[0m" +  "        ")
         self.display("conceal:\033[8m"  + "OHAI!" + "\033[28m" + "  ")
         self.display("\033[9m"  + "strike" + "\033[29m" + "         ")
@@ -425,25 +478,26 @@ class OutputPane(BasePane):
 
 
 ansi_codes = {
-    0     : [ 'control' , 'normal'    ],
-    1     : [ 'control' , 'bright'    ],
-    2     : [ 'control' , 'dim'       ],
-    3     : [ 'control' , 'italic'    ],
-    4     : [ 'control' , 'underline' ],
-    5     : [ 'control' , 'blink'     ],
-    7     : [ 'control' , 'inverse'   ],
-    8     : [ 'control' , 'conceal'   ],
-    9     : [ 'control' , 'strike'    ],
+    0     : [ 'control' , 'normal'     ],
+    1     : [ 'control' , 'bright'     ],
+    2     : [ 'control' , 'dim'        ],
+    3     : [ 'control' , 'italic'     ],
+    4     : [ 'control' , 'underline'  ],
+    5     : [ 'control' , 'blink'      ],
+    6     : [ 'control' , 'fast_blink' ],
+    7     : [ 'control' , 'inverse'    ],
+    8     : [ 'control' , 'conceal'    ],
+    9     : [ 'control' , 'strike'     ],
     # 10 - primary font
     # 11 - 19 - alternate fonts
     # 20 - fraktur
     21    : [ 'control' , 'double_underline' ],
-    22    : [ 'control' , 'normal_weight' ],
-    23    : [ 'control' , 'no_italic'     ],
-    24    : [ 'control' , 'no_underline'  ],
-    25    : [ 'control' , 'no_blink'      ],
-    28    : [ 'control' , 'no_conceal'    ],
-    29    : [ 'control' , 'no_strike'     ],
+    22    : [ 'control' , 'normal_weight'    ],
+    23    : [ 'control' , 'no_italic'        ],
+    24    : [ 'control' , 'no_underline'     ],
+    25    : [ 'control' , 'no_blink'         ],
+    28    : [ 'control' , 'no_conceal'       ],
+    29    : [ 'control' , 'no_strike'        ],
 
     30    : [ 'foreground' , 'black'       ],
     31    : [ 'foreground' , 'red'         ],
