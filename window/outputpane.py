@@ -24,7 +24,10 @@ class OutputPane(BasePane):
 
         # state toggles for ANSI processing
         self.intensity = ''
-        self.inverse = False
+        self.conceal = self.inverse = False
+        self.initial_style = rtc.RichTextAttr()
+        self.initial_style.SetLeftIndent(0, 10)
+        self.current_style = self.initial_style
 
         # output filters can register themselves
         self.filters = [self.lm_localedit_filter]
@@ -177,23 +180,23 @@ class OutputPane(BasePane):
 
                             if command == "foreground" : self.fg_colour = colour
                             else                       : self.bg_colour = colour
-                            self.set_current_colours()
+                            self.style_thyself()
 
                         elif command == 'control':
                             switcher = {
                                 'normal'              : self.doansi_normal,
                                 'bright'              : self.doansi_bright,
                                 'dim'                 : self.doansi_dim,
-                                'italic'              : self.BeginItalic,
-                                'underline'           : self.BeginUnderline,
+                                'italic'              : self.doansi_italic,
+                                'underline'           : self.doansi_underline,
                                 'blink'               : self.doansi_blink,
                                 'inverse'             : self.doansi_inverse,
                                 'conceal'             : self.doansi_conceal,
                                 'strike'              : self.doansi_strike,
                                 'double_underline'    : self.doansi_double_underline,
                                 'normal_weight'       : self.doansi_normal_weight,
-                                'no_italic'           : self.EndItalic,
-                                'no_underline'        : self.EndUnderline,
+                                'no_italic'           : self.doansi_no_italic,
+                                'no_underline'        : self.doansi_no_underline,
                                 'no_blink'            : self.doansi_no_blink,
                                 'no_conceal'          : self.doansi_no_conceal,
                                 'no_strike'           : self.doansi_no_strike,
@@ -207,6 +210,7 @@ class OutputPane(BasePane):
                             }
                             ansifunc = switcher.get(payload, lambda: print("Unknown ANSI control sequence"))
                             ansifunc()
+                            self.style_thyself()
 
                         else:
                             print("unknown ANSI command:", command)
@@ -241,70 +245,63 @@ class OutputPane(BasePane):
 
     ### ANSI HANDLERS
     def doansi_normal(self):
-        self.EndAllStyles()
+        self.current_style = self.initial_style
         self.intensity = ''
-        self.inverse = False
+        self.conceal = self.inverse = False
         self.fg_colour = self.theme.get('foreground')
         self.bg_colour = self.theme.get('background')
-        self.set_current_colours()
-    def doansi_bright(self):
-        self.intensity = 'bright'
-        self.set_current_colours()
-    def doansi_dim(self):
-        self.intensity = 'dim'
-        self.set_current_colours()
-    def doansi_blink(self):
-        print('Got an ANSI "blink"')
-        # TODO - create timer
-        # apply style name
-        # periodically switch foreground color to background
-    def doansi_inverse(self):
-        self.inverse = True
-        self.set_current_colours()
+    def doansi_bright(self):    self.intensity = 'bright'
+    def doansi_dim(self):       self.intensity = 'dim'
+    def doansi_italic(self):    self.current_style.SetFontStyle(wx.FONTSTYLE_ITALIC)
+    def doansi_underline(self): self.current_style.SetFontUnderlined(True)
+    def doansi_blink(self):     print('Got an ANSI "blink"')
+    def doansi_inverse(self):    self.inverse = True
     def doansi_strike(self):
         font = self.GetFont()
         font.SetStrikethrough(True)
-        self.BeginFont(font)
-    def doansi_normal_weight(self):
-        self.intensity = ''
-        self.set_current_colours()
-    def doansi_no_blink(self):
-        print('Got an ANSI "no_blink"')
-        # TODO - remove blink-code-handles style
+        self.current_style.SetFont(font)
+    def doansi_normal_weight(self): self.intensity = ''
+    def doansi_no_italic(self):     self.current_style.SetFontStyle(wx.FONTSTYLE_NORMAL)
+    def doansi_no_underline(self):  self.current_style.SetFontUnderlined(False)
+    def doansi_no_blink(self):      print('Got an ANSI "no_blink"')
     def doansi_no_strike(self):
         font = self.GetFont()
         font.SetStrikethrough(False)
-        self.BeginFont(font)
-    def doansi_default_fg(self):
-        self.fg_colour = self.theme.get('foreground')
-        self.set_current_colours()
-    def doansi_default_bg(self):
-        self.bg_colour = self.theme.get('background')
-        self.set_current_colours()
+        self.current_style.SetFont(font)
+    def doansi_default_fg(self): self.fg_colour = self.theme.get('foreground')
+    def doansi_default_bg(self): self.bg_colour = self.theme.get('background')
     def doansi_double_underline(self)    : print('Got an ANSI "double_underline"')
-    def doansi_conceal(self)             : print('Got an ANSI "conceal"')
-    def doansi_no_conceal(self)          : print('Got an ANSI "no_conceal"')
+    def doansi_conceal(self):    self.conceal = True
+    def doansi_no_conceal(self): self.conceal = False
     def doansi_framed(self)              : print('Got an ANSI "framed"')
+        # TODO - this seems to be correct all the way up to textboxattr having the border set
+        # and getting it into current_style, but nothing changes on-screen
+        #border = rtc.TextAttrBorders()
+        #border.SetColour(wx.WHITE)
+        #border.SetStyle(2)
+        #border.SetWidth(4)
+        #textboxattr = rtc.TextBoxAttr()
+        #textboxattr.m_border = border
+        #self.current_style.SetTextBoxAttr(textboxattr)
+
     def doansi_encircled(self)           : print('Got an ANSI "encircled"')
     def doansi_overline(self)            : print('Got an ANSI "overline"')
     def doansi_no_framed_encircled(self) : print('Got an ANSI "no_framed_encircled"')
     def doansi_no_overline(self)         : print('Got an ANSI "no_overline"')
 
-
-    def foreground_colour(self)    : return self.theme.Colour(self.fg_colour, self.intensity)
+    def foreground_colour(self)    : return self.theme.Colour(self.bg_colour if self.conceal else self.fg_colour, self.intensity)
     def background_colour(self)    : return self.theme.Colour(self.bg_colour)
     def lookup_colour(self, color) : return self.theme.Colour(color, self.intensity)
 
-    def set_current_colours(self):
-        current = rtc.RichTextAttr()
+    def style_thyself(self):
+        self.EndAllStyles()
         if self.inverse:
-            current.SetTextColour      (self.background_colour())
-            current.SetBackgroundColour(self.foreground_colour())
+            self.current_style.SetTextColour      (self.background_colour())
+            self.current_style.SetBackgroundColour(self.foreground_colour())
         else:
-            current.SetTextColour      (self.foreground_colour())
-            current.SetBackgroundColour(self.background_colour())
-
-        self.BeginStyle(current)
+            self.current_style.SetTextColour      (self.foreground_colour())
+            self.current_style.SetBackgroundColour(self.background_colour())
+        self.BeginStyle(self.current_style)
 
     def ansi_test(self):
         self.Freeze()
@@ -363,7 +360,7 @@ class OutputPane(BasePane):
         self.display("\n")
         self.display("\033[5m"  + "blink*" + "\033[25m" + "         ")
         self.display("\033[7m"  + "inverse" + "\033[0m" +  "        ")
-        self.display("\033[8m"  + "conceal*" + "\033[28m" + "       ")
+        self.display("conceal:\033[8m"  + "OHAI!" + "\033[28m" + "  ")
         self.display("\033[9m"  + "strike" + "\033[29m" + "         ")
         self.display("\n")
         self.display("\033[21m" + "dbl_underline*" + "\033[0m" +  " ")
@@ -371,7 +368,6 @@ class OutputPane(BasePane):
         self.display("\033[52m" + "encircled*" + "\033[54m" + "     ")
         self.display("\033[53m" + "overline*" + "\033[55m" + "      ")
         self.display("\n")
-
 
         self.display("\n")
         self.display("--- ANSI TEST END ---\n")
