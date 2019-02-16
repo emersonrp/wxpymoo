@@ -97,10 +97,19 @@ class InputPane(BasePane):
             # either way:
             self.tab_completion.CloseAndClear()
 
-        # TODO: this next bit simply doesn't work, but 'home' is not acting right by default
-#        elif k == wx.WXK_HOME:
-#            print("HOME!")
-#            self.SetInsertionPoint(0)
+        elif k == wx.WXK_HOME:
+            curpos = self.GetCaretPosition()
+            self.SetInsertionPoint(0)
+            self.ShowPosition(0)
+            if evt.ShiftDown(): self.SetSelection(0, curpos+1)
+            return
+
+        elif k == wx.WXK_END:
+            curpos = self.GetCaretPosition()
+            self.SetInsertionPointEnd()
+            self.ShowPosition(-1)
+            if evt.ShiftDown(): self.SetSelection(curpos+1, self.GetCaretPosition()+1)
+            return
 
         # Cmd-[#] to switch directly to a tab -- includes 1234567890-= keys
         # this is a little confusing because the tab indices are zero-based, so 
