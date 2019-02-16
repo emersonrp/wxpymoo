@@ -461,3 +461,75 @@ fansi_oem_to_latin1 = str.maketrans({
     253: 178,
     254: 149,
 })
+
+
+def ansi_test_contents():
+    test = ''
+
+    test += "\n"
+    test += "--- ANSI TEST BEGIN ---\n"
+    test += "System Colors:\n"
+
+    fg_cube = bg_cube = ''
+
+    for c in range(0,8):
+        fg_cube += "\033[3" + str(c) + "m*\033[0m"
+        bg_cube += "\033[4" + str(c) + "m \033[0m"
+    test += fg_cube + "    " + bg_cube + "\n"
+    fg_cube = bg_cube = ''
+
+    test += "\n"
+    test += "Color cube, 6x6x6\n"
+    for g in range(0,6):
+        for b in range(0,6):
+            for r in range(0,6):
+                c = ((r * 36) + (g * 6) + b) + 16
+                fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
+                bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
+        test += fg_cube + "    " + bg_cube + "\n"
+        fg_cube = bg_cube = ''
+
+    test += "\n"
+    test += "Greyscale ramp:\n"
+    for c in range(232,255):
+        fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
+        bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
+    test += fg_cube + "    " + bg_cube + "\n"
+    fg_cube = bg_cube = ''
+
+    test += "\n"
+    test += "Some random 24-bit color samples:\n"
+    from random import randint
+    line = ""
+    for i in range(0,6):
+        for j in range(0,6):
+            r = randint(0,255)
+            g = randint(0,255)
+            b = randint(0,255)
+            fg_bg = 48 if (j % 2) else 38
+
+            line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
+        test += line + "\n"
+        line = ""
+
+    test += "\n"
+    test += "Non-color ANSI codes (* = not yet supported):\n"
+    test += "This text should be " + "\033[1m"  + "bright" + "\033[22m.\n"
+    test += "This text should be " + "\033[2m"  + "dim" + "\033[22m.\n"
+    test += "This text should be " + "\033[3m"  + "italic" + "\033[23m.\n"
+    test += "This text should be " + "\033[4m"  + "underlined" + "\033[24m.\n"
+    test += "This text should " + "\033[5m"  + "blink" + "\033[25m.\n"
+    test += "This text should " + "\033[6m"  + "fast-blink" + "\033[25m.\n"
+    test += "This text should be " + "\033[7m"  + "inverse" + "\033[0m.\n"
+    test += "This text should be concealed (select to see): \033[8m"  +  "OHAI!" + "\033[28m.\n"
+    test += "This text should be " + "\033[9m"  + "strikethrough" + "\033[29m.\n"
+    test += "This text should be " + "\033[21m" + "double-underlined*" + "\033[0m.\n"
+    test += "This text should be " + "\033[51m" + "framed*" + "\033[54m.\n"
+    test += "This text should be " + "\033[52m" + "encircled*" + "\033[54m.\n"
+    test += "This text should be " + "\033[53m" + "overline*" + "\033[55m.\n"
+
+    test += "\n"
+    test += "--- ANSI TEST END ---\n"
+    test += "\n"
+
+    return test

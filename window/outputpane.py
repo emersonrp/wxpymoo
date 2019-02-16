@@ -7,7 +7,7 @@ import prefs
 import utility
 from editor import Editor
 from window.basepane import BasePane
-from filters.ansi import fansi_replace
+from filters.ansi import fansi_replace, ansi_test_contents
 
 #import webbrowser, re, math, emoji
 import webbrowser, re, math
@@ -32,7 +32,7 @@ class OutputPane(BasePane):
 
         self.initial_style = rtc.RichTextAttr()
         self.initial_style.SetLeftIndent(10, 50) # TODO make this a pref?
-        self.current_style = self.initial_style
+        self.current_style = rtc.RichTextAttr(self.initial_style)
 
         # output filters can register themselves
         self.filters = [self.lm_localedit_filter]
@@ -251,7 +251,7 @@ class OutputPane(BasePane):
 
     ### ANSI HANDLERS
     def doansi_normal(self):
-        self.current_style = self.initial_style
+        self.current_style = rtc.RichTextAttr(self.initial_style)
         self.intensity = ''
         self.conceal = self.inverse = False
         self.fg_colour = self.theme.get('foreground')
@@ -357,75 +357,7 @@ class OutputPane(BasePane):
 
     def ansi_test(self):
         self.Freeze()
-        self.display("\n")
-        self.display("--- ANSI TEST BEGIN ---\n")
-        self.display("System Colors:\n")
-
-        fg_cube = bg_cube = ''
-
-        for c in range(0,8):
-            fg_cube += "\033[3" + str(c) + "m*\033[0m"
-            bg_cube += "\033[4" + str(c) + "m \033[0m"
-        self.display(fg_cube + "    " + bg_cube + "\n")
-        fg_cube = bg_cube = ''
-
-        self.display("\n")
-        self.display("Color cube, 6x6x6\n")
-        for g in range(0,6):
-            for b in range(0,6):
-                for r in range(0,6):
-                    c = ((r * 36) + (g * 6) + b) + 16
-                    fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
-                    bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
-            self.display(fg_cube + "    " + bg_cube + "\n")
-            fg_cube = bg_cube = ''
-
-        self.display("\n")
-        self.display("Greyscale ramp:\n")
-        for c in range(232,255):
-            fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
-            bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
-        self.display(fg_cube + "    " + bg_cube + "\n")
-        fg_cube = bg_cube = ''
-
-        self.display("\n")
-        self.display("Some random 24-bit color samples:\n")
-        from random import randint
-        line = ""
-        for i in range(0,6):
-            for j in range(0,6):
-                r = randint(0,255)
-                g = randint(0,255)
-                b = randint(0,255)
-                fg_bg = 48 if (j % 2) else 38
-
-                line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
-            self.display(line + "\n")
-            line = ""
-
-        self.display("\n")
-        self.display("Non-color ANSI codes (* = not yet supported):\n")
-        self.display("\033[1m"  + "bright" + "\033[22m" + "         ")
-        self.display("\033[2m"  + "dim" + "\033[22m" + "            ")
-        self.display("\033[3m"  + "italic" + "\033[23m" + "         ")
-        self.display("\033[4m"  + "underline" + "\033[24m" + "      ")
-        self.display("\033[5m"  + "blink" + "\033[25m" + "          ")
-        self.display("\n")
-        self.display("\033[6m"  + "fast blink" + "\033[25m" + "     ")
-        self.display("\033[7m"  + "inverse" + "\033[0m" +  "        ")
-        self.display("conceal:\033[8m"  + "OHAI!" + "\033[28m" + "  ")
-        self.display("\033[9m"  + "strike" + "\033[29m" + "         ")
-        self.display("\n")
-        self.display("\033[21m" + "dbl_underline*" + "\033[0m" +  " ")
-        self.display("\033[51m" + "framed*" + "\033[54m" + "        ")
-        self.display("\033[52m" + "encircled*" + "\033[54m" + "     ")
-        self.display("\033[53m" + "overline*" + "\033[55m" + "      ")
-        self.display("\n")
-
-        self.display("\n")
-        self.display("--- ANSI TEST END ---\n")
-        self.display("\n")
-
+        self.display(ansi_test_contents())
         self.Thaw()
 
     ########### LM LOCALEDIT
