@@ -7,7 +7,7 @@ plainMsgAttr  = wx.TextAttr(wx.Colour(0,   0, 0))
 class MSSPInfo(wx.Dialog):
     def __init__(self, conn):
         worldname = conn.world.get('name')
-        wx.Dialog.__init__(self, conn, title = "Debug MCP: " + worldname,
+        wx.Dialog.__init__(self, conn, title = "MSSP Info: " + worldname,
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 
@@ -28,6 +28,7 @@ class MSSPInfo(wx.Dialog):
     def toggle_visible(self, evt = None):
         self.update()
         self.Fit()
+        self.CenterOnParent()
         self.Show(not self.IsShown())
         if evt: evt.Skip()
 
