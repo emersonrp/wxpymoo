@@ -40,13 +40,23 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.conn_status = wx.Window(self)
         self.conn_status.SetBackgroundColour(wx.RED)
 
-        self.SetFieldsCount(4)
+        # Activity blinker for when we're scrolled back
+        self.activity_blinker = wx.Window(self)
+        self.blinker_timer = None
+
+        # placeholder to keep stuff from being on top of the resizer thumb
+        self.spacer = wx.Window(self)
+
+        self.SetFieldsCount(6)
         #self.SetStatusStyles([wx.SB_RAISED, wx.SB_NORMAL, wx.SB_NORMAL, wx.SB_NORMAL])
 
-        self.AddWidget(self.status_field, horizontalalignment = ESB.ESB_EXACT_FIT),
-        self.AddWidget(self.feature_tray, horizontalalignment = ESB.ESB_ALIGN_RIGHT, verticalalignment = ESB.ESB_EXACT_FIT)
-        self.AddWidget(self.conn_time,    horizontalalignment = ESB.ESB_EXACT_FIT)
-        self.AddWidget(self.conn_status,  horizontalalignment = ESB.ESB_EXACT_FIT)
+        self.AddWidget(self.status_field  , horizontalalignment = ESB.ESB_EXACT_FIT)  ,
+        self.AddWidget(self.feature_tray  , horizontalalignment = ESB.ESB_ALIGN_RIGHT , verticalalignment = ESB.ESB_EXACT_FIT)
+        self.AddWidget(self.conn_time     , horizontalalignment = ESB.ESB_EXACT_FIT)
+        self.AddWidget(self.conn_status   , horizontalalignment = ESB.ESB_EXACT_FIT)
+        self.AddWidget(self.activity_blinker, horizontalalignment = ESB.ESB_EXACT_FIT)
+        self.AddWidget(self.spacer        , horizontalalignment = ESB.ESB_EXACT_FIT)
+
 
         self.update_timer = wx.CallLater(1000, self.UpdateConnectionStatus)
         self.status_timer = None
@@ -94,10 +104,12 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.feature_tray.Fit()
 
         self.SetStatusWidths(
-            [-1,
-                self.feature_tray.GetSize().width,
-                conn_time_size.Width + 3,
-                self.GetSize().height + 2
+            [-1,                                   # status pane
+                self.feature_tray.GetSize().width, # feature icons
+                conn_time_size.Width + 3,          # conn timer
+                self.GetSize().height + 2,         # status light
+                15,                                # activity blinker
+                self.GetSize().height + 2,         # placeholder
             ])
 
         self.OnSize(None)
@@ -111,6 +123,18 @@ class StatusBar(ESB.EnhancedStatusBar):
 
     def ClearStatus(self):
         self.SetStatusText('', 2)
+
+    def StartBlinker(self):
+        new_bg = (wx.RED if self.activity_blinker.GetBackgroundColour() != wx.RED else None)
+        self.activity_blinker.SetBackgroundColour(new_bg)
+        self.activity_blinker.SetToolTip("New text has arrived")
+        self.blinker_timer = wx.CallLater(1000, self.StartBlinker)
+
+    def StopBlinker(self):
+        if self.blinker_timer and self.blinker_timer.IsRunning():
+            self.blinker_timer.Stop()
+            self.activity_blinker.SetBackgroundColour(None)
+            self.activity_blinker.SetToolTip(None)
 
 class FeatureIcon(wx.Panel):
     def __init__(self, parent, i, w):

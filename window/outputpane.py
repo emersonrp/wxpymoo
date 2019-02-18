@@ -93,6 +93,11 @@ class OutputPane(BasePane):
             thm = self.GetScrollThumb(wx.VSCROLL)
             rge = self.GetScrollRange(wx.VSCROLL)
             self.is_scrolled_back = ((pos + thm) < rge)
+            print(f"{pos} {thm} {rge}")
+            print(f"I'm scrolled back: { self.is_scrolled_back }")
+        if not self.is_scrolled_back:
+            self.connection.status_bar.StopBlinker()
+            self.connection.SetTitle(self.connection.world.get('name'))
 
     def on_row_col_changed(self, evt):
         pass
@@ -102,6 +107,10 @@ class OutputPane(BasePane):
     def WriteText(self, rest):
         super(OutputPane, self).WriteText(rest)
         self.ScrollIfAppropriate()
+        if self.is_scrolled_back:
+            self.connection.status_bar.StartBinker()
+        if not self.connection.IsCurrentConnection():
+            self.connection.SetTitle(self.connection.world.get('name') + " (*)")
 
     def ScrollIfAppropriate(self):
         if ((not self.is_scrolled_back) or prefs.get('scroll_on_output')):

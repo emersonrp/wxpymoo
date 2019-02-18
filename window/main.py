@@ -215,7 +215,7 @@ class Main(wx.Frame):
         wx.adv.AboutBox(self.about_info)
 
     def quitApplication(self, evt):
-        self.closeConnection
+        self.closeConnection(evt)
         self.Close(True)
 
 from wx.aui import AuiNotebook
@@ -223,8 +223,9 @@ class MOONotebook(AuiNotebook):
     def __init__(self, parent):
         AuiNotebook.__init__(self, parent, style =
                 wx.aui.AUI_NB_TAB_FIXED_WIDTH|wx.aui.AUI_NB_CLOSE_ON_ALL_TABS|wx.aui.AUI_NB_DEFAULT_STYLE)
-        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE,  self.onPageClose)
-        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED, self.showOrHideTabs)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE,   self.onPageClose)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED,  self.showOrHideTabs)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onPageChanged)
 
     def onPageClose(self, evt = None):
         status_bar = self.GetCurrentPage().status_bar
@@ -234,3 +235,8 @@ class MOONotebook(AuiNotebook):
     def showOrHideTabs(self, evt = None):
         self.SetTabCtrlHeight(-1 if self.GetPageCount() > 1 else 0)
 
+    def onPageChanged(self, evt):
+        # Remove the "(*)" from the tab title
+        conn = self.GetCurrentPage()
+        conn.SetTitle(conn.world.get('name'))
+        evt.Skip()

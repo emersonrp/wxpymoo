@@ -46,7 +46,7 @@ class Connection(wx.SplitterWindow):
         self.input_pane  = InputPane(self, self)
         self.output_pane = OutputPane(self, self)
         self.status_bar  = StatusBar(mainwindow, self)
-        self.main_window = wx.GetApp().GetTopWindow()
+        self.mainwindow  = mainwindow
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
@@ -85,6 +85,10 @@ class Connection(wx.SplitterWindow):
             self.features.discard(feature)
         self.UpdateStatus()
 
+    def SetTitle(self, text):
+        tabindex = self.mainwindow.tabs.GetPageIndex(self)
+        self.mainwindow.tabs.SetPageText(tabindex, text)
+
     def UpdateStatus(self):
         self.status_bar.LayoutWidgets()
 
@@ -96,13 +100,12 @@ class Connection(wx.SplitterWindow):
         self.status_bar.AddStatus(message)
 
     def IsCurrentConnection(self):
-        return self.main_window.currentConnection() == self
+        return self.mainwindow.currentConnection() == self
 
     def Close(self):
         if self.is_connected():
             self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
-        # force it again just to be sure
-        #self.keepalive.Stop()
+
         if self.writer: self.writer.close()
         self.filter_queue = b''
         self.features.clear()
@@ -194,7 +197,7 @@ class Connection(wx.SplitterWindow):
 
     ### feature init callbacks
     def mcp_init_callback(self):
-        self.debug_mcp = DebugMCP(self.main_window, self)
+        self.debug_mcp = DebugMCP(self.mainwindow, self)
 
     def mssp_init_callback(self):
         self.mssp_info = MSSPInfo(self)
