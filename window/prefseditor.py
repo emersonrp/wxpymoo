@@ -53,11 +53,15 @@ class PrefsEditor(wx.Dialog):
         gp.local_echo_checkbox = wx.CheckBox(gp, -1, 'Echo Typed Commands')
         gp.local_echo_checkbox.SetValue( prefs.get('local_echo') )
 
+        gp.scroll_on_output_checkbox = wx.CheckBox(gp, -1, 'Scroll to bottom when new text arrives')
+        gp.scroll_on_output_checkbox.SetValue( prefs.get('scroll_on_output') )
+
         gp.panel_sizer = wx.BoxSizer(wx.VERTICAL)
         gp.panel_sizer.Add(gp.save_size_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.autoconnect_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.xmouse_checkbox, flag = wx.ALL, border = 10)
         gp.panel_sizer.Add(gp.local_echo_checkbox, flag = wx.ALL, border = 10)
+        gp.panel_sizer.Add(gp.scroll_on_output_checkbox, flag = wx.ALL, border = 10)
 
         gp.SetSizer(gp.panel_sizer)
         return gp

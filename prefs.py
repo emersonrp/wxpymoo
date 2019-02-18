@@ -19,6 +19,7 @@ _defaults   = {
     'save_mcp_window_size'   : True,
     'autoconnect_last_world' : True,
     'local_echo'             : False,
+    'scroll_on_output'       : True,
 
     'mcp_window_width'  : 600,
     'mcp_window_height' : 400,
@@ -37,7 +38,7 @@ def Initialize():
     for default in _defaults.items():
         (key, def_val) = default
         # if nothing exists for that key, set it to the default.
-        if not get(key):
+        if get(key) == None:
             set(key, str(def_val))
 
 def get(key):
@@ -45,6 +46,7 @@ def get(key):
     # ugly string -> Boolean handling.  Hope we never have a value actually named "True" or "False"
     if val == "True":  val = True
     if val == "False": val = False
+    if val == ""     : val = None
     return val
 
 def set(param, val):
@@ -60,6 +62,7 @@ def update(pw):
     set('autoconnect_last_world', pw.general_page.autoconnect_checkbox.GetValue() )
     set('use_x_copy_paste',       pw.general_page.xmouse_checkbox.GetValue() )
     set('local_echo',             pw.general_page.local_echo_checkbox.GetValue() )
+    set('scroll_on_output',       pw.general_page.scroll_on_output_checkbox.GetValue() )
 
     set('font',           pw.fonts_page.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
     set('use_ansi',       pw.fonts_page.ansi_checkbox.GetValue() )

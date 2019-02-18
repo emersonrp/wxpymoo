@@ -34,6 +34,8 @@ class OutputPane(BasePane):
         self.initial_style.SetLeftIndent(10, 50) # TODO make this a pref?
         self.current_style = rtc.RichTextAttr(self.initial_style)
 
+        self.is_scrolled_back = False
+
         # output filters can register themselves
         self.filters = [self.lm_localedit_filter]
         self.localedit_contents = None
@@ -43,19 +45,17 @@ class OutputPane(BasePane):
 
         # TODO - this probably should be a preference, but for now, this is the
         # least-bad default behavior.
-        self.Bind(wx.EVT_SIZE                        , self.on_size)
-        self.Bind(wx.EVT_SET_FOCUS                   , self.focus_input)
-        self.Bind(wx.EVT_TEXT_URL                    , self.process_url_click)
-        self.Bind(EVT_ROW_COL_CHANGED                , self.on_row_col_changed )
+        self.Bind(wx.EVT_SIZE         , self.on_size)
+        self.Bind(wx.EVT_SET_FOCUS    , self.on_set_focus)
+        self.Bind(wx.EVT_TEXT_URL     , self.on_url_click)
+        self.Bind(wx.EVT_SCROLLWIN    , self.on_scroll )
+
+        self.Bind(EVT_ROW_COL_CHANGED , self.on_row_col_changed)
 
     def register_filter(self, name, filter_callback):
         self.filters.append(filter_callback)
 
     # EVENT HANDLERS #######################
-    def on_row_col_changed(self, evt):
-        pass
-        # TODO - "if preferences dictate, send @linelength to self.connection"
-
     # This updates the widget's internal notion of "how big" it is in characters
     # it throws an event if the size *in chars* changes, nothing if the change in size was < 1 char
     def on_size(self, evt):
@@ -75,7 +75,10 @@ class OutputPane(BasePane):
         wx.CallAfter( self.ScrollIfAppropriate )
         evt.Skip()
 
-    def process_url_click(self, evt):
+    def on_set_focus(self, evt):
+        self.connection.input_pane.SetFocus()
+
+    def on_url_click(self, evt):
         url = evt.GetString()
         wx.BeginBusyCursor()
         if not re.match(r'^https?://', url):
@@ -83,20 +86,25 @@ class OutputPane(BasePane):
         webbrowser.open(url)
         wx.EndBusyCursor()
 
-    def focus_input(self, evt):
-        self.connection.input_pane.SetFocus()
+    def on_scroll(self, evt):
+        evt.Skip()
+        if (evt.GetOrientation() == wx.VERTICAL):
+            pos = self.GetScrollPos(wx.VSCROLL)
+            thm = self.GetScrollThumb(wx.VSCROLL)
+            rge = self.GetScrollRange(wx.VSCROLL)
+            self.is_scrolled_back = ((pos + thm) < rge)
+
+    def on_row_col_changed(self, evt):
+        pass
+        # TODO - "if preferences dictate, send @linelength to self.connection"
 
     ######################################
     def WriteText(self, rest):
         super(OutputPane, self).WriteText(rest)
         self.ScrollIfAppropriate()
 
-    def is_at_bottom(self):
-        # TODO - "is the bottom line currently visible / not scrolled-off"
-        return True
-
     def ScrollIfAppropriate(self):
-        if (self.is_at_bottom() or prefs.get('scroll_on_output')):
+        if ((not self.is_scrolled_back) or prefs.get('scroll_on_output')):
             self.ShowPosition(self.GetLastPosition())
             self.Refresh()
 
