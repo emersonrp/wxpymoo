@@ -62,6 +62,10 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.status_timer = None
         self.LayoutWidgets()
 
+    def Destroy(self):
+        if self.update_timer and self.update_timer.IsRunning():  self.update_timer.Stop()
+        if self.status_timer and self.status_timer.IsRunning():  self.status_timer.Stop()
+
     def UpdateConnectionStatus(self, evt = None):
         self.update_timer.Restart(1000)
         conn = self.connection
@@ -108,7 +112,7 @@ class StatusBar(ESB.EnhancedStatusBar):
                 self.feature_tray.GetSize().width, # feature icons
                 conn_time_size.Width + 3,          # conn timer
                 self.GetSize().height + 2,         # status light
-                15,                                # activity blinker
+                12,                                # activity blinker
                 self.GetSize().height + 2,         # placeholder
             ])
 
@@ -125,8 +129,10 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.SetStatusText('', 2)
 
     def StartBlinker(self):
+        if self.blinker_timer and self.blinker_timer.IsRunning(): return
         new_bg = (wx.RED if self.activity_blinker.GetBackgroundColour() != wx.RED else None)
         self.activity_blinker.SetBackgroundColour(new_bg)
+        self.activity_blinker.Refresh()
         self.activity_blinker.SetToolTip("New text has arrived")
         self.blinker_timer = wx.CallLater(1000, self.StartBlinker)
 

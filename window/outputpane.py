@@ -93,8 +93,6 @@ class OutputPane(BasePane):
             thm = self.GetScrollThumb(wx.VSCROLL)
             rge = self.GetScrollRange(wx.VSCROLL)
             self.is_scrolled_back = ((pos + thm) < rge)
-            print(f"{pos} {thm} {rge}")
-            print(f"I'm scrolled back: { self.is_scrolled_back }")
         if not self.is_scrolled_back:
             self.connection.status_bar.StopBlinker()
             self.connection.SetTitle(self.connection.world.get('name'))
