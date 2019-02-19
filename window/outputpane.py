@@ -108,7 +108,7 @@ class OutputPane(BasePane):
         super(OutputPane, self).WriteText(rest)
         self.ScrollIfAppropriate()
         if self.is_scrolled_back:
-            self.connection.status_bar.StartBinker()
+            self.connection.status_bar.StartBlinker()
         if not self.connection.IsCurrentConnection():
             self.connection.SetTitle(self.connection.world.get('name') + " (*)")
 
