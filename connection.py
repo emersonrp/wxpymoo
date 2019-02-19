@@ -52,14 +52,10 @@ class Connection(wx.SplitterWindow):
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
 
         self.Bind(wx.EVT_SPLITTER_SASH_POS_CHANGED, self.saveSplitterSize )
-        self.Bind(wx.EVT_SIZE, self.HandleResize)
+        self.Bind(wx.EVT_SIZE, self.OnSize)
         self.output_pane.Bind(EVT_ROW_COL_CHANGED , self.on_row_col_changed )
 
         mainwindow.Bind(EVT_PREFS_CHANGED, self.doPrefsChanged)
-
-    def on_row_col_changed(self, evt):
-        # This is sorta icky but math is hard
-        filters.telnetiac.handle_naws(self)
 
     def doPrefsChanged(self, evt):
         self.input_pane.restyle_thyself()
@@ -69,12 +65,18 @@ class Connection(wx.SplitterWindow):
     def saveSplitterSize(self, evt):
         size = self.GetSize()
         prefs.set('input_height', size.GetHeight() - evt.GetSashPosition())
+        evt.Skip()
 
-    def HandleResize(self, evt):
+    def OnSize(self, evt):
         size = self.GetSize()
         input_height = int(prefs.get('input_height')) or 25
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
+        evt.Skip()
+
+    def on_row_col_changed(self, evt):
+        # This is sorta icky but math is hard
+        filters.telnetiac.handle_naws(self)
 
     def ActivateFeature(self, feature, on = True):
         if on:
