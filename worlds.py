@@ -2,6 +2,7 @@ import wx
 import re
 import os
 import collections
+import prefs
 
 class World(dict):
 
@@ -33,12 +34,13 @@ class World(dict):
         if mainwindow:
             mainwindow.rebuildShortlist()
 
-worlds    = collections.OrderedDict({})
-_defaults = {}
-_config   = None
+worlds      = collections.OrderedDict({})
+_defaults   = {}
+_config     = None
+worlds_file = os.path.join(prefs.prefs_dir(), 'worlds')
 def Initialize():
     global _config, worlds, _defaults
-    _config = wx.FileConfig(localFilename = '.wxpymoo_worlds')
+    _config = wx.FileConfig(localFilename = worlds_file)
 
     # loop worlds...
     g_more, worldname, g_index = _config.GetFirstGroup()

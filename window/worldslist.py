@@ -169,7 +169,7 @@ class WorldsList(wx.Dialog):
     def Show(self, val = True):
         self.world_picker.Clear()
         for world in worlds: self.world_picker.Append(world)
-        last_world_name = prefs.get('last_world')
+        last_world_name = prefs.get('last_world', '')
         last_world = self.world_picker.FindString(last_world_name)
         # if we no longer have that world, go back to the top of the list
         if last_world < 0:

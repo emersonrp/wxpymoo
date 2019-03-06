@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 import utility
+import os
+from appdirs import user_config_dir
 
 PrefsChangedEvent, EVT_PREFS_CHANGED = wx.lib.newevent.NewEvent()
 
@@ -30,10 +32,17 @@ _defaults   = {
     'theme' : 'ANSI',
 }
 
+def prefs_dir():
+    config_dir = user_config_dir('wxpymoo')
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
+    return config_dir
+
 def Initialize():
     global _config
 
-    _config = wx.FileConfig()
+    config_file = os.path.join(prefs_dir(), 'config')
+    _config = wx.FileConfig(localFilename = config_file)
 
     for default in _defaults.items():
         (key, def_val) = default
@@ -41,12 +50,12 @@ def Initialize():
         if get(key) == None:
             set(key, str(def_val))
 
-def get(key):
+def get(key, default = None):
     val =  _config.Read(key)
     # ugly string -> Boolean handling.  Hope we never have a value actually named "True" or "False"
     if val == "True":  val = True
     if val == "False": val = False
-    if val == ""     : val = None
+    if val == ""     : val = default
     return val
 
 def set(param, val):

@@ -42,22 +42,22 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Start rolling binary packages for all platforms once it's remotely useful to anyone but me.
 * Per-world settings?  Colors, fonts?
 * Finish MCP 2.1 implementation.
-* Object browser, like MacMOOSE but hopefully nicer.
+* MOO object browser, like MacMOOSE but hopefully nicer.
 * Implement "SSH Forwarding" connection type.
 * color theme editor
 * Support more MUD protocols
 * More complete VT100 support
+* Character-mode improvements for non-MOO worlds
 
 ## Blue-sky
 * HTML help, using jtext?
 * MIME-based external apps, ie mplayer for audio/flac etc?  MCP package to accept MIME+data?  dns-com-vmoo-mmedia?
 * inline MOO syntax highlighting?  Like, detect the output of "@list $player:tell" and auto-highlight it?
-* Character-mode?
 
 ## Guiding thoughts
 * Monospaced fonts and line-based terminal output are not mutually incompatible with intuitive, pleasant UIs.
 * There are many wheels out there that have been invented well already.  My MOO client doesn't need its own built-in text editor.  Lather, rinse, repeat.
-* Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?  Who knows?
+* Nobody's living on a shell account on a VMS machine.  The MOO doesn't need to be a black-and-white culdesac.  There are dozens of interesting things a MOO client could do, connected to the 21st-century Internet, that I haven't thought of yet.  Detect chat in a different language and offer to translate?  Tweet you when your friends log on?  Display Google Maps for a MOO that knows how to host that?
 
 ## Contributors
 * [lisdude](https://github.com/lisdude)
@@ -66,6 +66,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 wxpymoo contains:
 * [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt
 * [EnhancedStatusBar](http://xoomer.virgilio.it/infinity77/main/EnhancedStatusBar.html) (c) 2005 Andrea Gavana and Nitro
+* [Feather Icons](https://feathericons.com/) (c) 2013-2017 Cole Bemis
 * The color themes were lovingly lifted from [Terminal Sexy](http://terminal.sexy) by George Czabania
 
 wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by Andrew Wilson.
@@ -78,7 +79,7 @@ wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by 
 * Clone this repo
 * Go to the Python link above, get the latest version of Python
 * Install it
-* Open a terminal, type <code>pip install wxPython</code>
+* Open a terminal, type <code>pip3 install wxPython</code>
 * Double-click "wxpymoo.py" inside the wxpymoo directory
 
 ### Fedora users:
