@@ -36,7 +36,7 @@ class MSPInfo(wx.Dialog):
 
         self.connection = conn
 
-        self.media_ctrls = {}
+        self.players = {}
 
         self.sizer = wx.BoxSizer( wx.VERTICAL )
         self.SetSizer(self.sizer)
@@ -59,14 +59,74 @@ class MSPInfo(wx.Dialog):
 
     def play_sound(self, sound_type, filename, params):
         print(f"MSPInfo going to play {sound_type}, {filename}, {params}")
-        fullpath = os.path.join(self.sound_dir, filename)
-        if not os.path.exists(fullpath):
-            print(f"MSP told to play missing file {fullpath} -- Did you download the sounds for this world?")
-        else:
-            mc = wx.media.MediaCtrl(self, -1, fullpath)
-            self.sizer.Add(mc, 1, wx.EXPAND)
-            self.Fit()
+        player = self.players.get(filename)
+        if not player:
+            player = PlayerPanel(self, filename)
+            self.sizer.Add(player, 0)
             self.Layout()
-            self.media_ctrls[filename] = mc
+            self.sizer.Fit(self)
+            self.players[filename] = player
 
-            mc.Play()
+        player.mc.Play()
+
+class PlayerPanel(wx.Panel):
+    def __init__(self, parent, filename):
+        wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
+
+        fullpath = os.path.join(parent.sound_dir, filename)
+        self.mc = wx.media.MediaCtrl(self, -1, fullpath)
+
+        btn2 = wx.Button(self, -1, "Play")
+        self.Bind(wx.EVT_BUTTON, self.OnPlay, btn2)
+        self.playBtn = btn2
+
+        btn3 = wx.Button(self, -1, "Pause")
+        self.Bind(wx.EVT_BUTTON, self.OnPause, btn3)
+
+        btn4 = wx.Button(self, -1, "Stop")
+        self.Bind(wx.EVT_BUTTON, self.OnStop, btn4)
+
+        slider = wx.Slider(self, -1, 0, 0, 10)
+        self.slider = slider
+        slider.SetMinSize((150, -1))
+        self.Bind(wx.EVT_SLIDER, self.OnSeek, slider)
+
+        # setup the layout
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        #sizer.Add(self.mc, 1, wx.EXPAND)
+        sizer.Add(wx.StaticText(self, label = filename), 0, wx.EXPAND)
+        sizer.Add(slider, 0)
+        sizer.Add(btn2, 0)
+        sizer.Add(btn3, 0)
+        sizer.Add(btn4, 0)
+        self.SetSizer(sizer)
+        sizer.Fit(self)
+
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.OnTimer)
+        self.timer.Start(100)
+
+    def OnPlay(self, evt):
+        if not self.mc.Play():
+            wx.MessageBox("Unable to Play media : Unsupported format?",
+                          "ERROR",
+                          wx.ICON_ERROR | wx.OK)
+        else:
+            self.mc.SetInitialSize()
+            self.GetSizer().Layout()
+            self.slider.SetRange(0, self.mc.Length())
+
+    def OnPause(self, evt):
+        self.mc.Pause()
+
+    def OnStop(self, evt):
+        self.mc.Stop()
+
+    def OnSeek(self, evt):
+        offset = self.slider.GetValue()
+        self.mc.Seek(offset)
+
+    def OnTimer(self, evt):
+        offset = self.mc.Tell()
+        self.slider.SetValue(offset)
+
