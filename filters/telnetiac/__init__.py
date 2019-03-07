@@ -100,6 +100,7 @@ MCCP1 = bytes([85])
 MCCP2 = bytes([86])
 
 # MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
+from window.mspinfo import msp_filter
 MSP = bytes([90])
 
 # MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)
@@ -250,9 +251,10 @@ def handle_iac_will_negotiation(cmd, opt, conn):
                 print("Got IAC WILL MCCP;  Sending IAC DO MCCP")
             conn.output(IAC + answer + opt)
         elif opt == MSP:
-            # TODO - support this eventually
-            print("Got IAC WILL MSP;  Sending IAC DONT MSP")
-            conn.output(IAC + DONT + MSP)
+            print("Got IAC WILL MSP;  Sending IAC DO MSP")
+            conn.output(IAC + DO + MSP)
+            conn.ActivateFeature('MSP')
+            conn.output_pane.register_filter('msp', msp_filter)
         elif opt == ZMP:
             print("Got IAC WILL ZMP;  Sending IAC DONT ZMP")
             conn.output(IAC + DONT + ZMP)
@@ -262,18 +264,18 @@ def handle_iac_will_negotiation(cmd, opt, conn):
             conn.output(IAC + DONT + GMCP)
         elif opt == ECHO:
             print("Got IAC WILL ECHO")
-            conn.iac['ECHO'] = False
+            conn.do_echo = False
         else:
             print("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
     elif cmd == WONT:
         if opt == ECHO:
             print("Got IAC WONT ECHO")
-            conn.iac['ECHO'] = True
+            conn.do_echo = True
         else:
             print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
-    
+
 def handle_iac_subnegotiation(sbdataq, conn):
     payload = deque(sbdataq)
     SB_ID = bytes([payload.popleft()])

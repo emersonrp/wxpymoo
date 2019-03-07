@@ -11,6 +11,7 @@ from window.outputpane import OutputPane, EVT_ROW_COL_CHANGED
 from window.statusbar  import StatusBar
 from window.debugmcp   import DebugMCP
 from window.msspinfo   import MSSPInfo
+from window.mspinfo    import MSPInfo
 
 from mcp21.core import MCPCore
 import prefs
@@ -29,13 +30,16 @@ class Connection(wx.SplitterWindow):
         self.home_url       = ''
         self.help_url       = ''
 
+        self.do_echo = False
+
         self.decompressor = zlib.decompressobj()
 
         # bin for Telnet IAC commands to stash any status info (on/off, etc)
         self.features = set()
         self.feature_init_callback = {
-            'MCP' : self.mcp_init_callback,
+            'MCP'  : self.mcp_init_callback,
             'MSSP' : self.mssp_init_callback,
+            'MSP'  : self.msp_init_callback,
         }
 
         # re-queue stuff for re-processing (ie if we turn on compression)
@@ -203,3 +207,6 @@ class Connection(wx.SplitterWindow):
 
     def mssp_init_callback(self):
         self.mssp_info = MSSPInfo(self)
+
+    def msp_init_callback(self):
+        self.msp_info = MSPInfo(self)
