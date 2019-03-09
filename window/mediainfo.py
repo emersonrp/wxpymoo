@@ -200,7 +200,7 @@ class PlayerPanel(wx.Panel):
         self.priority = 50
         self.current_volume = 100
 
-        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT)
+        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
         if 'volume' in icons:
             btn1.SetBitmap(icons['volume'])
             btn1.SetBitmapPressed(icons['mute'])
@@ -238,17 +238,15 @@ class PlayerPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnStop, btn4)
         btn4.SetToolTip("Stop")
 
-        namelabel = wx.StaticText(self, label = label, style = wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-
         # setup the layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(btn1, 0, wx.ALIGN_CENTER)
-        sizer.Add(namelabel, 1, wx.EXPAND|wx.ALL, 5)
-        sizer.Add(volume_ctrl, 0, wx.ALIGN_CENTER)
-        sizer.Add(seekbar, 0, wx.ALIGN_CENTER)
-        sizer.Add(btn2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-        sizer.Add(btn3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-        sizer.Add(btn4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+        sizer.Add(btn1, 0, wx.ALL, 5)
+        sizer.Add(wx.StaticText(self, label = label, style = wx.ALIGN_RIGHT), 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(volume_ctrl, 0, wx.ALL, 5)
+        sizer.Add(seekbar, 0, wx.ALL, 5)
+        sizer.Add(btn2, 0, wx.ALL, 5)
+        sizer.Add(btn3, 0, wx.ALL, 5)
+        sizer.Add(btn4, 0, wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
 
