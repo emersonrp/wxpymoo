@@ -1,5 +1,6 @@
 import wx
 import wx.media
+import wx.lib.scrolledpanel as scrolled
 import re
 import os, glob, random
 import urllib.request
@@ -45,13 +46,22 @@ class MediaInfo(wx.Dialog):
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 
+        mainwindow = wx.GetApp().GetTopWindow()
+        size = mainwindow.GetSize()
+        #self.SetMaxSize((int(size.GetWidth() * 0.75), int(size.GetHeight() * 0.75)))
+        self.SetMaxSize((800,400))
+
         self.connection = conn
 
         self.players  = {}
         self.base_url = ''
 
-        self.sizer = wx.BoxSizer( wx.VERTICAL )
-        self.SetSizer(self.sizer)
+        self.sp = scrolled.ScrolledPanel(self, -1, size =self.GetMaxSize())
+
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sp.SetSizer(self.sizer)
+        self.sp.SetAutoLayout(1)
+        self.sp.SetupScrolling(scroll_x = False)
 
         self.connection.status_bar.feature_icons['MSP'].Bind(wx.EVT_LEFT_UP, self.toggle_visible)
 
@@ -61,6 +71,14 @@ class MediaInfo(wx.Dialog):
         if not os.path.exists(self.sound_dir):
             print(f"no sound dir, making {self.sound_dir}")
             os.makedirs(self.sound_dir)
+
+    def make_player(self, label, fullpath):
+        player = PlayerPanel(self.sp, label, fullpath)
+        if player:
+            self.sizer.Add(player, 0, wx.EXPAND)
+            self.sizer.Fit(self.sp)
+            self.players[label] = player
+        return player
 
     def toggle_visible(self, evt = None):
         self.Fit()
@@ -168,15 +186,6 @@ class MediaInfo(wx.Dialog):
                 player.SetPriority(int(params['P']))
 
             player.OnPlay()
-
-    def make_player(self, label, fullpath):
-        player = PlayerPanel(self, label, fullpath)
-        if player:
-            self.sizer.Add(player, 0, wx.EXPAND)
-            self.Layout()
-            self.sizer.Fit(self)
-            self.players[label] = player
-        return player
 
 
 class PlayerPanel(wx.Panel):
