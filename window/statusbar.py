@@ -7,10 +7,11 @@ from utility import platform
 
 # get the images once at compile time
 icons = {}
-iconpath = os.path.join(wx.GetApp().path, "icons")
-for icon_file in os.listdir(iconpath):
-    feature, _ = icon_file.split('.')
-    icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
+iconpath = os.path.join(wx.GetApp().path, "icons", "features")
+if os.path.exists(iconpath):
+    for icon_file in os.listdir(iconpath):
+        feature, _ = icon_file.split('.')
+        icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
 
 class StatusBar(ESB.EnhancedStatusBar):
 
