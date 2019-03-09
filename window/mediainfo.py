@@ -1,5 +1,6 @@
 import wx
 import wx.media
+import re
 import os, glob, random
 import urllib.request
 from appdirs import user_config_dir
@@ -11,7 +12,13 @@ backend = {
     'linux'   : wx.media.MEDIABACKEND_GSTREAMER,
 }[platform]
 
-import re
+# get the images once at compile time
+icons = {}
+iconpath = os.path.join(wx.GetApp().path, "icons", "media")
+if os.path.exists(iconpath):
+    for icon_file in os.listdir(iconpath):
+        button, _ = icon_file.split('.')
+        icons[button] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
 
 MSP_TRIGGER = re.compile('!!(SOUND|MUSIC)\((.*)\)\n')
 
@@ -21,7 +28,7 @@ def msp_filter(output_pane, data):
         sound_type = matches.group(1)
         payload    = re.split('\s+', matches.group(2))
 
-        filename = payload.pop()
+        filename = payload.pop(0)
         params = {}
         for param in payload:
             k, v = re.split('=', param)
@@ -49,7 +56,8 @@ class MediaInfo(wx.Dialog):
         self.connection.status_bar.feature_icons['MSP'].Bind(wx.EVT_LEFT_UP, self.toggle_visible)
 
         # make sure there's a sounds dir to spelunk in / download into
-        self.sound_dir = os.path.join(user_config_dir('wxpymoo'),'sounds',worldname)
+        safe_worldname = re.sub('[^\w\-_\. ]', '_', worldname)
+        self.sound_dir = os.path.join(user_config_dir('wxpymoo'),'sounds',safe_worldname)
         if not os.path.exists(self.sound_dir):
             print(f"no sound dir, making {self.sound_dir}")
             os.makedirs(self.sound_dir)
@@ -142,7 +150,23 @@ class MediaInfo(wx.Dialog):
             player = self.players.get(filename) or self.make_player(filename, fullpath)
             if not player: return
 
-            # TODO - parse params and set MediaCtrl appropriately
+            # MSP param parsing
+            if 'V' in params:
+                print(f"Setting Volume to {params['V']}")
+                player.SetVolume(int(params['V']))
+
+            if 'L' in params:
+                print(f"Setting Repeats to {params['L']}")
+                player.SetRepeats(int(params['L']))
+
+            if 'C' in params and sound_type == "MUSIC":
+                print(f"Setting Continue to {params['C']}")
+                player.SetContinue(int((params['C'])))
+
+            if 'P' in params and sound_type == "SOUND":
+                print(f"Setting Priority to {params['P']}")
+                player.SetPriority(int(params['P']))
+
             player.OnPlay()
 
     def make_player(self, label, fullpath):
@@ -156,34 +180,58 @@ class MediaInfo(wx.Dialog):
 
 
 class PlayerPanel(wx.Panel):
+
     def __init__(self, parent, label, fullpath):
-        wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
+        wx.Panel.__init__(self, parent, -1, style = wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
 
         self.mc = wx.media.MediaCtrl(self, -1, szBackend = backend)
         self.play_queued = False
+        self.repeats = 1
+        self.cont = 1
+        self.priority = 50
+        self.current_volume = 100
 
-        btn2 = wx.Button(self, -1, "Play")
+        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
+        if 'volume' in icons:
+            btn1.SetBitmap(icons['volume'])
+            btn1.SetBitmapPressed(icons['mute'])
+        else:                 btn1.SetLabel('Mute')
+        self.Bind(wx.EVT_BUTTON, self.OnMute, btn1)
+
+        volume_ctrl = wx.Slider(self, -1, 0, 0, 100)
+        self.volume_ctrl = volume_ctrl
+        volume_ctrl.SetMinSize((100, -1))
+        self.Bind(wx.EVT_SLIDER, self.OnVol, volume_ctrl)
+
+        seekbar = wx.Slider(self, -1, 0, 0, 10)
+        self.seekbar = seekbar
+        seekbar.SetMinSize((150, -1))
+        self.Bind(wx.EVT_SLIDER, self.OnSeek, seekbar)
+
+        btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
+        if 'play' in icons: btn2.SetBitmap(icons['play'])
+        else:               btn2.SetLabel('Play')
         self.Bind(wx.EVT_BUTTON, self.OnPlay, btn2)
-        self.playBtn = btn2
 
-        btn3 = wx.Button(self, -1, "Pause")
+        btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
+        if 'pause' in icons: btn3.SetBitmap(icons['pause'])
+        else:                btn3.SetLabel('Pause')
         self.Bind(wx.EVT_BUTTON, self.OnPause, btn3)
 
-        btn4 = wx.Button(self, -1, "Stop")
+        btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
+        if 'stop' in icons: btn4.SetBitmap(icons['stop'])
+        else:               btn4.SetLabel('Stop')
         self.Bind(wx.EVT_BUTTON, self.OnStop, btn4)
-
-        slider = wx.Slider(self, -1, 0, 0, 10)
-        self.slider = slider
-        slider.SetMinSize((150, -1))
-        self.Bind(wx.EVT_SLIDER, self.OnSeek, slider)
 
         # setup the layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(btn1, 0, wx.ALL, 5)
         sizer.Add(wx.StaticText(self, label = label, style = wx.ALIGN_RIGHT), 1, wx.EXPAND|wx.ALL, 5)
-        sizer.Add(slider, 0)
-        sizer.Add(btn2, 0)
-        sizer.Add(btn3, 0)
-        sizer.Add(btn4, 0)
+        sizer.Add(volume_ctrl, 0, wx.ALL, 5)
+        sizer.Add(seekbar, 0, wx.ALL, 5)
+        sizer.Add(btn2, 0, wx.ALL, 5)
+        sizer.Add(btn3, 0, wx.ALL, 5)
+        sizer.Add(btn4, 0, wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
 
@@ -198,6 +246,7 @@ class PlayerPanel(wx.Panel):
             return None
 
     def OnLoad(self, evt):
+        self.SetVolume(self.current_volume)
         if self.play_queued:
             self.play_queue = False
             self.OnPlay()
@@ -218,7 +267,10 @@ class PlayerPanel(wx.Panel):
         else:
             self.mc.SetInitialSize()
             self.GetSizer().Layout()
-            self.slider.SetRange(0, self.mc.Length())
+            self.seekbar.SetRange(0, self.mc.Length())
+
+    def OnMute(self, evt):
+        pass
 
     def OnPause(self, evt):
         self.mc.Pause()
@@ -227,10 +279,27 @@ class PlayerPanel(wx.Panel):
         self.mc.Stop()
 
     def OnSeek(self, evt):
-        offset = self.slider.GetValue()
+        offset = self.seekbar.GetValue()
         self.mc.Seek(offset)
+
+    def OnVol(self, evt):
+        volume = self.volume_ctrl.GetValue()
+        self.mc.SetVolume(volume / 100)
 
     def OnTimer(self, evt):
         offset = self.mc.Tell()
-        self.slider.SetValue(offset)
+        self.seekbar.SetValue(offset)
 
+    def SetVolume(self, volume):
+        self.volume_ctrl.SetValue(volume)
+        self.current_volume = volume
+        self.mc.SetVolume(volume / 100)
+
+    def SetRepeats(self, repeats):
+        self.repeats = repeats
+
+    def SetContinue(self, cont):
+        self.cont = cont
+
+    def SetPriority(self, priority):
+        self.priority = priority
