@@ -100,7 +100,7 @@ MCCP1 = bytes([85])
 MCCP2 = bytes([86])
 
 # MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
-from window.mspinfo import msp_filter
+from window.mediainfo import msp_filter
 MSP = bytes([90])
 
 # MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)

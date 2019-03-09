@@ -13,32 +13,28 @@ backend = {
 
 import re
 
-MSP_TRIGGER = re.compile('!!(SOUND|MUSIC)\((.*)\)')
+MSP_TRIGGER = re.compile('!!(SOUND|MUSIC)\((.*)\)\n')
 
 # This sooorta ought to go under filters but no
 def msp_filter(output_pane, data):
-    return_val = ''
+    for matches in re.finditer(MSP_TRIGGER, data):
+        sound_type = matches.group(1)
+        payload    = re.split('\s+', matches.group(2))
 
-    for line in re.split('(\n)', data):
-        matches = MSP_TRIGGER.match(line)
-        if matches:
-            sound_type = matches.group(1)
-            payload    = re.split('\s+', matches.group(2))
+        filename = payload.pop()
+        params = {}
+        for param in payload:
+            k, v = re.split('=', param)
+            params[k] = v
+        output_pane.connection.media_info.play_msp_sound(sound_type, filename, params)
 
-            filename = payload.pop()
-            params = {}
-            for param in payload:
-                k, v = re.split('=', param)
-                params[k] = v
-            output_pane.connection.msp_info.play_sound(sound_type, filename, params)
-        else:
-            return_val += line
-    return return_val
+    return re.sub(MSP_TRIGGER, '', data)
 
-class MSPInfo(wx.Dialog):
+#####################
+class MediaInfo(wx.Dialog):
     def __init__(self, conn):
         worldname = conn.world.get('name')
-        wx.Dialog.__init__(self, conn, title = "MSP Status: " + worldname,
+        wx.Dialog.__init__(self, conn, title = "Media Status: " + worldname,
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 
@@ -54,7 +50,6 @@ class MSPInfo(wx.Dialog):
 
         # make sure there's a sounds dir to spelunk in / download into
         self.sound_dir = os.path.join(user_config_dir('wxpymoo'),'sounds',worldname)
-        print(f"looking for sounds in {self.sound_dir}")
         if not os.path.exists(self.sound_dir):
             print(f"no sound dir, making {self.sound_dir}")
             os.makedirs(self.sound_dir)
@@ -68,8 +63,8 @@ class MSPInfo(wx.Dialog):
     def Close(self):
         self.toggle_visible()
 
-    def play_sound(self, sound_type, filename, params):
-        print(f"MSPInfo going to play {sound_type}, {filename}, {params}")
+    def play_msp_sound(self, sound_type, filename, params):
+        print(f"MediaInfo going to play {sound_type}, {filename}, {params}")
         fullpath = ''
 
         if filename == "Off":
@@ -144,20 +139,24 @@ class MSPInfo(wx.Dialog):
                 print(f"Somehow still don't have a file for MSP sound {filename}, skipping")
                 return
 
-            player = self.players.get(filename)
-            if not player:
-                player = PlayerPanel(self, filename, fullpath)
-                if not player: return
-                self.sizer.Add(player, 0, wx.EXPAND)
-                self.Layout()
-                self.sizer.Fit(self)
-                self.players[filename] = player
+            player = self.players.get(filename) or self.make_player(filename, fullpath)
+            if not player: return
 
             # TODO - parse params and set MediaCtrl appropriately
             player.OnPlay()
 
+    def make_player(self, label, fullpath):
+        player = PlayerPanel(self, label, fullpath)
+        if player:
+            self.sizer.Add(player, 0, wx.EXPAND)
+            self.Layout()
+            self.sizer.Fit(self)
+            self.players[label] = player
+        return player
+
+
 class PlayerPanel(wx.Panel):
-    def __init__(self, parent, filename, fullpath):
+    def __init__(self, parent, label, fullpath):
         wx.Panel.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
 
         self.mc = wx.media.MediaCtrl(self, -1, szBackend = backend)
@@ -180,7 +179,7 @@ class PlayerPanel(wx.Panel):
 
         # setup the layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(wx.StaticText(self, label = filename, style = wx.ALIGN_RIGHT), 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(wx.StaticText(self, label = label, style = wx.ALIGN_RIGHT), 1, wx.EXPAND|wx.ALL, 5)
         sizer.Add(slider, 0)
         sizer.Add(btn2, 0)
         sizer.Add(btn3, 0)
@@ -194,8 +193,7 @@ class PlayerPanel(wx.Panel):
 
         self.Bind(wx.media.EVT_MEDIA_LOADED, self.OnLoad)
 
-        woot = self.mc.Load(fullpath)
-        if not woot:
+        if not self.mc.Load(fullpath):
             print(f"Can't find sound file {fullpath} - did you download the sound files for this world?")
             return None
 

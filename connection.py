@@ -11,7 +11,7 @@ from window.outputpane import OutputPane, EVT_ROW_COL_CHANGED
 from window.statusbar  import StatusBar
 from window.debugmcp   import DebugMCP
 from window.msspinfo   import MSSPInfo
-from window.mspinfo    import MSPInfo
+from window.mediainfo  import MediaInfo
 
 from mcp21.core import MCPCore
 import prefs
@@ -209,4 +209,4 @@ class Connection(wx.SplitterWindow):
         self.mssp_info = MSSPInfo(self)
 
     def msp_init_callback(self):
-        self.msp_info = MSPInfo(self)
+        self.media_info = MediaInfo(self)
