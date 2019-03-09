@@ -57,7 +57,7 @@ class MediaInfo(wx.Dialog):
 
         # make sure there's a sounds dir to spelunk in / download into
         safe_worldname = re.sub('[^\w\-_\. ]', '_', worldname)
-        self.sound_dir = os.path.join(user_config_dir('wxpymoo'),'sounds',safe_worldname)
+        self.sound_dir = os.path.join(user_config_dir('wxpymoo'),'sounds', safe_worldname)
         if not os.path.exists(self.sound_dir):
             print(f"no sound dir, making {self.sound_dir}")
             os.makedirs(self.sound_dir)
@@ -191,47 +191,55 @@ class PlayerPanel(wx.Panel):
         self.priority = 50
         self.current_volume = 100
 
-        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
+        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT)
         if 'volume' in icons:
             btn1.SetBitmap(icons['volume'])
             btn1.SetBitmapPressed(icons['mute'])
         else:                 btn1.SetLabel('Mute')
         self.Bind(wx.EVT_BUTTON, self.OnMute, btn1)
+        btn1.SetToolTip("Mute")
 
         volume_ctrl = wx.Slider(self, -1, 0, 0, 100)
         self.volume_ctrl = volume_ctrl
         volume_ctrl.SetMinSize((100, -1))
         self.Bind(wx.EVT_SLIDER, self.OnVol, volume_ctrl)
+        volume_ctrl.SetToolTip("Volume")
 
         seekbar = wx.Slider(self, -1, 0, 0, 10)
         self.seekbar = seekbar
         seekbar.SetMinSize((150, -1))
         self.Bind(wx.EVT_SLIDER, self.OnSeek, seekbar)
+        seekbar.SetToolTip("Seek")
 
         btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
         if 'play' in icons: btn2.SetBitmap(icons['play'])
         else:               btn2.SetLabel('Play')
         self.Bind(wx.EVT_BUTTON, self.OnPlay, btn2)
+        btn2.SetToolTip("Play")
 
         btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
         if 'pause' in icons: btn3.SetBitmap(icons['pause'])
         else:                btn3.SetLabel('Pause')
         self.Bind(wx.EVT_BUTTON, self.OnPause, btn3)
+        btn3.SetToolTip("Pause")
 
         btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
         if 'stop' in icons: btn4.SetBitmap(icons['stop'])
         else:               btn4.SetLabel('Stop')
         self.Bind(wx.EVT_BUTTON, self.OnStop, btn4)
+        btn4.SetToolTip("Stop")
+
+        namelabel = wx.StaticText(self, label = label, style = wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
 
         # setup the layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(btn1, 0, wx.ALL, 5)
-        sizer.Add(wx.StaticText(self, label = label, style = wx.ALIGN_RIGHT), 1, wx.EXPAND|wx.ALL, 5)
-        sizer.Add(volume_ctrl, 0, wx.ALL, 5)
-        sizer.Add(seekbar, 0, wx.ALL, 5)
-        sizer.Add(btn2, 0, wx.ALL, 5)
-        sizer.Add(btn3, 0, wx.ALL, 5)
-        sizer.Add(btn4, 0, wx.ALL, 5)
+        sizer.Add(btn1, 0, wx.ALIGN_CENTER)
+        sizer.Add(namelabel, 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(volume_ctrl, 0, wx.ALIGN_CENTER)
+        sizer.Add(seekbar, 0, wx.ALIGN_CENTER)
+        sizer.Add(btn2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+        sizer.Add(btn3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+        sizer.Add(btn4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
         self.SetSizer(sizer)
         sizer.Fit(self)
 
