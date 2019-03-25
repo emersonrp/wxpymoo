@@ -81,7 +81,7 @@ class OutputPane(BasePane):
     def on_url_click(self, evt):
         url = evt.GetString()
         wx.BeginBusyCursor()
-        if not re.match(r'^https?://', url):
+        if not re.match(r'^https?://', url, re.I):
             url = "http://" + url
         webbrowser.open(url)
         wx.EndBusyCursor()
