@@ -4,7 +4,6 @@ import wx
 import os, sys
 from wxasync import WxAsyncApp
 import asyncio
-from asyncio.events import get_event_loop
 
 def run():
     app = WxAsyncApp()
@@ -23,8 +22,7 @@ def run():
     frame = Main(None, "wxpymoo")
     frame.Show(True)
 
-    loop = get_event_loop()
-    loop.run_until_complete(app.MainLoop())
+    app.loop.run_until_complete(app.MainLoop())
 
 if __name__ == "__main__":
     run()
