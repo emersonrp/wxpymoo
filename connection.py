@@ -142,20 +142,56 @@ class Connection(wx.SplitterWindow):
             self.reader, self.writer = await asyncio.wait_for(
                 asyncio.open_connection(host, port, ssl = (conntype == "SSL")),
                 timeout = 15)
+            message = ""
+        except asyncio.CancelledError:
+            raise
+        except OSError as inst:
+            message = f"Connection to {host}:{port} failed - {inst}"
+        except ConnectionRefusedError:
+            message = f"Connection to {host}:{port} failed - connection refused"
+        except asyncio.TimeoutError:
+            message = f"Connection to {host}:{port} timed out."
         except Exception as inst:
-            self.Close()
-            message = "Connection error: " + str(inst)
-            if inst.__class__ == asyncio.TimeoutError:
-                message = "Connection to " + host + ":" + str(port) + " timed out."
-            else:
-                print("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
-            wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
-            return
+            message = f"Connection error: {inst}"
+            print(f"DEBUG: Connection Exception {inst.__class__} {inst}")
         finally:
+            if message:
+                self.Close()
+                wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
+                return
             wx.EndBusyCursor()
 
         if conntype == "SSL":
             self.ActivateFeature('SSL')
+
+
+
+
+
+
+
+
+
+        from window.mediainfo import msp_filter
+        self.ActivateFeature('MSP')
+        self.output_pane.register_filter('msp', msp_filter)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         self.connect_time = time.time()
 

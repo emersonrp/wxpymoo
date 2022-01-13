@@ -45,3 +45,21 @@ URL_REGEX = re.compile(r"""(
 )
 )""", re.VERBOSE)
 
+def status_message(mess, status):
+    code = status_codes.get(status) or status_codes.get('info')
+    return f"{gr}[{code}{gr}] {mess}"
+
+
+gr = "\033[38;5;240m"
+rd = "\033[32m"
+wh = "\033[37m"
+bl = "\033[34m"
+ye = "\033[33m"
+status_codes = {
+    'info'  : f"{wh}  INF  ",
+    'inf'   : f"{wh}  INF  ",
+    'error' : f"{rd} ERROR ",
+    'debug' : f"{gr} DEBUG ",
+    'mcp'   : f"{bl}  MCP  ",
+    'iac'   : f"{gr}  IAC  ",
+}
