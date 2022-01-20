@@ -95,6 +95,10 @@ class Connection(wx.SplitterWindow):
         tabindex = self.mainwindow.tabs.GetPageIndex(self)
         self.mainwindow.tabs.SetPageText(tabindex, text)
 
+    def GetTitle(self):
+        tabindex = self.mainwindow.tabs.GetPageIndex(self)
+        return self.mainwindow.tabs.GetPageText(tabindex)
+
     def UpdateStatus(self):
         self.status_bar.LayoutWidgets()
 
