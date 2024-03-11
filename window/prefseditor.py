@@ -94,9 +94,9 @@ class PrefsEditor(wx.Dialog):
             fcp.theme_picker.Disable()
 
         ansi_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        ansi_sizer.Add(fcp.ansi_checkbox,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
-        ansi_sizer.Add(fcp.ansi_blink_checkbox, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
-        ansi_sizer.Add(fcp.theme_picker,        0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER)
+        ansi_sizer.Add(fcp.ansi_checkbox,       0, wx.ALL|wx.EXPAND)
+        ansi_sizer.Add(fcp.ansi_blink_checkbox, 0, wx.ALL|wx.EXPAND)
+        ansi_sizer.Add(fcp.theme_picker,        0, wx.ALL|wx.EXPAND)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         panel_sizer.Add(fcp.sample,  0, wx.RIGHT|wx.LEFT|wx.EXPAND|wx.TOP, 10)
