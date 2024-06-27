@@ -165,7 +165,7 @@ class OutputPane(BasePane):
                 wx.Bell();
 
             # chop the text into text, ansi, text, ansi....
-            bits = re.split('\033\[(\d+(?:;\d+)*)m', text)
+            bits = re.split(r'\033\[(\d+(?:;\d+)*)m', text)
 
             for idx, bit in enumerate(bits):
                 # if we're on the last bit, check whether it might be a partial ANSI blob
@@ -384,7 +384,7 @@ class OutputPane(BasePane):
             if self.localedit_contents:
                 line = line.rstrip()
                 self.localedit_contents.append(line)
-                if re.match('\.$', line):
+                if re.match(r'\.$', line):
                     self.send_localedit_to_editor()
                     self.localedit_contents = None
             else:

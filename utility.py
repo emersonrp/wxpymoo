@@ -15,8 +15,7 @@ QUOTE_PREFIX = re.compile(r'^#\$"', re.MULTILINE)
 
 # This regex adapted from one found at
 # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-URL_REGEX = re.compile(r"""(
-(?xi)
+URL_REGEX = re.compile(r"""(?xi:
 \b
 (?:
     (?:

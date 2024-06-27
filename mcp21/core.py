@@ -19,8 +19,8 @@ import utility
 raw_re = re.compile(r'([-_*a-z0-9]+):\s+((?:"[^"]*")|(?:[-a-z0-9~`!@#$%^&*()=+{}[\]\|\';?/><.,])+)')
 
 def _version_cmp(v1, v2):
-    v1_maj, v1_min = re.split('\.', v1)
-    v2_maj, v2_min = re.split('\.', v2)
+    v1_maj, v1_min = re.split(r'\.', v1)
+    v2_maj, v2_min = re.split(r'\.', v2)
 
     return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min));
 
@@ -148,20 +148,20 @@ class MCPCore:
 
         if not raw: return
 
-        first = re.split('\s+', raw)[0]
+        first = re.split(r'\s+', raw)[0]
 
         message = Message()
 
-        if not re.search(':$', first):
+        if not re.search(r':$', first):
             message.auth_key = first
-            first_re = '^' + re.escape(first) + '\s+'
+            first_re = r'^' + re.escape(first) + r'\s+'
             raw = re.sub(first_re, '', raw)
 
         keyvals = re.findall(raw_re, raw)
 
         for keyval in keyvals:
             keyword, value = keyval
-            m = re.match('^(.+)(\*)', keyword)
+            m = re.match(r'^(.+)(\*)', keyword)
             if m:
                 keyword, splat = m.group(1,2)
 
