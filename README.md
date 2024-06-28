@@ -41,7 +41,8 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 * Pondering schemes to scrape online MOO lists to offer suggestions. (70% done)
 * Start rolling binary packages for all platforms once it's remotely useful to anyone but me.
 * Per-world settings?  Colors, fonts?
-* Finish MCP 2.1 implementation.
+* Finish implementation of MCP 2.1 and the various supported packages.
+* More MCP packages as I find them.
 * MOO object browser, like MacMOOSE but hopefully nicer.
 * Implement "SSH Forwarding" connection type.
 * color theme editor
@@ -65,15 +66,15 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 ## Credits
 wxpymoo contains:
 * [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt
-* [EnhancedStatusBar](http://xoomer.virgilio.it/infinity77/main/EnhancedStatusBar.html) (c) 2005 Andrea Gavana and Nitro
+* EnhancedStatusBar (c) 2005 Andrea Gavana and Nitro
 * [Feather Icons](https://feathericons.com/) (c) 2013-2017 Cole Bemis
 * The color themes were lovingly lifted from [Terminal Sexy](http://terminal.sexy) by George Czabania
 
 wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by Andrew Wilson.
 
 ## Dependencies
-* [Python](http://www.python.org) 3.8
-* [wxPython](http://www.wxpython.org) 4.0.4+
+* [Python](http://www.python.org) 3.11
+* [wxPython](http://www.wxpython.org) 4.2.1+
 
 ### Windows / Mac users:
 * Clone this repo
@@ -82,3 +83,7 @@ wxpymoo owes a great debt to [tkMOO-light](http://www.awns.com/tkMOO-light/) by 
 * Open a terminal, type <code>pip3 install wxPython</code>
 * Double-click "wxpymoo.py" inside the wxpymoo directory
 
+### Linux / etc users:
+* Clone this repo
+* install the latest version of python3 and of wxpython from your distribution
+* Either run ./wxpymoo.py from a terminal or double-click it in your file manager
