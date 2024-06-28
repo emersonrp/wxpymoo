@@ -38,7 +38,7 @@ class OutputPane(BasePane):
 
         # output filters can register themselves
         self.filters = [self.lm_localedit_filter]
-        self.localedit_contents = None
+        self.localedit_contents = []
 
         # "holding bin" for line-based filters to enqueue partial lines
         self.global_queue = ''
@@ -102,8 +102,8 @@ class OutputPane(BasePane):
         # TODO - "if preferences dictate, send @linelength to self.connection"
 
     ######################################
-    def WriteText(self, rest):
-        super(OutputPane, self).WriteText(rest)
+    def WriteText(self, text):
+        super(OutputPane, self).WriteText(text)
         self.ScrollIfAppropriate()
         if self.is_scrolled_back:
             self.connection.status_bar.StartBlinker()
@@ -160,7 +160,7 @@ class OutputPane(BasePane):
             # snip and ring bells
             # TODO -- "if beep is enabled in the prefs"
             text, count = re.subn("\007", '', text)
-            for b in range(0, count):
+            for _ in range(0, count):
                 print("DEBUG: found an ANSI beep")
                 wx.Bell();
 
@@ -386,7 +386,7 @@ class OutputPane(BasePane):
                 self.localedit_contents.append(line)
                 if re.match(r'\.$', line):
                     self.send_localedit_to_editor()
-                    self.localedit_contents = None
+                    self.localedit_contents = []
             else:
                 # Check for precisely "#$# edit name: xxxxxx upload: xxxxx"
                 if LOCALEDIT_LINE.match(line):
@@ -403,21 +403,24 @@ class OutputPane(BasePane):
     def send_localedit_to_editor(self):
         invocation = self.localedit_contents[0]
         matches = LOCALEDIT_LINE.match(invocation)
-        name    = matches.group(1)
-        upload  = matches.group(2)
-        self.localedit_contents[0] = upload
+        if matches:
+            name    = matches.group(1)
+            upload  = matches.group(2)
+            self.localedit_contents[0] = upload
 
-        if re.match('@program', upload):
-            type = "moo-code"
+            if re.match('@program', upload):
+                type = "moo-code"
+            else:
+                type = "text"
+
+            editor = Editor({
+                'reference': name,
+                'filetype' : type,
+                'content'  : self.localedit_contents,
+                'callback' : self._send_file
+            })
         else:
-            type = "text"
-
-        editor = Editor({
-            'reference': name,
-            'filetype' : type,
-            'content'  : self.localedit_contents,
-            'callback' : self._send_file
-        })
+            wx.LogError("No matches in localedit_contents, in outputpane.send_localedit_to_editor")
 
     def _send_file(self, id, content):
         for l in content:

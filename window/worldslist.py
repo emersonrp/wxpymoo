@@ -166,7 +166,7 @@ class WorldsList(wx.Dialog):
 
         self.show_fields_if_appropriate()
 
-    def Show(self, val = True):
+    def Show(self, show = True):
         self.world_picker.Clear()
         for world in worlds: self.world_picker.Append(world)
         last_world_name = prefs.get('last_world', '')
@@ -179,10 +179,10 @@ class WorldsList(wx.Dialog):
         self.world_picker.SetSelection(last_world)
         self.fill_thyself()
 
-        super(WorldsList, self).Show(val)
+        super(WorldsList, self).Show(show)
 
 
-    def select_world(self, evt):
+    def select_world(self, _):
         self.fill_thyself()
 
     # TODO - make wxpymoo.World have a notion of "connect to yourself"
@@ -229,7 +229,7 @@ class WorldsList(wx.Dialog):
 
 
 
-    def on_reset(self, evt):
+    def on_reset(self, _):
         # repopulate with the data from the World as last saved
         self.fill_thyself()
 
@@ -240,7 +240,7 @@ class WorldsList(wx.Dialog):
 
         if worlds.get(worldname) == None:
             worlds[worldname] = World({ "name" : worldname })
-            new_world = self.world_picker.Append(worldname)
+            self.world_picker.Append(worldname)
             self.world_picker.SetSelection(self.world_picker.FindString(worldname))
             self.fill_thyself()
         else:

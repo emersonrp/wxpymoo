@@ -41,12 +41,14 @@ class Connection(wx.SplitterWindow):
         # re-queue stuff for re-processing (ie if we turn on compression)
         self.filter_queue = b''
 
-        self.reader = self.writer = None
+        self.reader = None
+        self.writer = None
 
         self.input_pane  = InputPane(self, self)
         self.output_pane = OutputPane(self, self)
         self.status_bar  = StatusBar(mainwindow, self)
         self.mainwindow  = mainwindow
+        self.debug_mcp   = None
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)

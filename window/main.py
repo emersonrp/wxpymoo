@@ -1,4 +1,5 @@
 import wx
+import wx.aui
 import wx.adv
 from connection import Connection
 from window.connectdialog import ConnectDialog

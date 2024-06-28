@@ -43,7 +43,7 @@ class Editor(wx.EvtHandler):
         self.Bind(wx.EVT_TIMER, self._send_file_if_needed, self.watchTimer)
 
     def runEditor(self):
-        cmd = re.split(' +', prefs.get('external_editor'))
+        cmd = re.split(r' +', prefs.get('external_editor'))
         cmd.append(self.tmpfilename)
 
         # block the thread while the editor runs...
@@ -68,11 +68,11 @@ class Editor(wx.EvtHandler):
 
     ###################
     # Try this:
-    def alternative_plan(filepath):
-        import subprocess, os
+    def alternative_plan(self, filepath):
+        import subprocess, os, sys
         if sys.platform.startswith('darwin'):
             subprocess.call(('open', filepath))
         elif os.name == 'nt':
-            os.startfile(filepath)
+            os.startfile(filepath, 'edit')
         elif os.name == 'posix':
             subprocess.call(('xdg-open', filepath))

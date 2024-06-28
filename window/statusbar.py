@@ -1,9 +1,7 @@
 import wx
 import os
-import prefs
-import datetime, time
+import time
 import EnhancedStatusBar as ESB
-from utility import platform
 
 # get the images once at compile time
 icons = {}
@@ -51,13 +49,12 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.SetFieldsCount(6)
         #self.SetStatusStyles([wx.SB_RAISED, wx.SB_NORMAL, wx.SB_NORMAL, wx.SB_NORMAL])
 
-        self.AddWidget(self.status_field  , horizontalalignment = ESB.ESB_EXACT_FIT)  ,
+        self.AddWidget(self.status_field  , horizontalalignment = ESB.ESB_EXACT_FIT)
         self.AddWidget(self.feature_tray  , horizontalalignment = ESB.ESB_ALIGN_RIGHT , verticalalignment = ESB.ESB_EXACT_FIT)
         self.AddWidget(self.conn_time     , horizontalalignment = ESB.ESB_EXACT_FIT)
         self.AddWidget(self.conn_status   , horizontalalignment = ESB.ESB_EXACT_FIT)
         self.AddWidget(self.activity_blinker, horizontalalignment = ESB.ESB_EXACT_FIT)
         self.AddWidget(self.spacer        , horizontalalignment = ESB.ESB_EXACT_FIT)
-
 
         self.update_timer = wx.CallLater(1000, self.UpdateConnectionStatus)
         self.status_timer = None
@@ -67,7 +64,7 @@ class StatusBar(ESB.EnhancedStatusBar):
         if self.update_timer and self.update_timer.IsRunning():  self.update_timer.Stop()
         if self.status_timer and self.status_timer.IsRunning():  self.status_timer.Stop()
 
-    def UpdateConnectionStatus(self, evt = None):
+    def UpdateConnectionStatus(self, _ = None):
         self.update_timer.Restart(1000)
         conn = self.connection
 
@@ -150,9 +147,9 @@ class FeatureIcon(wx.Panel):
         self.SetToolTip(i + " enabled")
 
     # Bind mouse events to the bitmaps inside the panel, add "hand" cursor
-    def Bind(self, evt, handler):
-        if evt == wx.EVT_LEFT_UP:
+    def Bind(self, event, handler, source = None, id = wx.ID_ANY, id2 = wx.ID_ANY):
+        if event == wx.EVT_LEFT_UP:
             self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             for c in self.GetChildren():
-                c.Bind(evt, handler)
-        super(FeatureIcon, self).Bind(evt, handler)
+                c.Bind(event, handler)
+        super(FeatureIcon, self).Bind(event, handler, source, id, id2)
