@@ -80,13 +80,13 @@ class MCPCore:
             # the prefix #$" removed.  Any other received network line translates to an
             # in-band line consisting of exactly the same characters.
 
-            line, matches = utility.QUOTE_PREFIX.subn('', line)  # did we have the quote prefix?
+            line, matches = utility.QUOTE_PREFIX.subn('', line)  # did we have the #$" quote prefix?
             if matches > 0:
                 return_val += line + "\n" # we did, and removed it.  Add the line
                 line, p, rest = rest.partition('\n')
                 continue
 
-            line, matches = utility.OOB_PREFIX.subn('', line) # did we have the oob prefix?
+            line, matches = utility.OOB_PREFIX.subn('', line) # did we have the #$# oob prefix?
             if matches == 0:
                 return_val += line + "\n" # we did not, so add the line and bail
                 line, p, rest = rest.partition('\n')

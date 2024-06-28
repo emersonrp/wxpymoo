@@ -3,16 +3,13 @@ import os
 import time
 import EnhancedStatusBar as ESB
 
-# get the images once at compile time
-icons = {}
-
 class StatusBar(ESB.EnhancedStatusBar):
-
     def __init__(self, parent, connection):
         ESB.EnhancedStatusBar.__init__(self, parent)
         self.parent = parent
         self.connection = connection
 
+        icons = {}
         iconpath = os.path.join(wx.GetApp().path, "icons", "features")
         if os.path.exists(iconpath):
             for icon_file in os.listdir(iconpath):

@@ -1,6 +1,5 @@
 import wx
-import prefs
-import threading, tempfile, subprocess, os, re
+import tempfile, os, re
 
 class Editor(wx.EvtHandler):
     def __init__(self, opts):
@@ -34,8 +33,7 @@ class Editor(wx.EvtHandler):
         self._last_sent = os.stat(self.tmpfilename).st_mtime
 
         # hands are off now, start the editor
-        thread = threading.Thread(target = self.runEditor)
-        thread.start()
+        self.runEditor()
 
         # We run a timer to check the file a few times a second so that a
         # "save" will send, even without a "quit" attached.
@@ -43,14 +41,21 @@ class Editor(wx.EvtHandler):
         self.Bind(wx.EVT_TIMER, self._send_file_if_needed, self.watchTimer)
 
     def runEditor(self):
+        self.Bind(wx.EVT_END_PROCESS, self.OnProcessEnded)
+
         _config = wx.ConfigBase.Get()
         cmd = re.split(r' +', _config.Read('external_editor'))
         cmd.append(self.tmpfilename)
 
-        # block the thread while the editor runs...
-        subprocess.Popen(cmd).wait()
+        # launch the editor and capture the pid
+        self.process = wx.Process(self)
+        self.pid = wx.Execute(' '.join(cmd), wx.EXEC_ASYNC, self.process)
+        wx.LogMessage(f"Launched external editor as pid {self.pid}")
 
-        # ...then send it once the editor exits...
+    def OnProcessEnded(self, _):
+        wx.LogMessage(f"External editor pid {self.pid} exited.")
+
+        # ...send it once the editor exits...
         self._send_file_if_needed(None)
 
         # ...and remove the temp file.
@@ -58,7 +63,7 @@ class Editor(wx.EvtHandler):
 
         self.watchTimer.Stop()
 
-    def _send_file_if_needed(self, evt):
+    def _send_file_if_needed(self, _):
         mtime = os.stat(self.tmpfilename).st_mtime
         if not mtime: print("wtf is wrong with file?!?")
         if mtime > self._last_sent:
@@ -69,11 +74,11 @@ class Editor(wx.EvtHandler):
 
     ###################
     # Try this:
-    def alternative_plan(self, filepath):
-        import subprocess, os, sys
-        if sys.platform.startswith('darwin'):
-            subprocess.call(('open', filepath))
-        elif os.name == 'nt':
-            os.startfile(filepath, 'edit')
-        elif os.name == 'posix':
-            subprocess.call(('xdg-open', filepath))
+#    def alternative_plan(self, filepath):
+#        import subprocess, os, sys
+#        if sys.platform.startswith('darwin'):
+#            subprocess.call(('open', filepath))
+#        elif os.name == 'nt':
+#            os.startfile(filepath, 'edit')
+#        elif os.name == 'posix':
+#            subprocess.call(('xdg-open', filepath))
