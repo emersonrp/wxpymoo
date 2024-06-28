@@ -1,6 +1,8 @@
 import wx
 import os
 import time
+import sys
+from pathlib import Path
 import EnhancedStatusBar as ESB
 
 class StatusBar(ESB.EnhancedStatusBar):
@@ -10,7 +12,12 @@ class StatusBar(ESB.EnhancedStatusBar):
         self.connection = connection
 
         icons = {}
-        iconpath = os.path.join(wx.GetApp().path, "icons", "features")
+        if hasattr(sys, '_MEIPASS'):
+            path = Path(sys._MEIPASS) # pyright: ignore
+        else:
+            path = Path(wx.GetApp().path)
+
+        iconpath = os.path.join(path, "icons", "features")
         if os.path.exists(iconpath):
             for icon_file in os.listdir(iconpath):
                 feature, _ = icon_file.split('.')

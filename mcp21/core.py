@@ -1,5 +1,6 @@
 import wx
-import re, random, os, importlib
+import re, random, os, importlib, sys
+from pathlib import Path
 import utility
 
 # This module was developed by squinting directly at both the MCP spec
@@ -41,7 +42,10 @@ class MCPCore:
         # walk the packages directory, and instantiate everything we find there.
         # this relies on each package having a class called "MCPPackage" that's a
         # sane and correct subclass of MCPPackageBase.
-        path = wx.GetApp().path
+        if hasattr(sys, '_MEIPASS'):
+            path = Path(sys._MEIPASS) # pyright: ignore
+        else:
+            path = Path(wx.GetApp().path)
         for package_file in os.listdir(os.path.join(path, 'mcp21', 'package')):
             if package_file == "__pycache__": continue
             package, ext = package_file.split('.')

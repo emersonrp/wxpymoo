@@ -3,6 +3,9 @@ import re
 import os
 import collections
 import prefs
+import json
+import sys
+from pathlib import Path
 
 class World(dict):
 
@@ -39,40 +42,43 @@ worlds      = collections.OrderedDict({})
 _defaults   = {}
 def Initialize():
     global worlds, _defaults
-    _config = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
+    worldsconfig = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
 
     # loop worlds...
-    g_more, worldname, g_index = _config.GetFirstGroup()
+    g_more, worldname, g_index = worldsconfig.GetFirstGroup()
     if g_more:  # do we have anything at all from the config file?
         while g_more: # yes, loop and fill stuff out.
 
             # TODO - enumerate what the various keys might be and use Read() ReadBool() etc as appropriate
-            _config.SetPath(worldname)
+            worldsconfig.SetPath(worldname)
 
             worlddata = {}
 
             # loop data lines inside each world....
-            e_more, dataname, e_index = _config.GetFirstEntry()
+            e_more, dataname, e_index = worldsconfig.GetFirstEntry()
             while e_more:
-                worlddata[dataname] = _config.Read(dataname)
+                worlddata[dataname] = worldsconfig.Read(dataname)
                 # ew boolean handling.  Maybe go thru prefs to do this in one place
                 if worlddata[dataname] == "True" : worlddata[dataname] = True
                 if worlddata[dataname] == "False": worlddata[dataname] = False
-                e_more, dataname, e_index = _config.GetNextEntry(e_index)
+                e_more, dataname, e_index = worldsconfig.GetNextEntry(e_index)
 
             # build the World object
             worlds[worlddata['name']] = World(worlddata)
 
             # carry on, back to the top for the next world
-            _config.SetPath('/')
-            g_more, worldname, g_index = _config.GetNextGroup(g_index)
+            worldsconfig.SetPath('/')
+            g_more, worldname, g_index = worldsconfig.GetNextGroup(g_index)
 
     else:  # nothing from config file, grab the initial_worlds data
-        import json
-        path = wx.GetApp().path
+        if hasattr(sys, '_MEIPASS'):
+            path = Path(sys._MEIPASS) # pyright: ignore
+        else:
+            path = Path(wx.GetApp().path)
+
         initial_worlds = []
         try:
-            initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
+            initial_worlds = json.load(open(path / 'initial_worlds.json','r'))
         except Exception as e:
             wx.LogError(f"initial_worlds.json file could not be loaded: {e}")
 
