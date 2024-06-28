@@ -1,9 +1,9 @@
 import wx
 import wx.richtext as rtc
+import platform
 import prefs
 import re
 from window.basepane import BasePane
-from utility import platform
 from theme import Theme
 
 class InputPane(BasePane):
@@ -47,16 +47,16 @@ class InputPane(BasePane):
         self.SetContextMenu(menu)
 
     def paste_from_selection(self, evt = None):
-        uxcp = prefs.get('use_x_copy_paste')
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+        uxcp = wx.ConfigBase.Get().ReadBool('use_x_copy_paste')
+        if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Paste()
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
+        if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(False)
 
     def copy_from_selection(self, evt = None):
-        uxcp = prefs.get('use_x_copy_paste')
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+        uxcp = wx.ConfigBase.Get().ReadBool('use_x_copy_paste')
+        if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
-        if uxcp and platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
+        if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(False)
 
     ### HANDLERS
     def send_to_connection(self, evt):
@@ -65,7 +65,7 @@ class InputPane(BasePane):
             self.cmd_history.add(stuff)
             self.connection.output(stuff + "\n")
             self.Clear()
-            if prefs.get('local_echo') and (not 'ECHO' in self.connection.iac or self.connection.iac['ECHO'] == True):
+            if wx.ConfigBase.Get().ReadBool('local_echo') and (not 'ECHO' in self.connection.iac or self.connection.iac['ECHO'] == True):
                 self.connection.output_pane.display(">" + stuff + "\n")
 
     def check_for_interesting_keystrokes(self, evt):
@@ -112,7 +112,7 @@ class InputPane(BasePane):
             return
 
         # Cmd-[#] to switch directly to a tab -- includes 1234567890-= keys
-        # this is a little confusing because the tab indices are zero-based, so 
+        # this is a little confusing because the tab indices are zero-based, so
         # we want key [1] to turn into a 0.
         elif evt.CmdDown() and (k in (49,50,51,52,53,54,55,56,57,48,45,61)):
 
@@ -319,14 +319,14 @@ class TabCompletion(wx.PopupWindow):
                     w = w + 15
 
                 adj = 1
-                if platform == "windows": adj = 10
+                if platform.system() == "Windows": adj = 10
                 self.SetSize((w + adj, avail_height))
                 self.Layout()
 
                 # find the x and y location to pop up the menu
                 x_pos, y_pos = self.parent.ClientToScreen((-2,-5))
 
-                # temporarily move the cursor back to begin_pos so we can 
+                # temporarily move the cursor back to begin_pos so we can
                 # find out where, along the 'x' axis, the text being completed
                 # actually begins
                 self.parent.SetInsertionPoint(int(begin_pos))
@@ -353,7 +353,7 @@ class CompletionList(wx.ListCtrl):
         self.SetTextColour(Theme.fetch().get('foreground'))
         self.SetBackgroundColour(Theme.fetch().get('background'))
 
-        font = wx.Font(prefs.get('font'))
+        font = wx.Font(wx.ConfigBase.Get().Read('font'))
         self.SetFont(font)
 
         self.Bind(wx.EVT_KEY_DOWN,   self.parent.parent.check_for_interesting_keystrokes )

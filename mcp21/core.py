@@ -97,42 +97,55 @@ class MCPCore:
 
             m = re.match(r'(\S+)\s*(.*)', line)
 
-            message_name, payload = m.group(1,2)
-            # if we haven't started yet, and the message isn't a startup negotiation...
-            if not (not self.mcp_active and message_name != 'mcp'):
+            if m:
+                message_name, payload = m.group(1,2)
+                # if we haven't started yet, and the message isn't a startup negotiation...
+                if not (not self.mcp_active and message_name != 'mcp'):
 
-                # multiline message handling.  This is awful.
-                if message_name == '*':
-                    m = re.match(r'^(\S*) ([^:]*): ?(.*)', payload)
-                    tag, field, value = m.group(1,2,3)
+                    message = None
+                    # multiline message handling.  This is awful.
+                    if message_name == '*':
+                        m = re.match(r'^(\S*) ([^:]*): ?(.*)', payload)
+                        if m:
+                            tag, field, value = m.group(1,2,3)
 
-                    message = self.multiline_messages[tag]
-                    message._data_tag = tag
+                            message = self.multiline_messages[tag]
+                            message._data_tag = tag
 
-                    if not field in message.data: message.data[field] = []
+                            if not field in message.data: message.data[field] = []
 
-                    message.data[field].append(value)
+                            message.data[field].append(value)
+                        else:
+                            wx.LogError(f"mcp multiline message '{payload}' doesn't match regex in mcp21.core")
 
-                elif message_name == ':':
-                    m = re.match(r'^(\S+)', payload)
-                    tag = m.group(1)
-                    message = self.multiline_messages[tag]
-                    message.multi_in_progress = False
-                else:
-                    message = self.parse(payload)
-
-                # check auth
-                if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != self.mcp_auth_key):
-                    self.debug("mcp - auth failed")
-                else:
-                    message.message = message.message or message_name
-
-                    if message.multi_in_progress:
-                        if not message._data_tag in self.multiline_messages:
-                            self.multiline_messages[message._data_tag] = message
+                    elif message_name == ':':
+                        m = re.match(r'^(\S+)', payload)
+                        if m:
+                            tag = m.group(1)
+                            message = self.multiline_messages[tag]
+                            message.multi_in_progress = False
+                        else:
+                            wx.LogError(f"mcp multiline message '{payload}' doesn't match ':' regex in mcp21.core")
                     else:
-                        # don't dispatch multilines in progress
-                        self.dispatch(message)
+                        message = self.parse(payload)
+
+                    if message:
+                        # check auth
+                        if (message_name != '*') and (message_name != 'mcp') and (message.auth_key != self.mcp_auth_key):
+                            self.debug("mcp - auth failed")
+                        else:
+                            message.message = message.message or message_name
+
+                            if message.multi_in_progress:
+                                if not message._data_tag in self.multiline_messages:
+                                    self.multiline_messages[message._data_tag] = message
+                            else:
+                                # don't dispatch multilines in progress
+                                self.dispatch(message)
+                    else:
+                        wx.LogError("Didn't get a 'message' by the end of mcp21.core parsing.")
+            else:
+                wx.LogError("MCP line doesn't match 'name payload' regex in mcp21.core")
 
             line, p, rest = rest.partition('\n')
 
@@ -163,7 +176,7 @@ class MCPCore:
             keyword, value = keyval
             m = re.match(r'^(.+)(\*)', keyword)
             if m:
-                keyword, splat = m.group(1,2)
+                keyword, _ = m.group(1,2)
 
                 message.data[keyword] = []
                 message.multi_in_progress = True
@@ -189,6 +202,7 @@ class MCPCore:
 
         multiline = {}
 
+        datatag = ''
         for k in args:
             # TODO escape v if needed
             v = args[k] or ''
@@ -239,7 +253,7 @@ class MCPCore:
             else:
                 return smax
         else:
-            return undef
+            return None
 ### "MCP" package to get MCP itself enfired
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
@@ -274,7 +288,8 @@ class MCP(MCPPackageBase):
         self.mcp.connection.ActivateFeature('MCP')
         self.mcp.start_mcp()
 
-    def Initialize(wuh): pass
+    def Initialize(self):
+        ...
 
 class Message:
     def __init__(self):
@@ -282,3 +297,4 @@ class Message:
         self._data_tag         = None
         self.message           = ''
         self.multi_in_progress = False
+        self.auth_key          = ''

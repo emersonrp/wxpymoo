@@ -17,9 +17,10 @@ class World(dict):
         for f in data:
             if data.get(f) is not None: self[f] = data.get(f)
 
+    # TODO - enumerate what the various keys might be and use Write() WriteBool() etc as appropriate
     def save(self):
-        global _config
-        worldname = re.sub(r'\W', '_', self.get('name'))
+        _config = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
+        worldname = re.sub(r'\W', '_', str(self.get('name')))
 
         _config.DeleteGroup(worldname)
         _config.SetPath(worldname)
@@ -36,16 +37,16 @@ class World(dict):
 
 worlds      = collections.OrderedDict({})
 _defaults   = {}
-_config     = None
-worlds_file = os.path.join(prefs.prefs_dir(), 'worlds')
 def Initialize():
-    global _config, worlds, _defaults
-    _config = wx.FileConfig(localFilename = worlds_file)
+    global worlds, _defaults
+    _config = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
 
     # loop worlds...
     g_more, worldname, g_index = _config.GetFirstGroup()
     if g_more:  # do we have anything at all from the config file?
         while g_more: # yes, loop and fill stuff out.
+
+            # TODO - enumerate what the various keys might be and use Read() ReadBool() etc as appropriate
             _config.SetPath(worldname)
 
             worlddata = {}

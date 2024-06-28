@@ -1,6 +1,6 @@
 import wx
 import time
-import sys
+import re
 import zlib
 
 from wxasync import StartCoroutine
@@ -65,18 +65,21 @@ class Connection(wx.SplitterWindow):
         evt.Skip()
 
     def saveSplitterSize(self, evt):
+        _config = wx.ConfigBase.Get()
         size = self.GetSize()
-        prefs.set('input_height', size.GetHeight() - evt.GetSashPosition())
+        _config.WriteInt('input_height', size.GetHeight() - evt.GetSashPosition())
+        _config.Flush()
         evt.Skip()
 
     def OnSize(self, evt):
+        _config = wx.ConfigBase.Get()
         size = self.GetSize()
-        input_height = int(prefs.get('input_height')) or 25
+        input_height = _config.ReadInt('input_height') or 25
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
         evt.Skip()
 
-    def on_row_col_changed(self, evt):
+    def on_row_col_changed(self, _):
         # This is sorta icky but math is hard
         filters.telnetiac.handle_naws(self)
 
@@ -106,7 +109,7 @@ class Connection(wx.SplitterWindow):
     def IsCurrentConnection(self):
         return self.mainwindow.currentConnection() == self
 
-    def Close(self):
+    def Close(self, force = False):
         if self.is_connected():
             self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
 
@@ -114,6 +117,7 @@ class Connection(wx.SplitterWindow):
         self.filter_queue = b''
         self.features.clear()
         self.connect_time = self.reader = self.writer = None
+        super().Close(force)
 
     # TODO - we need to cram charset into worlds more deterministically
     def charset(self):
@@ -131,6 +135,9 @@ class Connection(wx.SplitterWindow):
 
     async def _connect(self):
         world    = self.world
+        if not world:
+            wx.LogError("No world is set in connection._connect")
+            return
         host     = world.get('host')
         port     = int(world.get('port'))
         conntype = world.get('conntype')
@@ -157,15 +164,17 @@ class Connection(wx.SplitterWindow):
 
         self.connect_time = time.time()
 
-        prefs.set('last_world', world.get('name'))
+        _config = wx.ConfigBase.Get()
+        _config.Write('last_world', world.get('name'))
+        _config.Flush()
 
         self.mcp = MCPCore(self)
 
-        if self.world.get('auto_login'):
-            login_script = self.world.get('login_script')
+        if world.get('auto_login'):
+            login_script = world.get('login_script')
             if login_script:
-                login_script = re.sub('%u', self.world.get('username', ''), login_script)
-                login_script = re.sub('%p', self.world.get('password', ''), login_script)
+                login_script = re.sub(r'%u', world.get('username', ''), login_script)
+                login_script = re.sub(r'%p', world.get('password', ''), login_script)
             self.output(login_script + "\n")
 
         while True:

@@ -22,6 +22,7 @@ class WxAsyncApp(wx.App):
         self.SetExitOnFrameDelete(True)
         self.exiting = False
         self.warn_on_cancel_callback = warn_on_cancel_callback
+        self.path = ''
 
     async def MainLoop(self):
         evtloop = wx.GUIEventLoop()
@@ -41,7 +42,7 @@ class WxAsyncApp(wx.App):
 
     def AsyncBind(self, event_binder, async_callback, object):
         """Bind a coroutine to a wx Event. Note that when wx object is destroyed, any coroutine still running will be cancelled automatically.
-        """ 
+        """
         if not iscoroutinefunction(async_callback):
             raise Exception("async_callback is not a coroutine function")
         if object not in self.BoundObjects:
@@ -52,12 +53,12 @@ class WxAsyncApp(wx.App):
 
     def StartCoroutine(self, coroutine, obj):
         """Start and attach a coroutine to a wx object. When object is destroyed, the coroutine will be cancelled automatically.
-        """ 
+        """
         if asyncio.iscoroutinefunction(coroutine):
             coroutine = coroutine()
         task = self.loop.create_task(coroutine)
         task.add_done_callback(self.OnTaskCompleted)
-        task.obj = obj
+        setattr(task, 'obj', obj)
         self.RunningTasks[obj].add(task)
 
     def OnEvent(self, event, obj, type):
@@ -69,13 +70,13 @@ class WxAsyncApp(wx.App):
             # This gathers completed callbacks (otherwise asyncio will show a warning)
             # Note: exceptions from callbacks raise here
             # we just let them bubble as there is nothing we can do at this point
-            _res = task.result()
+            _ = task.result()
         except CancelledError:
             # Cancelled because the window was destroyed, this is normal so ignore it
             pass
         self.RunningTasks[task.obj].remove(task)
 
-    def OnDestroy(self, event, obj):
+    def OnDestroy(self, _, obj):
         # Cancel async callbacks
         for task in self.RunningTasks[obj]:
             if not task.done():
@@ -107,7 +108,7 @@ async def AsyncShowDialog(dlg):
         closed.set()
     async def on_button(event):
         # Same code as in wxwidgets:/src/common/dlgcmn.cpp:OnButton
-        # to automatically handle OK, CANCEL, APPLY,... buttons 
+        # to automatically handle OK, CANCEL, APPLY,... buttons
         id = event.GetId()
         if id == dlg.GetAffirmativeId():
             if dlg.Validate() and dlg.TransferDataFromWindow():
@@ -119,7 +120,7 @@ async def AsyncShowDialog(dlg):
             end_dialog(wx.ID_CANCEL)
         else:
             event.Skip()
-    async def on_close(event):
+    async def on_close(_):
         closed.set()
         dlg.Hide()
     AsyncBind(wx.EVT_CLOSE, on_close, dlg)

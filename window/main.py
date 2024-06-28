@@ -11,7 +11,6 @@ from pathlib import Path
 
 from worlds import worlds
 
-import prefs
 class Main(wx.Frame):
 
     def __init__(self, parent, title):
@@ -25,19 +24,21 @@ class Main(wx.Frame):
 
         self.buildMenu()
 
+        _config = wx.ConfigBase.Get()
+
         h = 600
         w = 800
-        if prefs.get('save_window_size'):
-            if prefs.get('window_width'):  w = int(prefs.get('window_width'))
-            if prefs.get('window_height'): h = int(prefs.get('window_height'))
+        if _config.ReadBool('save_window_size'):
+            if _config.ReadInt('window_width'):  w = _config.ReadInt('window_width')
+            if _config.ReadInt('window_height'): h = _config.ReadInt('window_height')
         self.SetSize((w, h))
 
         self.tabs = MOONotebook(self)
 
         self.addEvents()
 
-        if prefs.get('autoconnect_last_world'):
-            world = worlds.get(prefs.get('last_world'))
+        if _config.ReadBool('autoconnect_last_world'):
+            world = worlds.get(_config.Read('last_world'))
             if world:
                 self.openWorld(world)
             else:
@@ -52,7 +53,7 @@ class Main(wx.Frame):
         self.tabs.showOrHideTabs()
         conn.input_pane.SetFocus()
 
-    def connect_to_shortlist(self, worldname, evt):
+    def connect_to_shortlist(self, worldname, _):
         world = worlds.get(worldname, None)
         if not world: return
         self.openWorld(world)
@@ -136,25 +137,26 @@ class Main(wx.Frame):
                 self.shortlist.append(menuitem)
                 self.Bind(wx.EVT_MENU, partial(self.connect_to_shortlist, world), menuitem)
 
-    def closeConnection(self, evt):
+    def closeConnection(self, _):
         if self.currentConnection():
             self.currentConnection().Close()
 
-    def reconnectConnection(self, evt):
+    def reconnectConnection(self, _):
         self.currentConnection().reconnect()
 
     def currentConnection(self):
         return self.tabs.GetCurrentPage()
 
     def onSize(self, evt):
-        if prefs.get('save_window_size'):
+        _config = wx.ConfigBase.Get()
+        if _config.ReadBool('save_window_size'):
             size = self.GetSize()
-            prefs.set('window_width',  str(size.GetWidth()))
-            prefs.set('window_height', str(size.GetHeight()))
+            _config.WriteInt('window_width',  size.GetWidth())
+            _config.WriteInt('window_height', size.GetHeight())
         self.Layout()
         evt.Skip()
 
-    def onTabChanged(self, evt):
+    def onTabChanged(self, _):
         current_status = self.GetStatusBar()
         if current_status:
             current_status.Hide()
@@ -164,43 +166,46 @@ class Main(wx.Frame):
         new_status.Show()
         new_status.UpdateConnectionStatus()
 
-    def handleCopy(self, evt):
+    def handleCopy(self, _):
         c = self.currentConnection()
-        if   (c.output_pane.HasSelection()): c.output_pane.Copy()
-        elif (c.input_pane .HasSelection()): c.input_pane .Copy()
+        if not c: return
+        if   (c.output_pane and c.output_pane.HasSelection()): c.output_pane.Copy()
+        elif (c.input_pane  and c.input_pane .HasSelection()): c.input_pane .Copy()
 
-    def handleCut(self, evt):
-        self.currentConnection().input_pane.Cut()
+    def handleCut(self, _):
+        if self.currentConnection():
+            self.currentConnection().input_pane.Cut()
 
-    def handlePaste(self, evt):
-        self.currentConnection().input_pane.Paste()
+    def handlePaste(self, _):
+        if self.currentConnection():
+            self.currentConnection().input_pane.Paste()
 
-    def ansi_test(self, evt):
-        self.currentConnection().output_pane.ansi_test()
+    def ansi_test(self, _):
+        if self.currentConnection():
+            self.currentConnection().output_pane.ansi_test()
 
     ### DIALOGS AND SUBWINDOWS
 
-    def showWorldsList(self, evt = None):
+    def showWorldsList(self, _ = None):
         if self.worlds_list is None: self.worlds_list = WorldsList(self)
         self.worlds_list.Show()
 
-    def showConnectDialog(self, evt):
+    def showConnectDialog(self, _):
         if self.connect_dialog is None: self.connect_dialog = ConnectDialog(self)
         self.connect_dialog.Show()
 
-    def showPrefsEditor(self, evt):
+    def showPrefsEditor(self, _):
         if self.prefs_editor is None: self.prefs_editor = PrefsEditor(self)
         self.prefs_editor.Show()
-        pass
 
-    def toggleDebugMCP(self, evt):
+    def toggleDebugMCP(self, _):
         conn = self.currentConnection()
         if conn.debug_mcp: conn.debug_mcp.toggle_visible()
 
-    def showHelp(self, evt):
-        pass
+    def showHelp(self, _):
+        ...
 
-    def showAboutBox(self, evt):
+    def showAboutBox(self, _):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')

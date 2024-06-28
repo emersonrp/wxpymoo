@@ -1,14 +1,5 @@
 # coding: utf-8
 import re
-from sys import platform as _platform
-
-
-if   _platform.startswith('linux'):
-    platform = 'linux'
-elif _platform == 'win32':
-    platform = 'windows'
-elif _platform == 'darwin':
-    platform = 'mac'
 
 OOB_PREFIX   = re.compile(r'^#\$#', re.MULTILINE)
 QUOTE_PREFIX = re.compile(r'^#\$"', re.MULTILINE)

@@ -39,17 +39,17 @@ class ConnectDialog(wx.Dialog):
 
         self.check_fields(None);
 
-    def Show(self):
-        self.Centre(wx.BOTH)
-        self.host.SetFocus()
-        super(wx.Dialog, self).Show()
+    def Show(self, show = True):
+        if show:
+            self.Centre(wx.BOTH)
+            self.host.SetFocus()
+        super(wx.Dialog, self).Show(show)
 
     def SelectAllText(self, evt):
         evt.GetEventObject().SelectAll()
         evt.Skip()
 
-    def check_fields(self, evt):
-        test_host = self.host.GetValue()
+    def check_fields(self, _):
         enable_button = False
 
         # both need to have something at all in it.
@@ -64,7 +64,7 @@ class ConnectDialog(wx.Dialog):
         # deactivate the button if we're not aok with the values
         self.FindWindowById(wx.ID_OK).Enable(enable_button)
 
-    def connect_please(self, evt):
+    def connect_please(self, _):
         host = self.host.GetValue()
         port = self.port.GetValue()
 

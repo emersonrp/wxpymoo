@@ -1,5 +1,4 @@
 import wx
-import prefs
 import ast
 import re
 
@@ -9,8 +8,9 @@ class Theme(dict):
 
     @classmethod
     def fetch(cls, themename = ''):
+        _config = wx.ConfigBase.Get()
         global all_themes
-        return all_themes[themename or prefs.get('theme')]
+        return all_themes[themename or _config.Read('theme')]
 
     @classmethod
     def all_theme_names(cls): return list(all_themes)
@@ -21,10 +21,12 @@ class Theme(dict):
 
     def Colour(self, colour, intensity = ''):
         css_colour = colour
+        colour_list = []
+        index = 0
         is_hex_already = re.match(r'^#[0-9a-f]+$', colour, re.IGNORECASE)
         if not is_hex_already:
             index = ansi_colour_codes.index(colour)
-            colour_list = self.get('colours')
+            colour_list = self.get('colours', [])
             css_colour = colour_list[index]
 
         mult = 1
@@ -43,6 +45,9 @@ class Theme(dict):
 
     # this is from Adaephon http://stackoverflow.com/a/27165165
     def index256_to_hex(self, index):
+        rgb_R = 0
+        rgb_G = 0
+        rgb_B = 0
         if index <= 15:
             intensity = ''
             if index > 7: # bright
@@ -87,8 +92,7 @@ class Theme(dict):
         return int(gray + x * r), int(gray + x * g), int(gray + x * b)
 
 def Initialize():
-    global _config, all_themes
-    _config = wx.FileConfig()
+    _config = wx.ConfigBase.Get()
 
     _config.SetPath('/Themes/')
 

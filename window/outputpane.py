@@ -52,7 +52,7 @@ class OutputPane(BasePane):
 
         self.Bind(EVT_ROW_COL_CHANGED , self.on_row_col_changed)
 
-    def register_filter(self, name, filter_callback):
+    def register_filter(self, _, filter_callback):
         self.filters.append(filter_callback)
 
     # EVENT HANDLERS #######################
@@ -75,7 +75,7 @@ class OutputPane(BasePane):
         wx.CallAfter( self.ScrollIfAppropriate )
         evt.Skip()
 
-    def on_set_focus(self, evt):
+    def on_set_focus(self, _):
         self.connection.input_pane.SetFocus()
 
     def on_url_click(self, evt):
@@ -97,8 +97,8 @@ class OutputPane(BasePane):
             self.connection.status_bar.StopBlinker()
             self.connection.SetTitle(self.connection.world.get('name'))
 
-    def on_row_col_changed(self, evt):
-        pass
+    def on_row_col_changed(self, _):
+        ...
         # TODO - "if preferences dictate, send @linelength to self.connection"
 
     ######################################
@@ -111,7 +111,8 @@ class OutputPane(BasePane):
             self.connection.SetTitle(self.connection.world.get('name') + " (*)")
 
     def ScrollIfAppropriate(self):
-        if ((not self.is_scrolled_back) or prefs.get('scroll_on_output')):
+        _config = wx.ConfigBase.Get()
+        if ((not self.is_scrolled_back) or _config.ReadBool('scroll_on_output')):
             self.ShowPosition(self.GetLastPosition())
             self.Refresh()
 
@@ -120,6 +121,7 @@ class OutputPane(BasePane):
         self.ScrollIfAppropriate()
 
     def display(self, text):
+        _config = wx.ConfigBase.Get()
         self.SetInsertionPointEnd()
         self.Freeze()
 
@@ -140,11 +142,11 @@ class OutputPane(BasePane):
             text = fil(self, text)
             if text == None: return  # output_filter must return None if it handled it
 
-        #if (True or prefs.get('render_emoji'):
+        #if (True or _config.ReadBool('render_emoji'):
             # TODO - preference?  "if (we detect an emoji)?"
             #text = emoji.emojize(text, use_aliases = True)
 
-        if prefs.get('use_ansi'):
+        if _config.ReadBool('use_ansi'):
             # Dear lord this is sorta ugly
 
             # TODO -- let's make this whole thing an external filter that
@@ -195,6 +197,7 @@ class OutputPane(BasePane):
                                     colour = self.theme.index256_to_hex(codes.pop(0))
                                 else:
                                     print("Got an unknown fg/bg ANSI subtype: " + str(subtype))
+                                    colour = "#000000" # TODO - this is probably not right
                             else:
                                 colour = payload
 
@@ -237,7 +240,7 @@ class OutputPane(BasePane):
                             print("unknown ANSI command:", command)
                 else:
                     # is a text-only chunk, check for URLs
-                    if prefs.get('highlight_urls'):
+                    if _config.ReadBool('highlight_urls'):
                         matches = utility.URL_REGEX.split(bit)
                         for chunk in matches:
                             if not chunk: continue
@@ -277,11 +280,11 @@ class OutputPane(BasePane):
     def doansi_italic(self):     self.current_style.SetFontStyle(wx.FONTSTYLE_ITALIC)
     def doansi_underline(self):  self.current_style.SetFontUnderlined(True)
     def doansi_blink(self):
-        if prefs.get('use_ansi_blink'):
+        if wx.ConfigBase.Get().ReadBool('use_ansi_blink'):
             self.blink = True
             self.blink_start = self.GetInsertionPoint()
     def doansi_fast_blink(self):
-        if prefs.get('use_ansi_blink'):
+        if wx.ConfigBase.Get().ReadBool('use_ansi_blink'):
             self.fast_blink = True
             self.fast_blink_start = self.GetInsertionPoint()
     def doansi_inverse(self):    self.inverse = True
@@ -293,7 +296,7 @@ class OutputPane(BasePane):
     def doansi_no_italic(self):     self.current_style.SetFontStyle(wx.FONTSTYLE_NORMAL)
     def doansi_no_underline(self):  self.current_style.SetFontUnderlined(False)
     def doansi_no_blink(self):
-        if not prefs.get('use_ansi_blink'): return
+        if not wx.ConfigBase.Get().ReadBool('use_ansi_blink'): return
         end = self.GetInsertionPoint()
         if self.blink:
             if self.blink_start:

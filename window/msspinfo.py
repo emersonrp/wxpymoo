@@ -32,7 +32,7 @@ class MSSPInfo(wx.Dialog):
         self.Show(not self.IsShown())
         if evt: evt.Skip()
 
-    def Close(self):
+    def Close(self, force = False):
         self.toggle_visible()
 
     def add_message(self, msg):

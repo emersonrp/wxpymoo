@@ -39,21 +39,22 @@ class PrefsEditor(wx.Dialog):
         evt.Skip()
 
     def createGeneralPanel(self):
+        _config = wx.ConfigBase.Get()
         gp = wx.Panel(self.book)
         self.save_size_checkbox = wx.CheckBox(gp, -1, 'Save Window Size')
-        self.save_size_checkbox.SetValue( prefs.get('save_window_size') )
+        self.save_size_checkbox.SetValue( _config.ReadBool('save_window_size') )
 
         self.autoconnect_checkbox = wx.CheckBox(gp, -1, 'Autoconnect to last world at startup')
-        self.autoconnect_checkbox.SetValue( prefs.get('autoconnect_last_world') )
+        self.autoconnect_checkbox.SetValue( _config.ReadBool('autoconnect_last_world') )
 
         self.xmouse_checkbox = wx.CheckBox(gp, -1, 'Use X-style mouse copy/paste behavior')
-        self.xmouse_checkbox.SetValue( prefs.get('use_x_copy_paste') )
+        self.xmouse_checkbox.SetValue( _config.ReadBool('use_x_copy_paste') )
 
         self.local_echo_checkbox = wx.CheckBox(gp, -1, 'Echo Typed Commands')
-        self.local_echo_checkbox.SetValue( prefs.get('local_echo') )
+        self.local_echo_checkbox.SetValue( _config.ReadBool('local_echo') )
 
         self.scroll_on_output_checkbox = wx.CheckBox(gp, -1, 'Scroll to bottom when new text arrives')
-        self.scroll_on_output_checkbox.SetValue( prefs.get('scroll_on_output') )
+        self.scroll_on_output_checkbox.SetValue( _config.ReadBool('scroll_on_output') )
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         panel_sizer.Add(self.save_size_checkbox, flag = wx.ALL, border = 10)
@@ -66,12 +67,13 @@ class PrefsEditor(wx.Dialog):
         return gp
 
     def createFontPanel(self):
+        _config = wx.ConfigBase.Get()
         fcp = wx.Panel(self.book)
 
-        font = wx.Font(prefs.get('font'))
+        font = wx.Font(_config.Read('font'))
 
-        fgcolour = prefs.get('fgcolour')
-        bgcolour = prefs.get('bgcolour')
+        fgcolour = _config.Read('fgcolour')
+        bgcolour = _config.Read('bgcolour')
 
         # output sample/controls
         self.sample    =    ExpandoTextCtrl(fcp, style = wx.TE_READONLY | wx.TE_RICH | wx.TE_MULTILINE , size = wx.Size(400,-1))
@@ -82,10 +84,10 @@ class PrefsEditor(wx.Dialog):
         self.ansi_checkbox       = wx.CheckBox(fcp, -1, 'Use ANSI colors')
         self.ansi_blink_checkbox = wx.CheckBox(fcp, -1, 'Honor ANSI blink')
         # TODO - get and set these two at display time not create time
-        self.theme = prefs.get('theme')
+        self.theme = _config.Read('theme')
         self.theme_picker.SetSelection(self.theme_picker.FindString(self.theme))
 
-        if prefs.get('use_ansi'):
+        if _config.ReadBool('use_ansi'):
             self.ansi_checkbox.SetValue(True)
             self.theme_picker.Enable()
         else:
@@ -121,7 +123,7 @@ class PrefsEditor(wx.Dialog):
 
         editor_label       = wx.StaticText(pp, -1, "External Editor")
         self.external_editor = wx.TextCtrl(pp, -1, "")
-        self.external_editor.SetValue( prefs.get('external_editor') )
+        self.external_editor.SetValue( wx.ConfigBase.Get().Read('external_editor') )
 
         editor_sizer = wx.FlexGridSizer(1,2,5,10)
         editor_sizer.Add(editor_label,       0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)

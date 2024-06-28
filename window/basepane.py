@@ -1,8 +1,7 @@
 import wx
 import wx.richtext as rtc
 import prefs
-import re
-from utility import platform
+import platform
 from theme import Theme
 
 class BasePane(rtc.RichTextCtrl):
@@ -38,10 +37,10 @@ class BasePane(rtc.RichTextCtrl):
     def left_mouse_up(self, evt):
         if self.is_dragging:
             self.is_dragging = False
-            if prefs.get('use_x_copy_paste'):
-                if platform == 'linux': wx.TheClipboard.UsePrimarySelection(True)
+            if wx.ConfigBase.Get().ReadBool('use_x_copy_paste'):
+                if platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(True)
                 if self.CanCopy(): self.Copy()
-                if platform == 'linux': wx.TheClipboard.UsePrimarySelection(False)
+                if platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(False)
         evt.Skip(True)
 
     # treat selectin in input/output as mutually exclusive
@@ -52,7 +51,7 @@ class BasePane(rtc.RichTextCtrl):
         evt.Skip(True)
 
     def paste_with_middle_mouse(self,evt):
-        if prefs.get('use_x_copy_paste'): self.connection.input_pane.paste_from_selection()
+        if wx.ConfigBase.Get().ReadBool('use_x_copy_paste'): self.connection.input_pane.paste_from_selection()
 
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()
@@ -64,7 +63,7 @@ class BasePane(rtc.RichTextCtrl):
         self.SetBasicStyle(basic_style)
         self.basic_style = basic_style
 
-        font = wx.Font(prefs.get('font'))
+        font = wx.Font(wx.ConfigBase.Get().Read('font'))
         self.SetFont(font)
 
         # set one-half character's worth of left / top margin

@@ -43,7 +43,8 @@ class Editor(wx.EvtHandler):
         self.Bind(wx.EVT_TIMER, self._send_file_if_needed, self.watchTimer)
 
     def runEditor(self):
-        cmd = re.split(r' +', prefs.get('external_editor'))
+        _config = wx.ConfigBase.Get()
+        cmd = re.split(r' +', _config.Read('external_editor'))
         cmd.append(self.tmpfilename)
 
         # block the thread while the editor runs...

@@ -5,11 +5,6 @@ import EnhancedStatusBar as ESB
 
 # get the images once at compile time
 icons = {}
-iconpath = os.path.join(wx.GetApp().path, "icons", "features")
-if os.path.exists(iconpath):
-    for icon_file in os.listdir(iconpath):
-        feature, _ = icon_file.split('.')
-        icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
 
 class StatusBar(ESB.EnhancedStatusBar):
 
@@ -17,6 +12,12 @@ class StatusBar(ESB.EnhancedStatusBar):
         ESB.EnhancedStatusBar.__init__(self, parent)
         self.parent = parent
         self.connection = connection
+
+        iconpath = os.path.join(wx.GetApp().path, "icons", "features")
+        if os.path.exists(iconpath):
+            for icon_file in os.listdir(iconpath):
+                feature, _ = icon_file.split('.')
+                icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
 
         # status field
         self.status_field = wx.Panel(self)

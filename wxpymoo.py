@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 
-import wx
 import os, sys
 from wxasync import WxAsyncApp
-import asyncio
+from window.main import Main
+
+import prefs
+import worlds
+import theme
 
 def run():
     app = WxAsyncApp()
 
     app.path = os.path.dirname(sys.argv[0])
-
-    from window.main import Main
-    import prefs
-    import worlds
-    import theme
 
     prefs.Initialize()
     worlds.Initialize()
