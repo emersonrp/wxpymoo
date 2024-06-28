@@ -3,13 +3,14 @@
 import wx
 import os, sys
 from wxasync import WxAsyncApp
+import asyncio
 from window.main import Main
 
 import prefs
 import worlds
 import theme
 
-def run():
+async def run():
     app = WxAsyncApp()
 
     wx.Log.SetActiveTarget(wx.LogStderr())
@@ -29,7 +30,7 @@ def run():
     frame = Main(None, "wxpymoo")
     frame.Show(True)
 
-    app.loop.run_until_complete(app.MainLoop())
+    await app.MainLoop()
 
 if __name__ == "__main__":
-    run()
+    asyncio.run(run())
