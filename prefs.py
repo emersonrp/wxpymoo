@@ -10,7 +10,7 @@ if platform.system() == "Linux":
     wx.StandardPaths.Get().SetFileLayout(wx.StandardPaths.Get().FileLayout.FileLayout_XDG)
 
 
-def prefs_dir():
+def get_prefs_dir():
     return Path(wx.StandardPaths.Get().GetUserConfigDir()) / 'wxpymoo'
 
 def Initialize():
@@ -39,7 +39,10 @@ def Initialize():
 
         'theme' : 'ANSI',
     }
-    config_file = prefs_dir() / 'config'
+    prefs_dir = get_prefs_dir()
+    if not prefs_dir.exists():
+        prefs_dir.mkdir(parents = True)
+    config_file = prefs_dir / 'config'
     wx.ConfigBase.Set(wx.FileConfig(localFilename = str(config_file)))
 
     for key, def_val in _defaults.items():

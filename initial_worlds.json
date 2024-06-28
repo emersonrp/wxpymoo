@@ -5,7 +5,7 @@
         "port" : "4201",
         "url" : "http://ansiart.com",
         "theme" : "social",
-        "use_fansi" : "True",
+        "use_fansi" : 1,
         "description" : "<p>8BitMUSH is a collaborative virtual world, based upon text-based artwork (16-color ANSI Art, 256-color FANSI Art, and colorless ASCII Art.) Every player is encouraged to extend the world with their own creations, and explore the creations of others. The community is very social, with a unique culture and over 10 years of history.</p> <p>The virtual world is based around a colorful megatropolis called ANSI City, with a surrounding suburbia and various other landscapes to explore and build upon. The virtual economy allows for players to run their own companies, invest in a stock market, and buy and sell products from various shops and vendors. Many projects and games have been coded on 8Bit using MUSHCode, the in-game programming language, including arcade games, toys, board games, interactive-fiction puzzles, a space system and much more. There are also tools to create content without writing any code, and a vibrant social community."
     },
     {
@@ -69,7 +69,7 @@
         "port" : "7777",
         "url" : "http://www.cybersphere.net",
         "theme" : "RPG",
-        "use_fansi" : "True",
+        "use_fansi" : 1,
         "description" : "<p>CyberSphere is an RPG MOO set in a dark American future. Your virtual journey begins in New Carthage, the denizens of which range from the benign eccentric to the malicious psychotic. Shadowed alleys conceal dark secrets, and gleaming towers of urban wealth hide fantastic conspiracies.</p> <p>Past the skeletal buildings of the anarchic New Carthage outskirts, beyond its armored city wall, a vast Wasteland of post-apocalyptic Hell awaits the truly brave. Its glowing sands crawl with the horrific mutant champions of natural selection, and are stained with the blood of the weak.</p> <p> Delta-winged shuttles crisscross the scarred planet as reconstruction continues under the control of emergent superpowers in a new world order: mega-corporations and crime syndicates. Bangkok harbors shadowy black markets of cybernetic technology, while orbital colonies turn serenely on axes of money, power, and privilege.</p> <p> As the physical landscape still smoulders from the ravages of global wars and environmental disasters, an alternate reality glows brightly in the worldwide matrix network. Deckers and console jockeys swim the depths of this data sea, knights rendered in chrome on battlefields formed in the cognitive non-space of a collective consciousness.</p><p>The pulse-pounding excitement of our virtual world is but a keystroke away."
     },
     {

@@ -22,7 +22,7 @@ class World(dict):
 
     # TODO - enumerate what the various keys might be and use Write() WriteBool() etc as appropriate
     def save(self):
-        _config = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
+        _config = wx.FileConfig(localFilename = str(prefs.get_prefs_dir() / 'worlds'))
         worldname = re.sub(r'\W', '_', str(self.get('name')))
 
         _config.DeleteGroup(worldname)
@@ -42,7 +42,7 @@ worlds      = collections.OrderedDict({})
 _defaults   = {}
 def Initialize():
     global worlds, _defaults
-    worldsconfig = wx.FileConfig(localFilename = str(prefs.prefs_dir() / 'worlds'))
+    worldsconfig = wx.FileConfig(localFilename = str(prefs.get_prefs_dir() / 'worlds'))
 
     # loop worlds...
     g_more, worldname, g_index = worldsconfig.GetFirstGroup()
