@@ -13,17 +13,17 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            CMD_BUILD: pyinstaller --noconsole --noconfirm --clean --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --include-modules wx._xml wxpymoo.py
+            CMD_BUILD: pyinstaller --noconsole --noconfirm --clean --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --hidden-import wx._xml wxpymoo.py
             CMD_VERIFY: dir dist/wxpymoo
             CMD_PREZIP: echo
             FILE_NAME: wxpymoo-${{ github.ref_name }}_windows.zip
           - os: macos-12
-            CMD_BUILD:  pyinstaller --onedir --windowed --noconsole --strip --noconfirm --clean --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module numpy --include-modules wx._xml wxpymoo.py
+            CMD_BUILD:  pyinstaller --onedir --windowed --noconsole --strip --noconfirm --clean --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module numpy --hidden-import wx._xml wxpymoo.py
             CMD_VERIFY: ls -la dist/wxpymoo.app
             CMD_PREZIP: rm -rf dist/wxpymoo
             FILE_NAME: wxpymoo-${{ github.ref_name }}_macos.zip
           - os: ubuntu-latest
-            CMD_BUILD: pyinstaller --noconsole --noconfirm --clean --strip --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --include-modules wx._xml wxpymoo.py
+            CMD_BUILD: pyinstaller --noconsole --noconfirm --clean --strip --add-data icons:icons --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --hidden-import wx._xml wxpymoo.py
             CMD_VERIFY: ls -la dist/wxpymoo
             FILE_NAME: wxpymoo-${{ github.ref_name }}_linux.zip
 
