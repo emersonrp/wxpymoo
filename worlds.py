@@ -70,7 +70,11 @@ def Initialize():
     else:  # nothing from config file, grab the initial_worlds data
         import json
         path = wx.GetApp().path
-        initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
+        initial_worlds = []
+        try:
+            initial_worlds = json.load(open(os.path.join(path, 'initial_worlds.json'),'r'))
+        except Exception as e:
+            wx.LogError(f"initial_worlds.json file could not be loaded: {e}")
 
         for world_data in initial_worlds:
             world = World(world_data)
