@@ -1,58 +1,56 @@
-r"""TELNET negotiation filter
-
-This code was adapted from the telnetlib library included with Python 2.7,
-and is being used under the PSF License agreement included below.
-
-All changes to the original telnetlib code are copyright (c) 2019 R Pickett,
-and licensed under the same terms.
-
-======================================
-1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
-   the Individual or Organization ("Licensee") accessing and otherwise using Python
-   2.7.15 software in source or binary form and its associated documentation.
-
-2. Subject to the terms and conditions of this License Agreement, PSF hereby
-   grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
-   analyze, test, perform and/or display publicly, prepare derivative works,
-   distribute, and otherwise use Python 2.7.15 alone or in any derivative
-   version, provided, however, that PSF's License Agreement and PSF's notice of
-   copyright, i.e., "Copyright © 2001-2019 Python Software Foundation; All Rights
-   Reserved" are retained in Python 2.7.15 alone or in any derivative version
-   prepared by Licensee.
-
-3. In the event Licensee prepares a derivative work that is based on or
-   incorporates Python 2.7.15 or any part thereof, and wants to make the
-   derivative work available to others as provided herein, then Licensee hereby
-   agrees to include in any such work a brief summary of the changes made to Python
-   2.7.15.
-
-4. PSF is making Python 2.7.15 available to Licensee on an "AS IS" basis.
-   PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF
-   EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR
-   WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
-   USE OF PYTHON 2.7.15 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
-
-5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 2.7.15
-   FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
-   MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 2.7.15, OR ANY DERIVATIVE
-   THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
-
-6. This License Agreement will automatically terminate upon a material breach of
-   its terms and conditions.
-
-7. Nothing in this License Agreement shall be deemed to create any relationship
-   of agency, partnership, or joint venture between PSF and Licensee.  This License
-   Agreement does not grant permission to use PSF trademarks or trade name in a
-   trademark sense to endorse or promote products or services of Licensee, or any
-   third party.
-
-8. By copying, installing or otherwise using Python 2.7.15, Licensee agrees
-   to be bound by the terms and conditions of this License Agreement.
-======================================
-"""
+# TELNET negotiation filter
+#
+# This code was adapted from the telnetlib library included with Python 2.7,
+# and is being used under the PSF License agreement included below.
+#
+# All changes to the original telnetlib code are copyright (c) 2019 R Pickett,
+# and licensed under the same terms.
+#
+# ======================================
+# 1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
+#    the Individual or Organization ("Licensee") accessing and otherwise using Python
+#    2.7.15 software in source or binary form and its associated documentation.
+#
+# 2. Subject to the terms and conditions of this License Agreement, PSF hereby
+#    grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
+#    analyze, test, perform and/or display publicly, prepare derivative works,
+#    distribute, and otherwise use Python 2.7.15 alone or in any derivative
+#    version, provided, however, that PSF's License Agreement and PSF's notice of
+#    copyright, i.e., "Copyright © 2001-2019 Python Software Foundation; All Rights
+#    Reserved" are retained in Python 2.7.15 alone or in any derivative version
+#    prepared by Licensee.
+#
+# 3. In the event Licensee prepares a derivative work that is based on or
+#    incorporates Python 2.7.15 or any part thereof, and wants to make the
+#    derivative work available to others as provided herein, then Licensee hereby
+#    agrees to include in any such work a brief summary of the changes made to Python
+#    2.7.15.
+#
+# 4. PSF is making Python 2.7.15 available to Licensee on an "AS IS" basis.
+#    PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF
+#    EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR
+#    WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
+#    USE OF PYTHON 2.7.15 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+#
+# 5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 2.7.15
+#    FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+#    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 2.7.15, OR ANY DERIVATIVE
+#    THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+#
+# 6. This License Agreement will automatically terminate upon a material breach of
+#    its terms and conditions.
+#
+# 7. Nothing in this License Agreement shall be deemed to create any relationship
+#    of agency, partnership, or joint venture between PSF and Licensee.  This License
+#    Agreement does not grant permission to use PSF trademarks or trade name in a
+#    trademark sense to endorse or promote products or services of Licensee, or any
+#    third party.
+#
+# 8. By copying, installing or otherwise using Python 2.7.15, Licensee agrees
+#    to be bound by the terms and conditions of this License Agreement.
+# ======================================
 
 from collections import deque
-import wx
 
 # Telnet protocol characters (don't change)
 IAC     = bytes([255]) # "Interpret As Command"
@@ -273,7 +271,7 @@ def handle_iac_will_negotiation(cmd, opt, conn):
         else:
             print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
-    
+
 def handle_iac_subnegotiation(sbdataq, conn):
     payload = deque(sbdataq)
     SB_ID = bytes([payload.popleft()])

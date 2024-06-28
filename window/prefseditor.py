@@ -151,14 +151,14 @@ class PrefsEditor(wx.Dialog):
         textattr = wx.TextAttr(fgcolour, bgcolour, font)
 
         self.sample.SetBackgroundColour(bgcolour)
-        self.sample.SetValue("""
-Emerson says, "This is what your window will look like."
-Emerson waves around a brightly-colored banner.
-
-It's super effective!
-
-01234567 89ABCDEF
-""")
+        self.sample.SetValue(
+            'Emerson says, "This is what your window will look like."\n'
+            'Emerson waves around a brightly-colored banner.\n'
+            '\n'
+            'It\'s super effective!\n'
+            '\n'
+            '01234567 89ABCDEF\n'
+        )
         self.sample.SetStyle(0, self.sample.GetLastPosition(), textattr)
 
         # Mock up ANSI if ANSI pref is on

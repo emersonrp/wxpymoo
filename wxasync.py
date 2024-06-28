@@ -41,8 +41,9 @@ class WxAsyncApp(wx.App):
         self.exiting = True
 
     def AsyncBind(self, event_binder, async_callback, object):
-        """Bind a coroutine to a wx Event. Note that when wx object is destroyed, any coroutine still running will be cancelled automatically.
-        """
+        # Bind a coroutine to a wx Event. Note that when wx object is destroyed,
+        # any coroutine still running will be cancelled automatically.
+
         if not iscoroutinefunction(async_callback):
             raise Exception("async_callback is not a coroutine function")
         if object not in self.BoundObjects:
@@ -52,8 +53,9 @@ class WxAsyncApp(wx.App):
         object.Bind(event_binder, lambda event: self.OnEvent(event, object, event_binder.typeId))
 
     def StartCoroutine(self, coroutine, obj):
-        """Start and attach a coroutine to a wx object. When object is destroyed, the coroutine will be cancelled automatically.
-        """
+        # Start and attach a coroutine to a wx object. When object is
+        # destroyed, the coroutine will be cancelled automatically.
+
         if asyncio.iscoroutinefunction(coroutine):
             coroutine = coroutine()
         task = self.loop.create_task(coroutine)
@@ -85,20 +87,17 @@ class WxAsyncApp(wx.App):
                     warnings.warn("cancelling callback" + str(obj) + str(task))
         del self.BoundObjects[obj]
 
-
 def AsyncBind(event, async_callback, obj):
     app = wx.App.Get()
     if type(app) is not WxAsyncApp:
         raise Exception("Create a 'WxAsyncApp' first")
     app.AsyncBind(event, async_callback, obj)
 
-
 def StartCoroutine(coroutine, obj):
     app = wx.App.Get()
     if type(app) is not WxAsyncApp:
         raise Exception("Create a 'WxAsyncApp' first")
     app.StartCoroutine(coroutine, obj)
-
 
 async def AsyncShowDialog(dlg):
     closed = Event()

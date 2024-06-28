@@ -26,32 +26,30 @@
 # End Of Comments
 # --------------------------------------------------------------------------- #
 
-""" Description:
-
-EnhancedStatusBar Is A Slight Modification (Actually A Subclassing) Of wx.StatusBar.
-It Allows You To Add Almost Any Widget You Like To The wx.StatusBar Of Your Main
-Frame Application And Also To Layout Them Properly.
-
-
-What It Can Do:
-
-1) Almost All The Functionalities Of wx.StatusBar Are Still Present;
-2) You Can Add Different Kind Of Widgets Into Every Field Of The EnhancedStatusBar;
-3) The AddWidget() Methods Accepts 2 Layout Inputs:
-   - horizontalalignment: This Specify The Horizontal Alignment For Your Widget,
-     And Can Be ESB_EXACT_FIT, ESB_ALIGN_CENTER_HORIZONTAL, ESB_ALIGN_LEFT And
-     ESB_ALIGN_RIGHT;
-   - varticalalignment: This Specify The Vertical Alignment For Your Widget,
-     And Can Be ESB_EXACT_FIT, ESB_ALIGN_CENTER_VERTICAL, ESB_ALIGN_BOTTOM And
-     ESB_ALIGN_LEFT;
-
-EnhancedStatusBar Is Freeware And Distributed Under The wxPython License.
-
-Latest Revision: 21 September 2005, 19.57.20 GMT+2
-Latest Revision before Latest Revision: 21 September 2005, 18.29.35 GMT+2
-Latest Revision before Latest Revision before Latest Revision: 31 May 2005, 23.17 CET
-
-"""
+### Description:
+###
+### EnhancedStatusBar Is A Slight Modification (Actually A Subclassing) Of wx.StatusBar.
+### It Allows You To Add Almost Any Widget You Like To The wx.StatusBar Of Your Main
+### Frame Application And Also To Layout Them Properly.
+###
+###
+### What It Can Do:
+###
+### 1) Almost All The Functionalities Of wx.StatusBar Are Still Present;
+### 2) You Can Add Different Kind Of Widgets Into Every Field Of The EnhancedStatusBar;
+### 3) The AddWidget() Methods Accepts 2 Layout Inputs:
+###    - horizontalalignment: This Specify The Horizontal Alignment For Your Widget,
+###      And Can Be ESB_EXACT_FIT, ESB_ALIGN_CENTER_HORIZONTAL, ESB_ALIGN_LEFT And
+###      ESB_ALIGN_RIGHT;
+###    - varticalalignment: This Specify The Vertical Alignment For Your Widget,
+###      And Can Be ESB_EXACT_FIT, ESB_ALIGN_CENTER_VERTICAL, ESB_ALIGN_BOTTOM And
+###      ESB_ALIGN_LEFT;
+###
+### EnhancedStatusBar Is Freeware And Distributed Under The wxPython License.
+###
+### Latest Revision: 21 September 2005, 19.57.20 GMT+2
+### Latest Revision before Latest Revision: 21 September 2005, 18.29.35 GMT+2
+### Latest Revision before Latest Revision before Latest Revision: 31 May 2005, 23.17 CET
 
 import wx
 
@@ -82,12 +80,11 @@ class EnhancedStatusBar(wx.StatusBar):
 
     def __init__(self, parent, id=wx.ID_ANY, style=wx.STB_SIZEGRIP,
                  name="EnhancedStatusBar"):
-        """Default Class Constructor.
-
-        EnhancedStatusBar.__init__(self, parent, id=wx.ID_ANY,
-                                   style=wx.STB_SIZEGRIP,
-                                   name="EnhancedStatusBar")
-        """
+        #         Default Class Constructor.
+        #
+        #         EnhancedStatusBar.__init__(self, parent, id=wx.ID_ANY,
+        #                                    style=wx.STB_SIZEGRIP,
+        #                                    name="EnhancedStatusBar")
 
         wx.StatusBar.__init__(self, parent, id, style, name)
 
@@ -100,10 +97,10 @@ class EnhancedStatusBar(wx.StatusBar):
 
 
     def OnSize(self, event):
-        """Handles The wx.EVT_SIZE Events For The StatusBar.
-
-        Actually, All The Calculations Linked To HorizontalAlignment And
-        VerticalAlignment Are Done In This Function."""
+        #         Handles The wx.EVT_SIZE Events For The StatusBar.
+        #
+        #         Actually, All The Calculations Linked To HorizontalAlignment And
+        #         VerticalAlignment Are Done In This Function.
 
         for pos, item in self._items.items():
             widget, horizontalalignment, verticalalignment = item.widget, item.horizontalalignment, item.verticalalignment
@@ -195,25 +192,24 @@ class EnhancedStatusBar(wx.StatusBar):
 
     def AddWidget(self, widget, horizontalalignment=ESB_ALIGN_CENTER_HORIZONTAL,
                   verticalalignment=ESB_ALIGN_CENTER_VERTICAL, pos = -1):
-        """Add A Widget To The EnhancedStatusBar.
+        #         Add A Widget To The EnhancedStatusBar.
+        #
+        #         Parameters:
+        #
+        #         - horizontalalignment: This Can Be One Of:
+        #           a) ESB_EXACT_FIT: The Widget Will Fit Horizontally The StatusBar Field Width;
+        #           b) ESB_ALIGN_CENTER_HORIZONTAL: The Widget Will Be Centered Horizontally In
+        #              The StatusBar Field;
+        #           c) ESB_ALIGN_LEFT: The Widget Will Be Left Aligned In The StatusBar Field;
+        #           d) ESB_ALIGN_RIGHT: The Widget Will Be Right Aligned In The StatusBar Field;
+        #
+        #         - verticalalignment:
+        #           a) ESB_EXACT_FIT: The Widget Will Fit Vertically The StatusBar Field Height;
+        #           b) ESB_ALIGN_CENTER_VERTICAL: The Widget Will Be Centered Vertically In
+        #              The StatusBar Field;
+        #           c) ESB_ALIGN_BOTTOM: The Widget Will Be Bottom Aligned In The StatusBar Field;
+        #           d) ESB_ALIGN_TOP: The Widget Will Be TOP Aligned In The StatusBar Field;
 
-        Parameters:
-
-        - horizontalalignment: This Can Be One Of:
-          a) ESB_EXACT_FIT: The Widget Will Fit Horizontally The StatusBar Field Width;
-          b) ESB_ALIGN_CENTER_HORIZONTAL: The Widget Will Be Centered Horizontally In
-             The StatusBar Field;
-          c) ESB_ALIGN_LEFT: The Widget Will Be Left Aligned In The StatusBar Field;
-          d) ESB_ALIGN_RIGHT: The Widget Will Be Right Aligned In The StatusBar Field;
-
-        - verticalalignment:
-          a) ESB_EXACT_FIT: The Widget Will Fit Vertically The StatusBar Field Height;
-          b) ESB_ALIGN_CENTER_VERTICAL: The Widget Will Be Centered Vertically In
-             The StatusBar Field;
-          c) ESB_ALIGN_BOTTOM: The Widget Will Be Bottom Aligned In The StatusBar Field;
-          d) ESB_ALIGN_TOP: The Widget Will Be TOP Aligned In The StatusBar Field;
-
-        """
 
         if pos == -1:
             pos = self._curPos
