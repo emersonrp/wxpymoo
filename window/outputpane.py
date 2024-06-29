@@ -235,7 +235,7 @@ class OutputPane(BasePane):
                             self.style_thyself()
 
                         else:
-                            wx.LogMessage("unknown ANSI command:", command)
+                            wx.LogMessage(f"unknown ANSI command: {command}")
                 else:
                     # is a text-only chunk, check for URLs
                     if config.ReadBool('highlight_urls'):
