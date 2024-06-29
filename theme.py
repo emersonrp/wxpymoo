@@ -95,8 +95,6 @@ class Theme(dict):
 def Initialize():
     themesconfig = wx.FileConfig(localFilename = str(prefs.get_prefs_dir() / 'themes'))
 
-    themesconfig.SetPath('/Themes/')
-
     # loop themes...
     g_more, themename, g_index = themesconfig.GetFirstGroup()
     if g_more:  # do we have anything at all from the themesconfig file?
@@ -115,7 +113,7 @@ def Initialize():
             all_themes[themename] = Theme(theme)
 
             # carry on, back to the top for the next world
-            themesconfig.SetPath('/Themes/')
+            themesconfig.SetPath('/')
             g_more, themename, g_index = themesconfig.GetNextGroup(g_index)
 
     else:  # nothing from themesconfig file, grab the _default_themes data
@@ -126,11 +124,9 @@ def Initialize():
             for key, val in theme.items():
                 themesconfig.Write(key, str(val))
 
-            themesconfig.SetPath('/Themes/')
+            themesconfig.SetPath('/')
 
             all_themes[name] = Theme(theme)
-
-    themesconfig.SetPath('/')
 
 
 #### DATA
