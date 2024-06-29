@@ -1,5 +1,6 @@
 import wx
 import prefs
+import platform
 from theme import Theme
 
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
@@ -112,14 +113,25 @@ class PrefsEditor(wx.Dialog):
 
     def createPathsPanel(self):
         pp = wx.Panel(self.book)
+        config = wx.ConfigBase.Get()
 
-        editor_label       = wx.StaticText(pp, -1, "External Editor")
-        self.external_editor = wx.TextCtrl(pp, -1, "")
-        self.external_editor.SetValue( wx.ConfigBase.Get().Read('external_editor') )
+        editor_label         = wx.StaticText(pp, -1, "External Editor")
+        self.editor_picker   = wx.Choice(pp, wx.ID_ANY, choices = list(editors.keys()))
+        self.editor_picker.Bind(wx.EVT_CHOICE, self.OnEditorPicker)
+        idx = self.editor_picker.FindString(config.Read('editor_picker'))
+        idx = 0 if idx == wx.NOT_FOUND else idx
+        self.editor_picker.SetSelection(idx)
 
-        editor_sizer = wx.FlexGridSizer(1,2,5,10)
+        path_label         = wx.StaticText(pp, -1, "Editor Path")
+        self.editor_path = wx.TextCtrl(pp, -1, "")
+        self.editor_path.SetValue( wx.ConfigBase.Get().Read('editor_path') )
+        self.editor_path.Enable(False) # will enable if we select "Custom"
+
+        editor_sizer = wx.FlexGridSizer(2,2,5,10)
         editor_sizer.Add(editor_label,       0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
-        editor_sizer.Add(self.external_editor, 1, wx.EXPAND, 0)
+        editor_sizer.Add(self.editor_picker, 1, wx.EXPAND, 0)
+        editor_sizer.Add(path_label,         0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL, 0)
+        editor_sizer.Add(self.editor_path, 1, wx.EXPAND, 0)
         editor_sizer.AddGrowableCol(1)
 
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -127,7 +139,15 @@ class PrefsEditor(wx.Dialog):
 
         pp.SetSizer(panel_sizer)
 
+        self.OnEditorPicker()
+
         return pp
+
+    def OnEditorPicker(self, _ = None):
+        editor = self.editor_picker.GetString(self.editor_picker.GetSelection())
+        editor_path = editors[editor]
+        self.editor_path.SetValue(editor_path)
+        self.editor_path.Enable(editor == "Custom")
 
     def resize_everything(self, evt):
         self.Fit()
@@ -214,3 +234,30 @@ class PrefsEditor(wx.Dialog):
             self.theme_picker.Disable()
 
         if evt: evt.Skip()
+
+editors = {}
+if platform.system() == "Windows":
+    editors = {
+        'notepad' : 'notepad',
+    }
+elif platform.system() == "Linux":
+    editors = {
+        'Default Editor' : '$TERMINAL -e $EDITOR',
+        'vim'            : '$TERMINAL -e vim',
+        'gvim'           : 'gvim -f',
+        'emacs'          : 'emacs',
+        'neovim'         : '$TERMINAL -e nvim',
+        'neovim-qt'      : 'nvim-qt --nofork',
+        'Kate'           : 'kate -b',
+        'gedit'          : 'gedit',
+        'nano'           : '$TERMINAL -e nano',
+        'Custom'         : '',
+    }
+elif platform.system() == "Darwin":
+    # TODO THIS SERIOUSLY NEEDS TESTING
+    editors = {
+        'vim'      : 'open -a vim',
+        'BBEdit'   : 'open -a BBEdit',
+        'TextMate' : 'open -a TextMate',
+
+    }

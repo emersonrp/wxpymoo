@@ -43,7 +43,12 @@ class Editor(wx.EvtHandler):
     def runEditor(self):
         self.Bind(wx.EVT_END_PROCESS, self.OnProcessEnded)
 
-        cmd = re.split(r' +', wx.ConfigBase.Get().Read('external_editor'))
+        editor_path = wx.ConfigBase.Get().Read('editor_path')
+        if not editor_path:
+            wx.LogError("ERROR!  External editor path not selected, aborting!")
+            wx.MessageBox("You have no external editor selected.  Please visit the Preferences dialog.", "No Editor")
+            return
+        cmd = re.split(r' +', wx.ConfigBase.Get().Read('editor_path'))
         cmd.append(f'"{self.tmpfilename}"')
 
         # launch the editor and capture the pid

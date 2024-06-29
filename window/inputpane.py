@@ -1,7 +1,5 @@
 import wx
-import wx.richtext as rtc
 import platform
-import prefs
 import re
 from window.basepane import BasePane
 from theme import Theme
@@ -36,28 +34,29 @@ class InputPane(BasePane):
                 return
         evt.Skip()
 
-    def doClear(self, evt): self.Clear()
+    def doClear(self, _): self.Clear()
+
     def AddClearAllToMenu(self):
         menu = self.GetContextMenu()
-        selectall, selectall_pos = menu.FindChildItem(menu.FindItem("Select All"))
+        _, selectall_pos = menu.FindChildItem(menu.FindItem("Select All"))
         clear_input = menu.Insert(selectall_pos, -1, "Clear Input", "Clears all text from the input")
         self.Bind(wx.EVT_MENU, self.doClear, clear_input)
         self.SetContextMenu(menu)
 
-    def paste_from_selection(self, evt = None):
+    def paste_from_selection(self, _ = None):
         uxcp = wx.ConfigBase.Get().ReadBool('use_x_copy_paste')
         if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Paste()
         if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(False)
 
-    def copy_from_selection(self, evt = None):
+    def copy_from_selection(self, _ = None):
         uxcp = wx.ConfigBase.Get().ReadBool('use_x_copy_paste')
         if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(True)
         self.Copy()
         if uxcp and platform.system() == 'Linux': wx.TheClipboard.UsePrimarySelection(False)
 
     ### HANDLERS
-    def send_to_connection(self, evt):
+    def send_to_connection(self, _):
         if self.connection:
             stuff = self.GetValue()
             self.cmd_history.add(stuff)

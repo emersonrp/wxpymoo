@@ -46,11 +46,10 @@ class MCPCore:
             path = Path(sys._MEIPASS) # pyright: ignore
         else:
             path = Path(wx.GetApp().path)
-        for package_file in os.listdir(os.path.join(path, 'mcp21', 'package')):
-            if package_file == "__pycache__": continue
-            package, ext = package_file.split('.')
+        for package_file in Path(path / 'mcp21' / 'package').glob('*.py'):
+            package = package_file.stem
 
-            if package == '__init__' or ext != 'py' : continue
+            if package == '__init__': continue
 
             # do the actual importing
             mod = importlib.import_module('mcp21.package.' + package)

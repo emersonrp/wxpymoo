@@ -50,20 +50,17 @@ def handle_mssp(payload, conn):
     # and treat each piece of info appropriately, ie, mash into our scheme,
     # or possibly just add each of them to our scheme.
 
-    # TODO - do we need to ask if we want to mash this in here?  It's
-    # intrusive for something like "number of connected players" which
-    # will change every time.  Do we just want to treat it as gospel
-    # and mash it into the world?  Leaning toward yes.
     if got_new_info:
-        message = "Got new MSSP info for this world:\n\n"
-        for key in got_new_info:
-            worldkey = "MSSP_" + key.capitalize()
-            message = message + key + ":" + str(extracted[key]) + "\n"
-        message = message + "\nSave new world info?"
-        dlg = wx.MessageDialog(conn, message, "New World Info", wx.YES_NO)
-        dlg.SetYesNoLabels(wx.ID_SAVE, "&Don't Save")
-        if dlg.ShowModal() == wx.ID_YES:
-            for key in extracted:
+#        message = "Got new MSSP info for this world:\n\n"
+#        for key in got_new_info:
+#            worldkey = "MSSP_" + key.capitalize()
+#            message = message + key + ":" + str(extracted[key]) + "\n"
+
+#        message = message + "\nSave new world info?"
+#        dlg = wx.MessageDialog(conn, message, "New World Info", wx.YES_NO)
+#        dlg.SetYesNoLabels(wx.ID_SAVE, "&Don't Save")
+#        if dlg.ShowModal() == wx.ID_YES:
+            for key in got_new_info:
                 worldkey = "MSSP_" + key.upper()
                 world[worldkey] = extracted[key]
             world.save()
