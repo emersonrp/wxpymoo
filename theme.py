@@ -1,6 +1,7 @@
 import wx
 import ast
 import re
+import prefs
 
 all_themes = {}
 
@@ -92,44 +93,44 @@ class Theme(dict):
         return int(gray + x * r), int(gray + x * g), int(gray + x * b)
 
 def Initialize():
-    config = wx.ConfigBase.Get()
+    themesconfig = wx.FileConfig(localFilename = str(prefs.get_prefs_dir() / 'themes'))
 
-    config.SetPath('/Themes/')
+    themesconfig.SetPath('/Themes/')
 
-    # loop worlds...
-    g_more, themename, g_index = config.GetFirstGroup()
-    if g_more:  # do we have anything at all from the config file?
+    # loop themes...
+    g_more, themename, g_index = themesconfig.GetFirstGroup()
+    if g_more:  # do we have anything at all from the themesconfig file?
         while g_more: # yes, loop and fill stuff out.
-            config.SetPath(themename)
+            themesconfig.SetPath(themename)
 
             theme = {}
             # loop data lines inside each theme....
-            e_more, keyname, e_index = config.GetFirstEntry()
+            e_more, keyname, e_index = themesconfig.GetFirstEntry()
             while e_more:
-                theme[keyname] = config.Read(keyname)
-                e_more, keyname, e_index = config.GetNextEntry(e_index)
+                theme[keyname] = themesconfig.Read(keyname)
+                e_more, keyname, e_index = themesconfig.GetNextEntry(e_index)
 
             # turn the list of colours back into a list
             theme['colours'] = ast.literal_eval(theme['colours'])
             all_themes[themename] = Theme(theme)
 
             # carry on, back to the top for the next world
-            config.SetPath('/Themes/')
-            g_more, themename, g_index = config.GetNextGroup(g_index)
+            themesconfig.SetPath('/Themes/')
+            g_more, themename, g_index = themesconfig.GetNextGroup(g_index)
 
-    else:  # nothing from config file, grab the _default_themes data
+    else:  # nothing from themesconfig file, grab the _default_themes data
 
         for name, theme in _default_themes.items():
-            config.SetPath(name)
+            themesconfig.SetPath(name)
 
             for key, val in theme.items():
-                config.Write(key, str(val))
+                themesconfig.Write(key, str(val))
 
-            config.SetPath('/Themes/')
+            themesconfig.SetPath('/Themes/')
 
             all_themes[name] = Theme(theme)
 
-    config.SetPath('/')
+    themesconfig.SetPath('/')
 
 
 #### DATA
