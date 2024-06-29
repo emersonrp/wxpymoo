@@ -178,8 +178,6 @@ class MediaInfo(wx.Dialog):
                 wx.LogMessage(f"Setting Priority to {params['P']}")
                 player.SetPriority(int(params['P']))
 
-            player.OnPlay()
-
 
 class PlayerPanel(wx.Panel):
 
@@ -189,11 +187,11 @@ class PlayerPanel(wx.Panel):
         wx.Panel.__init__(self, parent, -1, style = wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
 
         self.mc = wx.media.MediaCtrl(self, -1, szBackend = backend)
-        self.play_queued = False
         self.repeats = 1
         self.cont = 1
         self.priority = 50
         self.current_volume = 100
+        self.previous_volume = 100 # for when we mute and then unmute
 
         if not self.icons:
             if hasattr(sys, '_MEIPASS'):
@@ -207,13 +205,14 @@ class PlayerPanel(wx.Panel):
                     button = icon_file.stem
                     self.icons[button] = wx.Bitmap(str(icon_file))
 
-        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
-        if 'volume' in self.icons:
-            btn1.SetBitmap(self.icons['volume'])
-            btn1.SetBitmapPressed(self.icons['mute'])
-        else:                 btn1.SetLabel('Mute')
-        btn1.Bind(wx.EVT_BUTTON, self.OnMute)
+        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn1.SetBitmap(self.icons['volume'])
+        btn1.SetBitmapPressed(self.icons['mute'])
+        btn1.Bind(wx.EVT_TOGGLEBUTTON, self.OnMute)
         btn1.SetToolTip("Mute")
+
+        medialabel = wx.StaticText(self, label = Path(filename).stem, size = (150,-1),
+                                  style = wx.ALIGN_CENTER|wx.ST_ELLIPSIZE_MIDDLE,)
 
         volume_ctrl = wx.Slider(self, -1, 0, 0, 100)
         self.volume_ctrl = volume_ctrl
@@ -227,41 +226,38 @@ class PlayerPanel(wx.Panel):
         seekbar.Bind(wx.EVT_SLIDER, self.OnSeek)
         seekbar.SetToolTip("Seek")
 
-        btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
-        if 'play' in self.icons: btn2.SetBitmap(self.icons['play'])
-        else:               btn2.SetLabel('Play')
+        btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn2.SetBitmap(self.icons['play'])
         btn2.Bind(wx.EVT_BUTTON, self.OnPlay)
         btn2.SetToolTip("Play")
 
-        btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
-        if 'pause' in self.icons: btn3.SetBitmap(self.icons['pause'])
-        else:                btn3.SetLabel('Pause')
+        btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn3.SetBitmap(self.icons['pause'])
         btn3.Bind(wx.EVT_BUTTON, self.OnPause)
         btn3.SetToolTip("Pause")
 
-        btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE)
-        if 'stop' in self.icons: btn4.SetBitmap(self.icons['stop'])
-        else:               btn4.SetLabel('Stop')
+        btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn4.SetBitmap(self.icons['stop'])
         btn4.Bind(wx.EVT_BUTTON, self.OnStop)
         btn4.SetToolTip("Stop")
 
         # setup the layout
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(btn1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(wx.StaticText(self, label = Path(filename).stem, style = wx.ALIGN_RIGHT), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(volume_ctrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(seekbar, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(btn2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(btn3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-        sizer.Add(btn4, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        sizer.Add(btn1,        0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(medialabel,  0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(volume_ctrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(seekbar,     2, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(btn2,        0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(btn3,        0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer.Add(btn4,        0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         self.SetSizer(sizer)
         sizer.Fit(self)
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnTimer)
-        self.timer.Start(100)
 
         self.Bind(wx.media.EVT_MEDIA_LOADED, self.OnLoad)
+        self.Bind(wx.media.EVT_MEDIA_STOP,   self.OnStop)
 
         if not self.mc.Load(fullpath):
             wx.LogMessage(f"Can't find sound file {fullpath} - did you download the sound files for this world?")
@@ -269,36 +265,45 @@ class PlayerPanel(wx.Panel):
 
     def OnLoad(self, _):
         self.SetVolume(self.current_volume)
-        if self.play_queued:
-            self.play_queue = False
-            self.OnPlay()
+        self.OnPlay()
+        self.seekbar.SetRange(0, self.mc.Length())
 
     def OnPlay(self, _ = None):
-        if self.mc.GetState() == wx.media.MEDIASTATE_PLAYING: return
-
-        # We're calling "Play" up above whether or not we've just made the mediactrl,
-        # so if we're not fully loaded yet, set a flag for OnLoad() to catch and play.
-        if self.mc.Length() == 0:
-            self.play_queued = True
+        state = self.mc.GetState()
+        if state == wx.media.MEDIASTATE_PLAYING:
             return
+        elif state == wx.media.MEDIASTATE_STOPPED:
+            self.mc.Seek(0)
 
         if not self.mc.Play():
             wx.MessageBox("Unable to Play media : Unsupported format?",
                           "ERROR",
                           wx.ICON_ERROR | wx.OK)
         else:
-            self.mc.SetInitialSize()
-            self.GetSizer().Layout()
-            self.seekbar.SetRange(0, self.mc.Length())
+            self.timer.Start(100)
+            #self.mc.SetInitialSize()
+            #self.GetSizer().Layout()
 
-    def OnMute(self, _):
-        pass
+    def OnMute(self, evt):
+        button = evt.EventObject
+        if button.GetValue(): # is pressed
+            self.previous_volume = self.current_volume
+            self.SetVolume(0)
+        else:
+            self.SetVolume(self.previous_volume)
 
     def OnPause(self, _):
-        self.mc.Pause()
+        state = self.mc.GetState()
+        if state == wx.media.MEDIASTATE_PLAYING:
+            self.mc.Pause()
+        elif state == wx.media.MEDIASTATE_PAUSED:
+            self.mc.Play()
 
     def OnStop(self, _):
         self.mc.Stop()
+        self.mc.Seek(0)
+        self.seekbar.SetValue(0)
+        self.timer.Stop()
 
     def OnSeek(self, _):
         offset = self.seekbar.GetValue()
@@ -315,6 +320,7 @@ class PlayerPanel(wx.Panel):
     def SetVolume(self, volume):
         self.volume_ctrl.SetValue(volume)
         self.current_volume = volume
+        self.previouv_volume = volume
         self.mc.SetVolume(volume / 100)
 
     def SetRepeats(self, repeats):
