@@ -21,10 +21,10 @@ class DebugMCP(wx.Dialog):
 
         self.addEvents()
 
-        _config = wx.ConfigBase.Get()
-        if (_config.ReadBool('save_mcp_window_size')):
-            w = _config.ReadInt('mcp_window_width')  or 600
-            h = _config.ReadInt('mcp_window_height') or 400
+        config = wx.ConfigBase.Get()
+        if (config.ReadBool('save_mcp_window_size')):
+            w = config.ReadInt('mcp_window_width')  or 600
+            h = config.ReadInt('mcp_window_height') or 400
             self.SetSize([int(w), int(h)])
 
         sizer = wx.BoxSizer( wx.VERTICAL )
@@ -58,9 +58,9 @@ class DebugMCP(wx.Dialog):
         op.ShowPosition(op.GetInsertionPoint())
 
     def onSize(self, evt):
-        _config = wx.ConfigBase.Get()
-        if (_config.ReadBool('save_mcp_window_size')):
+        config = wx.ConfigBase.Get()
+        if (config.ReadBool('save_mcp_window_size')):
             size = self.GetSize()
-            _config.WriteInt('mcp_window_width',  size.GetWidth())
-            _config.WriteInt('mcp_window_height', size.GetHeight())
+            config.WriteInt('mcp_window_width',  size.GetWidth())
+            config.WriteInt('mcp_window_height', size.GetHeight())
         evt.Skip()

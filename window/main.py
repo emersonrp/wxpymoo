@@ -76,13 +76,13 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.showHelp,     Help_help  )
         self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
 
-        _config = wx.ConfigBase.Get()
+        config = wx.ConfigBase.Get()
 
         h = 600
         w = 800
-        if _config.ReadBool('save_window_size'):
-            if _config.ReadInt('window_width'):  w = _config.ReadInt('window_width')
-            if _config.ReadInt('window_height'): h = _config.ReadInt('window_height')
+        if config.ReadBool('save_window_size'):
+            if config.ReadInt('window_width'):  w = config.ReadInt('window_width')
+            if config.ReadInt('window_height'): h = config.ReadInt('window_height')
         self.SetSize((w, h))
 
         self.tabs = MOONotebook(self)
@@ -90,8 +90,8 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.onSize)
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onTabChanged)
 
-        if _config.ReadBool('autoconnect_last_world'):
-            world = worlds.get(_config.Read('last_world'))
+        if config.ReadBool('autoconnect_last_world'):
+            world = worlds.get(config.Read('last_world'))
             if world:
                 self.openWorld(world)
             else:
@@ -142,11 +142,11 @@ class Main(wx.Frame):
         return self.tabs.GetCurrentPage()
 
     def onSize(self, evt):
-        _config = wx.ConfigBase.Get()
-        if _config.ReadBool('save_window_size'):
+        config = wx.ConfigBase.Get()
+        if config.ReadBool('save_window_size'):
             size = self.GetSize()
-            _config.WriteInt('window_width',  size.GetWidth())
-            _config.WriteInt('window_height', size.GetHeight())
+            config.WriteInt('window_width',  size.GetWidth())
+            config.WriteInt('window_height', size.GetHeight())
         self.Layout()
         evt.Skip()
 

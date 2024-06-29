@@ -110,8 +110,8 @@ class OutputPane(BasePane):
             self.connection.SetTitle(self.connection.world.get('name') + " (*)")
 
     def ScrollIfAppropriate(self):
-        _config = wx.ConfigBase.Get()
-        if ((not self.is_scrolled_back) or _config.ReadBool('scroll_on_output')):
+        config = wx.ConfigBase.Get()
+        if ((not self.is_scrolled_back) or config.ReadBool('scroll_on_output')):
             self.ShowPosition(self.GetLastPosition())
             self.Refresh()
 
@@ -120,7 +120,7 @@ class OutputPane(BasePane):
         self.ScrollIfAppropriate()
 
     def display(self, text):
-        _config = wx.ConfigBase.Get()
+        config = wx.ConfigBase.Get()
         self.SetInsertionPointEnd()
         self.Freeze()
 
@@ -141,11 +141,11 @@ class OutputPane(BasePane):
             text = fil(self, text)
             if text == None: return  # output_filter must return None if it handled it
 
-        #if (True or _config.ReadBool('render_emoji'):
+        #if (True or config.ReadBool('render_emoji'):
             # TODO - preference?  "if (we detect an emoji)?"
             #text = emoji.emojize(text, use_aliases = True)
 
-        if _config.ReadBool('use_ansi'):
+        if config.ReadBool('use_ansi'):
             # Dear lord this is sorta ugly
 
             # TODO -- let's make this whole thing an external filter that
@@ -238,7 +238,7 @@ class OutputPane(BasePane):
                             wx.LogMessage(f"unknown ANSI command: {command}")
                 else:
                     # is a text-only chunk, check for URLs
-                    if _config.ReadBool('highlight_urls'):
+                    if config.ReadBool('highlight_urls'):
                         matches = utility.URL_REGEX.split(bit)
                         for chunk in matches:
                             if not chunk: continue

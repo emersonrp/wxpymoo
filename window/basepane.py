@@ -56,6 +56,8 @@ class BasePane(rtc.RichTextCtrl):
     def restyle_thyself(self):
         basic_style = rtc.RichTextAttr()
         self.theme = Theme.fetch()
+        self.fg_colour = self.theme.get('foreground')
+        self.bg_colour = self.theme.get('background')
         basic_style.SetTextColour      (self.fg_colour)
         basic_style.SetBackgroundColour(self.bg_colour)
 
@@ -65,11 +67,6 @@ class BasePane(rtc.RichTextCtrl):
 
         font = wx.Font(wx.ConfigBase.Get().Read('font'))
         self.SetFont(font)
-
-        # set one-half character's worth of left / top margin
-        font_width, font_height = self.font_size()
-        # Apparently Centos' Wx doesn't have this, so commenting it out.
-        #self.SetMargins((font_width / 2, -1))
 
         self.update_size()
 
