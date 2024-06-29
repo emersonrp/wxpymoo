@@ -96,7 +96,7 @@ def Initialize():
 
 
 MSSP_VARS = {
-    # Offical from https : //tintin.sourceforge.io/protocols/mssp/
+    # Offical from https://tintin.sourceforge.io/protocols/mssp/
     'NAME'               : "Name of the MUD.",
     'PLAYERS'            : "Current number of logged in players.",
     'UPTIME'             : "Unix time value of the startup time of the MUD.",
@@ -144,7 +144,7 @@ MSSP_VARS = {
     'PAY FOR PERKS'      : "Pay for perks ? 1 or 0",
     'HIRING BUILDERS'    : "Game is hiring builders ? 1 or 0",
     'HIRING CODERS'      : "Game is hiring coders ? 1 or 0",
-    # Extended from http : //web.archive.org/web/20130322222545/http//www.mudbytes.net/index.php?a=articles&s=MSSP_Fields
+    # Extended from http://web.archive.org/web/20130322222545/http//www.mudbytes.net/index.php?a=articles&s=MSSP_Fields
     'DBSIZE'             : 'Total number of rooms, exits, objects, mobiles, and players.',
     'EXITS'              : 'Current number of exits.',
     'EXTRA DESCRIPTIONS' : 'Current number of extra descriptions.',

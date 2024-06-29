@@ -3,6 +3,11 @@ import wx
 MSSP_VAR = chr(1)
 MSSP_VAL = chr(2)
 
+# TODO - we only store the last value of a multi-value variable.
+# According to the spec, the last one should be the default / preferred
+# one, but this is still suboptimal.  This is because we don't have a
+# sane way to store list values in the worlds .ini-format file.
+# TODO - maybe worlds wants to be a json file.
 def handle_mssp(payload, conn):
     bucket = ''
     extracted = {}
@@ -13,52 +18,52 @@ def handle_mssp(payload, conn):
             if c == MSSP_VAR:
                 if bucket:
                     if current_var:
-                        extracted[current_var].append(bucket)
+                        extracted[current_var] = bucket
                 current_var = ''
-            if c == MSSP_VAL:
+            elif c == MSSP_VAL:
                 if current_var:
-                    extracted[current_var].append(bucket)
+                    extracted[current_var] = bucket
                 else:
-                    extracted[bucket] = []
+                    extracted[bucket] = ''
                     current_var = bucket
             bucket = ''
         else:
             bucket = bucket + c
-    if bucket: extracted[current_var].append(bucket)
+    if bucket: extracted[current_var] = bucket
 
     # OK, let's mash that all back into the current world
 
+    world = conn.world
+
+    # First, check if any of it is new.
+    got_new_info = []
+    for key, value in extracted.items():
+        if conn.mssp_info:
+            conn.mssp_info.add_message({str(key) : str(value)})
+        worldkey = "MSSP_" + key.capitalize()
+        if not str(world.get(worldkey)) == str(value):
+            wx.LogMessage(f"Got new MSSP info: {worldkey} = {value} (Was: {world.get(worldkey)})")
+            got_new_info.append(key)
+
     # TODO - explicitly examine each of the official MSSP variables
-    # https://tintin.sourceforge.io/protocols/mssp/
+    # https://tintin.mudhalla.net/protocols/mssp/
     # and treat each piece of info appropriately, ie, mash into our scheme,
     # or possibly just add each of them to our scheme.
 
-    world = conn.world
-
-    got_new_info = []
-    for key in extracted:
-        if conn.mssp_info:
-            conn.mssp_info.add_message({str(key) : str(extracted[key])})
-        worldkey = "MSSP_" + key.capitalize()
-        if not str(world.get(worldkey)) == str(extracted[key]):
-            wx.LogMessage(f"Got new MSSP info: {worldkey} = {extracted[key]} (Was: {world.get(worldkey)})")
-            got_new_info.append(key)
-
-    # XXX temporarily stopping the dialog / save madness
-    return
-
+    # TODO - do we need to ask if we want to mash this in here?  It's
+    # intrusive for something like "number of connected players" which
+    # will change every time.  Do we just want to treat it as gospel
+    # and mash it into the world?  Leaning toward yes.
     if got_new_info:
         message = "Got new MSSP info for this world:\n\n"
         for key in got_new_info:
             worldkey = "MSSP_" + key.capitalize()
             message = message + key + ":" + str(extracted[key]) + "\n"
-        message = message + "\nSave new info into world?"
+        message = message + "\nSave new world info?"
         dlg = wx.MessageDialog(conn, message, "New World Info", wx.YES_NO)
         dlg.SetYesNoLabels(wx.ID_SAVE, "&Don't Save")
         if dlg.ShowModal() == wx.ID_YES:
             for key in extracted:
-                worldkey = "MSSP_" + key.capitalize()
+                worldkey = "MSSP_" + key.upper()
                 world[worldkey] = extracted[key]
             world.save()
-
-    return
