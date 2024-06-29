@@ -11,6 +11,7 @@ from window.outputpane import OutputPane, EVT_ROW_COL_CHANGED
 from window.statusbar  import StatusBar
 from window.debugmcp   import DebugMCP
 from window.msspinfo   import MSSPInfo
+from window.mediainfo  import MediaInfo
 
 from mcp21.core import MCPCore
 import prefs
@@ -29,13 +30,16 @@ class Connection(wx.SplitterWindow):
         self.home_url       = ''
         self.help_url       = ''
 
+        self.do_echo = False
+
         self.decompressor = zlib.decompressobj()
 
         # bin for Telnet IAC commands to stash any status info (on/off, etc)
         self.features = set()
         self.feature_init_callback = {
-            'MCP' : self.mcp_init_callback,
+            'MCP'  : self.mcp_init_callback,
             'MSSP' : self.mssp_init_callback,
+            'MSP'  : self.msp_init_callback,
         }
 
         # re-queue stuff for re-processing (ie if we turn on compression)
@@ -96,6 +100,10 @@ class Connection(wx.SplitterWindow):
         tabindex = self.mainwindow.tabs.GetPageIndex(self)
         self.mainwindow.tabs.SetPageText(tabindex, text)
 
+    def GetTitle(self):
+        tabindex = self.mainwindow.tabs.GetPageIndex(self)
+        return self.mainwindow.tabs.GetPageText(tabindex)
+
     def UpdateStatus(self):
         self.status_bar.LayoutWidgets()
 
@@ -142,25 +150,62 @@ class Connection(wx.SplitterWindow):
         port     = int(world.get('port'))
         conntype = world.get('conntype')
 
+        message = ''
         try:
             wx.BeginBusyCursor()
             self.reader, self.writer = await asyncio.wait_for(
                 asyncio.open_connection(host, port, ssl = (conntype == "SSL")),
                 timeout = 15)
+            message = ""
+        except asyncio.CancelledError:
+            raise
+        except ConnectionRefusedError:
+            message = f"Connection to {host}:{port} failed - connection refused"
+        except asyncio.TimeoutError:
+            message = f"Connection to {host}:{port} timed out."
+        except OSError as inst:
+            message = f"Connection to {host}:{port} failed - {inst}"
         except Exception as inst:
-            self.Close()
-            message = "Connection error: " + str(inst)
-            if inst.__class__ == asyncio.TimeoutError:
-                message = "Connection to " + host + ":" + str(port) + " timed out."
-            else:
-                wx.LogMessage("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
-            wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
-            return
+            message = f"Connection error: {inst}"
+            wx.LogError(f"DEBUG: Connection Exception {inst.__class__} {inst}")
         finally:
+            if message:
+                self.Close()
+                wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
+                return
             wx.EndBusyCursor()
 
         if conntype == "SSL":
             self.ActivateFeature('SSL')
+
+
+
+
+
+
+
+
+
+        from window.mediainfo import msp_filter
+        self.ActivateFeature('MSP')
+        self.output_pane.register_filter('msp', msp_filter)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         self.connect_time = time.time()
 
@@ -214,3 +259,6 @@ class Connection(wx.SplitterWindow):
 
     def mssp_init_callback(self):
         self.mssp_info = MSSPInfo(self)
+
+    def msp_init_callback(self):
+        self.media_info = MediaInfo(self)

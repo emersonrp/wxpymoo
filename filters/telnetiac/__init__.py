@@ -99,6 +99,7 @@ MCCP1 = bytes([85])
 MCCP2 = bytes([86])
 
 # MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
+from window.mediainfo import msp_filter
 MSP = bytes([90])
 
 # MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)
@@ -249,9 +250,10 @@ def handle_iac_will_negotiation(cmd, opt, conn):
                 wx.LogMessage("Got IAC WILL MCCP;  Sending IAC DO MCCP")
             conn.output(IAC + answer + opt)
         elif opt == MSP:
-            # TODO - support this eventually
-            wx.LogMessage("Got IAC WILL MSP;  Sending IAC DONT MSP")
-            conn.output(IAC + DONT + MSP)
+            wx.LogMessage("Got IAC WILL MSP;  Sending IAC DO MSP")
+            conn.output(IAC + DO + MSP)
+            conn.ActivateFeature('MSP')
+            conn.output_pane.register_filter('msp', msp_filter)
         elif opt == ZMP:
             wx.LogMessage("Got IAC WILL ZMP;  Sending IAC DONT ZMP")
             conn.output(IAC + DONT + ZMP)
@@ -261,14 +263,14 @@ def handle_iac_will_negotiation(cmd, opt, conn):
             conn.output(IAC + DONT + GMCP)
         elif opt == ECHO:
             wx.LogMessage("Got IAC WILL ECHO")
-            conn.iac['ECHO'] = False
+            conn.do_echo = False
         else:
             wx.LogMessage("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
     elif cmd == WONT:
         if opt == ECHO:
             wx.LogMessage("Got IAC WONT ECHO")
-            conn.iac['ECHO'] = True
+            conn.do_echo = True
         else:
             wx.LogMessage("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)

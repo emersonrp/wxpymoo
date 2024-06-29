@@ -159,6 +159,7 @@ class Main(wx.Frame):
         self.SetStatusBar(new_status)
         new_status.Show()
         new_status.UpdateConnectionStatus()
+        self.SetTitle("wxpymoo - " + self.currentConnection().GetTitle())
 
     def handleCopy(self, _):
         c = self.currentConnection()

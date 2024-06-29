@@ -15,7 +15,7 @@ async def run():
 
     wx.Log.SetActiveTarget(wx.LogStderr())
 
-    app.path = os.path.dirname(sys.argv[0])
+    setattr(app, 'path', os.path.dirname(sys.argv[0]))
 
     # Let's try to unbuffer "print" for easier debug
     # This per "Perkins"' comment on https://stackoverflow.com/questions/107705/disable-output-buffering
