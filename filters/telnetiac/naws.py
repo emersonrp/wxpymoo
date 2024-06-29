@@ -1,3 +1,5 @@
+import wx
+
 IAC  = bytes([255]) # "Interpret As Command"
 SE   = bytes([240])  # Subnegotiation End
 SB   = bytes([250])  # Subnegotiation Begin
@@ -22,7 +24,7 @@ def handle_naws(conn):
         if r1 == 255: rowsbytes = bytes([r1]) + rowsbytes
         if r2 == 255: rowsbytes = rowsbytes + bytes([r2])
 
-        print(f"Sending IAC NAWS info: {c1} {c2} x {r1} {r2}")
+        wx.LogMessage(f"Sending IAC NAWS info: {c1} {c2} x {r1} {r2}")
         conn.output(IAC + SB + NAWS + colsbytes + rowsbytes + IAC + SE)
 
         conn.UpdateIcon('NAWS', f'NAWS enabled: {cols}x{rows}')

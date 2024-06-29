@@ -252,8 +252,8 @@ class WorldsList(wx.Dialog):
         selected_world = self.world_picker.GetStringSelection()
         world = worlds[ selected_world ]
 
-        self.host.SetValue(str(world.get("host", "")))
-        self.port.SetValue(int(world.get("port", 0)))
+        self.host.SetValue(world.get("host", ""))
+        self.port.SetValue(world.get("port", 0))
 
         self.conntype.SetStringSelection(world.get("conntype", "Direct"))
 

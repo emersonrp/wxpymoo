@@ -1,9 +1,10 @@
 # This handles the TTYPE request per the MTTS spec (https://tintin.sourceforge.io/protocols/mtts/)
+import wx
 
 MTTS = chr(24)  # terminal type
-IAC   = chr(255) # "Interpret As Command"
-SE    = chr(240) # Subnegotiation End
-SB    = chr(250) # Subnegotiation Begin
+IAC  = chr(255) # "Interpret As Command"
+SE   = chr(240) # Subnegotiation End
+SB   = chr(250) # Subnegotiation Begin
 
 # Our bitvector for MTTS:
 #   1 "ANSI"              Client supports all common ANSI color codes.
@@ -20,12 +21,12 @@ SB    = chr(250) # Subnegotiation Begin
 
 replies = [ 'WXPYMOO', 'VT100-TRUECOLOR', 'MTTS 271', 'MTTS 271' ]
 
-def handle_mtts(payload, conn):
+def handle_mtts(_, conn):
 
     conn.mtts_reply = getattr(conn, 'mtts_reply', 0)
     reply = replies[conn.mtts_reply]
 
-    print("Got IAC MTTS subrequest;  Sending " + reply)
+    wx.LogMessage("Got IAC MTTS subrequest;  Sending " + reply)
     conn.output(IAC + SB + MTTS + chr(0) + reply + IAC + SE)
 
     conn.UpdateIcon('MTTS', f'MTTS Enabled: {reply}')

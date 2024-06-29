@@ -3,7 +3,6 @@ import wx.richtext as rtc
 import wx.lib.newevent
 import re
 
-import prefs
 import utility
 from editor import Editor
 from window.basepane import BasePane

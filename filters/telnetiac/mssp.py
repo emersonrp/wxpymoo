@@ -4,8 +4,6 @@ MSSP_VAR = chr(1)
 MSSP_VAL = chr(2)
 
 def handle_mssp(payload, conn):
-    getting_var = 0
-    getting_val = 0
     bucket = ''
     extracted = {}
     current_var = ''
@@ -13,20 +11,16 @@ def handle_mssp(payload, conn):
         c = chr(payload.popleft())
         if (c == MSSP_VAR) or (c == MSSP_VAL):
             if c == MSSP_VAR:
-                getting_var = 1
                 if bucket:
                     if current_var:
                         extracted[current_var].append(bucket)
-                getting_val = 0
                 current_var = ''
             if c == MSSP_VAL:
-                getting_val = 1
                 if current_var:
                     extracted[current_var].append(bucket)
                 else:
                     extracted[bucket] = []
                     current_var = bucket
-                getting_var = 0
             bucket = ''
         else:
             bucket = bucket + c
@@ -47,7 +41,7 @@ def handle_mssp(payload, conn):
             conn.mssp_info.add_message({str(key) : str(extracted[key])})
         worldkey = "MSSP_" + key.capitalize()
         if not str(world.get(worldkey)) == str(extracted[key]):
-            print(f"Got new MSSP info: {worldkey} = {extracted[key]} (Was: {world.get(worldkey)})")
+            wx.LogMessage(f"Got new MSSP info: {worldkey} = {extracted[key]} (Was: {world.get(worldkey)})")
             got_new_info.append(key)
 
     # XXX temporarily stopping the dialog / save madness

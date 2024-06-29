@@ -2,7 +2,7 @@
     {
         "name" : "8BitMUSH",
         "host" : "8bit.fansi.org",
-        "port" : "4201",
+        "port" : 4201,
         "url" : "http://ansiart.com",
         "theme" : "social",
         "use_fansi" : 1,
@@ -11,7 +11,7 @@
     {
         "name" : "AnsibleMOO",
         "host" : "ansiblemoo.org",
-        "port" : "6000",
+        "port" : 6000,
         "url" : "http://www.ansiblemoo.org/",
         "theme" : "RPG sci-fi",
         "description" : "<p>Ansible is an online text-based role-playing game, set in the Orson Scott Card novel, Ender's Game.</p>"
@@ -19,7 +19,7 @@
     {
         "name" : "Arthnor",
         "host" : "q.geek.nz",
-        "port" : "8888",
+        "port" : 8888,
         "theme" : "RPG",
         "description" : "<p>Arthnor is set in a fairly generic 'Medieval' world.  Players can fight with NPCs and other players, and a number of skills are available (including various forms of crafting e.g. making weapons, armour, cooking, fishing, mining, ...).</p> <p>It is still being created but is quite playable, and players are encouraged to contribute (players can create their own rooms and objects).</p>"
     },
@@ -27,13 +27,13 @@
         "name" : "ASI MOO",
         "url"  : "http://www.asi.org/adb/09/08/04/moo.html",
         "host" : "moo.asi.org",
-        "port" : "7777",
+        "port" : 7777,
         "description" : "<p> The Artemis Society International meeting server is always available for open discussions. We call it the MOO for reasons which will become obvious if you read this whole page.</p> <p>You will find members of Artemis Society International in the MOO most of the time. The largest gatherings are during the evening hours of the United States, and on weekends.</p> <p>Artemis Society members also use the MOO for scheduled meetings, which are announced by the individual committees and teams responsible for those meetings.</p> <p>The MOO environment is tuned more for on-line role-playing games than for conversation, so first-time users might encounter a few unexpected quirks. For more information on what you can do while in the MOO, read the user's guide:</p>"
     },
     {
         "name" : "BayMOO",
         "host" : "baymoo.org",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://baymoo.org:4242/",
         "theme" : "social",
         "description" : "<p>The overall concept of BayMOO is the real and imaginative world of the San Francisco Bay Area. BayMOO is divided into three hubs, each connected to a central space called the Aquatic Dome. The three hubs are:</p> <ul><li>I. The Bay Area</li><li>II. Netspace</li><li>III. Other Worlds</li>"
@@ -43,13 +43,13 @@
         "name" : "BrightMOO",
         "url"  : "http://brightmoo.sourceforge.net",
         "host" : "brightmoo.genesismuds.com",
-        "port" : "7760",
+        "port" : 7760,
         "description" : "<p>BrightMOO is an experiment.  It is a proof of concept, designed to demonstrate the feasibility of building client-side, three-dimensional environments using existing MOO technology.   It is part authoring tool, part electronic environment, part three-dimensional game engine.  While BrightMOO might not be the ultimate answer to the question of infinitely flexible electronic worlds, it is designed to demonstrate what can be done and what can happen.</p>"
     },
     {
         "name" : "CMC Moo",
         "host" : "cmc.uib.no",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://cmc.uib.no/dream/",
         "theme" : "educational",
         "description" : "<p>This MOO is run by the <a href=\"http://cmc.uib.no/\">cyber/media/culture (cmc) project</a> at the <a href=\"http://www.uib.no\">University of Bergen</a>.  Two major projects live here:</p><ul><li>The Midsummer Night's Dream project. This project aims to create a MOO environment for teaching, learning about and exploring English literature in general and Shakespeare's A Midsummer Night's Dream in particular. This area of the MOO allows students to wander through versions of the fictional landscape in Shakespeare's play and to explore the Globe theatre and the surrounding streets of Southwark as they were in Shakespeare's time. Discussion areas and teaching facilities are also being made available.</p><p>pURLmoo, an experimental project administrated by John Cayley and others. In pURLmoo language is pushed to its limits and writers test the possibilities of words in MOOs.</li>"
@@ -57,7 +57,7 @@
     {
         "name" : "ChatMUD",
         "host" : "chatmud.com",
-        "port" : "7443",
+        "port" : 7443,
         "conntype" : "SSL",
         "url" : "https://chatmud.com",
         "theme" : "social",
@@ -66,7 +66,7 @@
     {
         "name" : "Cybersphere",
         "host" : "cs.netsville.com",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://www.cybersphere.net",
         "theme" : "RPG",
         "use_fansi" : 1,
@@ -75,7 +75,7 @@
     {
         "name" : "De Digitale Metro",
         "host" : "demetro.nl",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://www.demetro.nl/",
         "theme" : "ESL",
         "description" : "<p>This world is in Dutch. It is located around the capital's subway and is only accesible for those who are registered on their home page. Everything is in Dutch, but they are friendly enough to speak your language (if they can.) Most of the residents are able to speak English. Dit is een Nederlandse Moo.  Alles is in het Nederlands, maar ze zijn aardig genoeg om in jou taal te praten (als ze het kunnen), de meeste mensen spreken ook Engels.</p>"
@@ -83,14 +83,14 @@
     {
         "name" : "DownMOO",
         "host" : "downmoo.sloth.org",
-        "port" : "8888",
+        "port" : 8888,
         "description" : "Where your core crash is our joy"
     },
     {
         "name" : "Dreistadt",
         "theme" : "ESL educational",
         "host" : "lingo.uib.no",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://cmc.uib.no:7001/",
         "description" : "<p>A German language MOO.  &quot;Dreistadt ist eine virtuelle Stadt im Internet.  Hier kann man sich ganz einfach treffen, mit Freunden reden oder neue Leute kennenlernen, sich ein Haus bauen und einrichten... aber auch Deutsch studieren, Hausarbeiten einschicken, mit Lehrern und Mitstudenten diskutieren. <b>P&auml;dagogisch</b> wurde Dreistadt konzipiert als ein Raum, der den prozesshaften und dynamischen Charakter nat&uuml;rlichen Spracherwerbs betont und sich bewusst zunutze macht.  Fremdsprachenlerner k&ouml;nnen in authentischen und nat&uuml;rlichen Kontakt mit der Zielkultur treten und so auf neue und kreative Weise ihre Sprachkompetenz st&auml;rken.  It is sponsored by the <a href=\"http://www.uib.no/\">Universit&auml;t Bergen/Norwegen</A>, <a href=\"http://www.hf.uib.no/hi/\">Sektion f&uuml;r humanistische Informatik</A>.&quot;</p>"
     },
@@ -98,12 +98,12 @@
         "name" : "DuneMOO",
         "url"  : "http://www.dunemoo.com",
         "host" : "moo.dunemoo.com",
-        "port" : "9800"
+        "port" : 9800
     },
     {
         "name" : "FooMOO",
         "host" : "foomoo.org",
-        "port" : "4500",
+        "port" : 4500,
         "url" : "http://www.foomoo.org/",
         "description" : "<p>FooMOO is a MOO (MUD, Object-Oriented) designed for the teaching and practicing of MOO programming. There is no theme, and few restrictions.</p>"
     },
@@ -111,13 +111,13 @@
         "name" : "Fractured",
         "url"  : "http://fracturedproject.net/",
         "host" : "fracturedproject.net",
-        "port" : "5139",
+        "port" : 5139,
         "description" : "<p>Fractured Moo is an online, text-based, Role Playing game. Using simple commands you traverse a virtual world where anything is possible. The characters are who ever they choose to be, citizens, shop keepers, police, government officials, criminals, or maybe just a rebel fighting the system they can't escape. Law abiding or not they all must cut out a life for themselves. How they do that is up to them. Survival is not garenteed, deceit and betrayal are not unheard of. You must find your way through the unknown world, unknown to you, unknown to most of humanity and it's the only place you have left to call home. Looking back is futile, you're here and there is no leaving....Fractured, it's your story...</p>"
     },
     {
         "name" : "Ghostwheel MOO",
         "host" : "moo.ghostwheel.org",
-        "port" : "6969",
+        "port" : 6969,
         "url" : "http://fazigu.org/~quinn/ghost/",
         "theme" : "sci-fi",
         "description" : "<p>The apocalypse is a collective nightmare. Fading. Few remember what happened, and no witness lives to tell. Sometime, somehow, two millenia of civilization collapsed into dust.</p> <p>The past is a bleached skull on glowing sand. The future is now, and humanity crawls forward, shaking off its holocaust ashes.</p>"
@@ -125,7 +125,7 @@
     {
         "name" : "Harper's Tale",
         "host" : "moo.harpers-tale.com",
-        "port" : "7007",
+        "port" : 7007,
         "url" : "http://www.harpers-tale.com/",
         "theme" : "RPG",
         "description" : "<p>Harper's Tale is a text-based online roleplaying game, a simulation of the world of Pern, created by Anne McCaffrey in her &quot;Dragonriders of Pern&quot; novels"
@@ -135,12 +135,12 @@
         "url"  : "http://hellmoo.org",
         "host" : "hellmoo.org",
         "theme" : "RPG",
-        "port" : "7777"
+        "port" : 7777
     },
     {
         "name" : "Holo Trek",
         "host" : "holotrek.org",
-        "port" : "1701",
+        "port" : 1701,
         "url" : "http://www.holotrek.org/",
         "theme" : "RPG",
         "description" : "<p>HoloTrek is a Star Trek themed role-playing game on a timeline that branched from the events of TNG/DS9 around the first season of DS9. The game attempts to remain true to the Star Trek universe; canon is highly regarded.</p> <p>Players may choose to join the United Federation of Planets, the Klingon Empire, the Rihannsu (Romulan) Empire, the Ferengi Alliance, or Hellesport, an independent commerce station.</p> <p>The game is primarily role-playing, but is supported by advanced space, combat, skills, and economic systems. A full commodities market economy is available for those that wish to strike out on their own as freelance traders, merchants, pirates, mercenaries, and spies.</p> <p>HoloTrek welcomes both experienced and new roleplayers to the game. Good roleplay is rewarded; players who develop good roleplaying skills will find their characters growing in power and influence.</p>"
@@ -148,14 +148,14 @@
     {
         "name" : "InfernoMOO",
         "host" : "optiquest.org",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "RPG",
         "description" : "InfernoMoo is a post-apocalyptic text based role-playing game. It is set after an atomic conflict has brought down the great civilizations of the 21st century. Enough time has passed that some towns and vestiges of society have returned, but not nearly enough to curb the inherent violence and conflict of a life lived without comfort or salvation. Corporations both ancient and new sit astride the few surviving cities like obscene, glittering spiders, wielding their power over their desert domains without question and without mercy. The fake smile, the furtive stare are the weapons of the city-dweller, forever dependent on their corporate masters for protection against the raiders and radioactive sands. Yet a few wander the wastes, living off the bones of the old world and whatever justice they can find at the end of their gun. Only time will tell who is stronger."
     },
     {
         "name" : "LambdaMOO",
         "host" : "lambda.moo.mud.org",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://lambdamoo.blogspot.com/",
         "theme" : "social",
         "description" : "<p>LambdaMOO is the original MOO</p>"
@@ -164,12 +164,12 @@
         "name" : "MarsHome",
         "url"  : "http://moo.marshome.org/",
         "host" : "moo.marshome.org",
-        "port" : "7777"
+        "port" : 7777
     },
     {
         "name": "The Meadow",
         "host" : "hayseed.net",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://www.hayseed.net/meadow.html",
         "theme" : "social",
         "description" : "<p>The Meadow is a low-traffic social moo with a somewhat fantastical theme, open to beginners and experts.  Programmers, builders, and smart conversationalists are all welcome.</p>"
@@ -178,14 +178,14 @@
         "name" : "Medieval",
         "url"  : "http://www.medievalmoo.nl/",
         "host" : "moo.medievalmoo.nl",
-        "port" : "1111",
+        "port" : 1111,
         "description" : "<p>(Dutch language) -- Welcome, noble stranger on Medieval website. Travelers at any time be invited to wandering through the vast lands that lie hidden behind the main gate. Stroll through the mystical Glevum, &quot;Polis Luna&quot;, the city of the Ancient and the moon. Walk through the earthly Sendar, &quot;Polis Lumina&quot; city of Malos and the sun. Tie the battle with scum in the forests and save the damsel from the clutches of Malos.</p>"
     },
     {
         "name" : "MidgardMOO",
         "url"  : "http://moo.midgard.org",
         "host" : "moo.midgard.org",
-        "port" : "1359",
+        "port" : 1359,
         "theme" : "RPG",
         "description" : "<p>The day after the Comet hit, the thousands of years of &quot;progress&quot; that had covered the treacheries and weaknesses of ordinary people with a thin veneer of civilization were dissolved and melted like snow on the desert's dusty face. No one knows just how far backwards humanity fell that day. For a few, for the lucky, it was just centuries. For the rest, it was millennia.</p> <p>Civilization is a luxury now, and a costly one. Only a few places have been able to maintain it. Welcome to one such enclave.</p> <p>Welcome to The Valley.</p>"
     },
@@ -193,7 +193,7 @@
         "name" : "Miriani",
         "url"  : "http://www.toastsoft.net/",
         "host" : "toastsoft.net",
-        "port" : "1234",
+        "port" : 1234,
         "theme" : "RPG",
         "description" : "<p>Miriani is a multi-player online roleplaying game in which you take on the role of a starship pilot. Your goal is simply to make a life for yourself through whatever means possible. You may choose to do this by becoming a pirate and stealing from other players, protecting human space from known alien threats, performing mundane activities for credits, or any combination of the above. Your life in Miriani is what you make it.</p> <p>Similarly, the open-ended nature of the game means that players are free to attack at will. You must be prepared to defend yourself and your alliance should a pirate come calling. It's recommended to make alliances with other players, read the defense handbook, practice in simulators, discuss tactics (there are many different weapons and technologies available to you), and become familiar with the technology that's available to you. It's all part of the life of a starship pilot!</p>"
     },
@@ -201,19 +201,19 @@
         "name" : "MOO Canada, Eh?",
         "url"  : "http://www.moo.ca/",
         "host" : "moo.ca",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "social"
     },
     {
         "name" : "MOOMellow",
         "url"  : "http://www.chilipepper.com:7000/",
         "host" : "moo.chilipepper.com",
-        "port" : "7777"
+        "port" : 7777
     },
     {
         "name" : "MOOsaico",
         "host" : "moo.di.uminho.pt",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://moosaico.com",
         "theme" : "educational ESL",
         "description" : "<p>MOOsaico is the oldest text based virtual environment operating in Portugal and for some time the only one in the world with multilingual support.</p>"
@@ -222,18 +222,18 @@
         "name" : "mooyeah!",
         "url"  : "http://www.hellyeah.com/moo/",
         "host" : "moo.hellyeah.com",
-        "port" : "7777"
+        "port" : 7777
     },
     {
         "name" : "Once Upon A MOO",
         "host" : "rupert.twyst.org",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "social"
     },
     {
         "name" : "OpalMOO",
         "host" : "moo.opal.org",
-        "port" : "7878",
+        "port" : 7878,
         "theme" : "social",
         "description" : "<p>The Theme of OpalMOO is not easy to put into one or two cute little nifty phrases, but if it were, the phrase would probably be, &quot;Gritty and Sensual.&quot; We are trying to keep up a &quot;running on the backstreets&quot; image. Things like abandoned warehouses and movie theatres are great. Things like Space Ports and shiny new office buildings are not.</p>"
     },
@@ -241,20 +241,20 @@
         "name" : "Port of Dreams",
         "url"  : "http://phaze.ca/pod/",
         "host" : "phaze.ca",
-        "port" : "9999",
+        "port" : 9999,
         "description" : "<p>A MOO where Dreams can come true.  This is an Adult MOO, you must be at least 18 years of age.  We hope that everyone who comes here will find some level of enjoyment, be it Role Playing, the sights, or the conversation.</p>"
     },
     {
         "name" : "Rupert",
         "host" : "rupert.twyst.org",
-        "port" : "9040",
+        "port" : 9040,
         "url" : "http://rupert.twyst.org/rupert",
         "description" : "<p>A MOO based on the universe as described by Douglas Adams.</p>"
     },
     {
         "name" : "Ryksyll MOO",
         "host" : "moo.ryksyll.com",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://moo.ryksyll.com:8889/",
         "theme" : "RPG",
         "description" : "<p>Ryksyll MOO is a world based on the works of Peter Wright on the land of Mycle.  No books have been published on the world but several short stories have been posted, and more are in the works.  Mycle is a world filled with magic, dragons, and mythical creatures.  Mycle is also the home to several anthropomorphic predators (Big cats, and wolves).  Most of these are active in Ryksyll in one form or another, but humans are the most populous, followed by elves.</p> <p>Ryksyll MOO is an adult restricted game.  We only allow Adults to play here, and we only allow adult characters.  No children of any kind.  This is to free our players from the problems of having to worry about what they can and can't say in front of children, and what they can and can't say.  We have a complex political and economic system in the works, these are not necessary to the play, but provide a strong set of background tasks for the players to RP around. </p>"
@@ -262,7 +262,7 @@
     {
         "name" : "schMOOze University",
         "host" : "schmooze.hunter.cuny.edu",
-        "port" : "8888",
+        "port" : 8888,
         "url" : "http://schmooze.hunter.cuny.edu/",
         "theme" : "educational ESL",
         "description" : "<p>schMOOze U. is a small, friendly college known for its hospitality and the diversity of the student population. It was established in July, 1994 as a place where people studying English as a second or foreign language could practice English while sharing ideas and experiences with other learners and practicers of English. Students have opportunities for one-on-one and group conversations as well as access to language games such as Scrabble and Boggle, an on-line dictionary, a virtual library and a grammar maze. Although schMOOze U. was founded with ESL/EFL students in mind, it welcomes all people interested in cross-cultural communication.</p>"
@@ -270,7 +270,7 @@
     {
         "name" : "Sindome",
         "host" : "moo.sindome.org",
-        "port" : "5555",
+        "port" : 5555,
         "url" : "http://sindome.org/",
         "theme" : "RPG",
         "description" : "<p>Sindome is an online text-based Cyberpunk Role Playing game inspired by Neuromancer, Judge Dredd and more. You play online in real-time with other people. You'll develop a unique character with a past, thoughts, dreams, and secrets. Because roleplaying is required, there is an expectation that your character will have reasons for their actions. We've gone beyond your typical roleplaying text game. You don't decide your character's success or failure, the game does. Most everything you do will depend on the stats and skills your character possesses. This includes understanding languages, perception, combat, and a vast array of other things you can do.</p>"
@@ -278,7 +278,7 @@
     {
         "name" : "SquidMOO",
         "host" : "squidsoft.net",
-        "port" : "4444",
+        "port" : 4444,
         "url" : "http://www.squidsoft.net/games/squidmoo/",
         "theme" : "social",
         "description" : "<p>SquidMOO is simply a social MOO; that is, less a game and more a place where users can chat and learn to build and program for MOO. Squidsoft staff are almost always connected here.</p>"
@@ -287,7 +287,7 @@
         "name" : "Star Conquest",
         "url"  : "http://www.squidsoft.net/",
         "host" : "squidsoft.net",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "RPG",
         "description" : "<p>Humanity has just emerged from the lowest point in its collective history, and the closest it has been to extinction since the advent of agriculture. By the year 2304, the Coalition of humans and their alien allies the Jinu has spread across the stars, and thought themselves powerful. But the Outsiders, an alien empire occupying vast reaches of Rimward space, proved them wrong. First contact between the two allies was severed, and suddenly humanity was alone. Then the Outsiders attacked in force, and human planets and governments fell one by one.</p> <p>It was the apocalypse.</p> <p>But contrary to the beliefs of many, not all hope was lost. After five years, a single starship, the Percival Lowell, returned from Rimward space, bringing with it the means to nullify the Outsiders' greatest weapon. With this, and the help of many other brave pilots, the occupying Outsiders were driven off human worlds and back to where they came from.</p> <p>Humanity is now trying to rebuild, and trying to regain what it has lost. The Outsiders are finished with occupation, and now desire only to see humans extinct.  New threats and new mysteries seem to appear every day. In the midst of it all, civilian starships span the stars, maintaining an open threat against any new invasion and trying to make a few credits while they're at it.</p> <p>You too have felt the lure of this; the desire for a unique freedom that most citizens will never know, the drive to explore, the need to defend your species, and yes, greed for the vast wealth that is to be had.</p> <p>It is time to take to the stars.</p>"
 
@@ -295,7 +295,7 @@
     {
         "name" : "TecfaMOO",
         "host" : "tecfamoo.unige.ch",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://tecfa.unige.ch/tecfamoo.html",
         "theme" : "research educational",
         "description" : "<p>The TECFAMOO is a text-based virtual reality. It is a Virtual Space for Educational Technology, Education, Research and Life at TECFA, School of Psychology and Education, University of Geneva, Switzerland.</p>"
@@ -304,21 +304,21 @@
         "name" : "the-night.com",
         "url"  : "http://www.the-night.com/",
         "host" : "the-night.com",
-        "port" : "2000",
+        "port" : 2000,
         "theme" : "RPG",
         "description" : "<p>'the-night.com' (TNC) is a text-based game set in a fictional island chain in the Atlantic. Instead of graphics, players are encouraged to use their imaginations. The world and its characters are presented like an interactive book, each character developed and acted out by another player. Your actions, decisions create the story. In TNC, you decide what becomes of the game world. Live out any life you want. Run for politics and make decisions that affect the game's population, join the police and investigate crimes, or perhaps start a little trouble yourself. Run a business, start a family.</p> <p>But be careful. Military coups, brutal war, deadly cults, and unexplainable horrors are just a few of the plagues that have engulfed our world.</p>"
     },
     {
         "name" : "TrekMOO VI",
         "host" : "virtualworlds.peidev.com",
-        "port" : "9529",
+        "port" : 9529,
         "theme" : "RPG",
         "description" : "<p>This is a role-playing game based on the general theme of the Star Trek universe</p> <p>The year is 2481 and the setting is in a sector of space outside the traditional areas known in the Trek world.  Noone has a claim on this sector, and it is peppered with various resources and planets (most of which are uninhabitable).</p> <p>The game is centered around the gather of <resourc(s)> and preparing them for a routine shuttle back to your homeworld.  Though each org handles this in a different manner, the end result is to earn cash to continue to grow your org and your position in this area.</p>"
     },
     {
         "name" : "Utopia",
         "host" : "utopiamoo.net",
-        "port" : "1111",
+        "port" : 1111,
         "url" : "http://www.utopiamoo.net/",
         "theme" : "ESL",
         "description" : "<p>Self-described as a &quot;Dutch MOO based on fairytales, stories and all kinds of fantastic creatures in a wonderful world of magic power combined with  fun. A RPG is under construction.&quot;</p>"
@@ -327,7 +327,7 @@
         "name" : "VCSU MEP",
         "url"  : "http://http://euler.vcsu.edu/pland.htm",
         "host" : "euler.vcsu.edu",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "education",
         "description" : "<p>VCSU MEP is an online educational project to instruct introductory Computer Science students in initial programming classes.</p>"
     },
@@ -335,7 +335,7 @@
         "name" : "VRoma",
         "url"  : "http://www.vroma.org/",
         "host" : "vroma.org",
-        "port" : "8200",
+        "port" : 8200,
         "theme" : "educational",
         "description" : "<p>The VRoma Project is first and foremost a community of scholars, both teachers and students, who create online resources for teaching about the Latin language and ancient Roman culture.</p>"
     },
@@ -343,14 +343,14 @@
         "name" : "WackyMOO",
         "url"  : "http://wackymoo.jellybean.co.uk:8081/",
         "host" : "wackymoo.jellybean.co.uk",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "social",
         "description" : "<p>WackyMOO's theme is what it's name suggests - a place where nothing is quite normal, and no one is as they seem. We have an open door policy to lunatics, and we make sure that all of our wizards are completely insane before we decide to give them wizard bits.</p>"
     },
     {
         "name" : "Waterpoint",
         "host" : "waterpoint.moo.mud.org",
-        "port" : "8301",
+        "port" : 8301,
         "url" : "http://waterpoint.moo.mud.org/",
         "theme" : "social",
         "description" : "<p>Waterpoint is a text-based shared virtual space. A MOO.</p> <p>Waterpoint takes place on an island called &quot;Waterpoint&quot; somewhere off the eastern coast of North America far enough north to have cold winters and mildly hot summers. The island appears to be abandoned by its former owners.</p> <p>Waterpoint is occupied by a bunch of people that started washing ashore in the late 1990's. They have built numerous toys, a few buildings, and spent a lot of time talking.</p>"
@@ -358,7 +358,7 @@
     {
         "name" : "Wayfar 1444",
         "host" : "wayfar1444.com",
-        "port" : "7777",
+        "port" : 7777,
         "url" : "http://wayfar1444.com/",
         "theme" : "science fiction",
         "description" : "<p>Wayfar 1444 is a text based online multiplayer game. You are a colonist, sent to the surface of an alien world with a few basic supplies. Join up with other colonists, or plot against them, while surviving and building a self sufficient colony.</p> <p>Wayfar features a procedurally generated galaxy, a distinctive dice pool combat system, hacking, robots, aircraft, vehicles, starships, buildings, detailed crafting, easy to understand english command syntax, and a friendly admin staff.</p>"
@@ -366,7 +366,7 @@
     {
         "name" : "WeyrMount II",
         "host" : "moo.weyrmount.org",
-        "port" : "8000",
+        "port" : 8000,
         "url" : "http://www.weyrmount.org",
         "theme" : "social",
         "description" : "<p>This new Weyrmount is the virtual home of members of the Ultima Dragons-Internet Chapter. It is modeled after the ideal world of a host of turmoil-sick dragons -- intelligent dragons, with the knowledge and power to build beautiful cities in the mountains and wonderous tools and works of art.  Most Dragons hold close kinship with the mystical land of Britannia (the land in the majority of Origin's Ultima series) but, as the concept is of dragons who have fled terrible catastrophy on Britannia through a magical portal, this new land is -not- Britannia. Perhaps it is one of the other lost continents of that world; perhaps it is an entirely new world altogether.  There are still two moons in the sky (Trammel and Felucca, by observation) and much of the wildlife is the same, but there the similarities end. The Dragons are all pioneers here, out to explore and tame this fabulous new world, and make it their new home.  </p>"
@@ -374,7 +374,7 @@
     {
         "name" : "Where No One Has Gone Before",
         "host" :  "game.wnohgb.org",
-        "port" : "1701",
+        "port" : 1701,
         "url" : "http://www.wnohgb.org/",
         "theme" : "RPG",
         "description" : "<p>'Where No One Has Gone Before' is a multi-player roleplay game set in an alternate Trek universe.</p>"
@@ -382,14 +382,14 @@
     {
         "name" : "X-Men: Flame of Darkness",
         "host" : "kydance.net",
-        "port" : "2009",
+        "port" : 2009,
         "theme" : "RPG",
         "description" : "<p>We are a Marvel Universe Text-Based Roleplaying Game where people can create original characters, or play an established character such as Captain America or the Mighty Thor! Our Theme is set in a Year One version the TRN-123 Marvel Universe. This allows players to focus on character rather than decades of history.</p>"
     },
     {
         "name" : "YibMOO",
         "host" : "yibmoo.dyndns.org",
-        "port" : "7777",
+        "port" : 7777,
         "theme" : "social",
         "description" : "<p>YibMOO takes place inside and on the grounds of another large sprawling mansion, the vacation house of the fabulously wealthy and famously eccentric founder of YibCo, Inc. Somewhat unlike a certain other mansion, from which it draws some of its inspiration, this house is still (and perpetually) under construction. The owner's instructions to the contracting company were simply, &quot;Surprise me. And make me laugh.&quot; Many builders have taken the opportunity to add to the mansion, extending it in dozens of different directions, each with a completely different vision and architectural style. The secret passageway system is rumored to be one of the finest in the world. ... Unbenownst to the world at large, the secret YibCo Research and Development facility lies beneath this very house, where a legion of inventors and crackpot scientists cook up their zany prototypes in a labyrinth of tunnels, laboratories and underground testing hangars -- strange sounds, smells, and wisps of brightly-colored smoke occasionally drift up to the main part of the house from these nether regions. The house, of course, is lavishly equipped with all of the latest YibCo prototypes. </p>"
     }

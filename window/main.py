@@ -22,43 +22,6 @@ class Main(wx.Frame):
         self.worlds_list    = None
         self.shortlist      = []
 
-        self.buildMenu()
-
-        _config = wx.ConfigBase.Get()
-
-        h = 600
-        w = 800
-        if _config.ReadBool('save_window_size'):
-            if _config.ReadInt('window_width'):  w = _config.ReadInt('window_width')
-            if _config.ReadInt('window_height'): h = _config.ReadInt('window_height')
-        self.SetSize((w, h))
-
-        self.tabs = MOONotebook(self)
-
-        self.addEvents()
-
-        if _config.ReadBool('autoconnect_last_world'):
-            world = worlds.get(_config.Read('last_world'))
-            if world:
-                self.openWorld(world)
-            else:
-                wx.CallAfter(self.showWorldsList)
-        else:
-            wx.CallAfter(self.showWorldsList)
-
-    def openWorld(self, world):
-        conn = Connection(self)
-        conn.connect(world)
-        self.tabs.AddPage(conn, world.get('name'), select = True)
-        self.tabs.showOrHideTabs()
-        conn.input_pane.SetFocus()
-
-    def connect_to_shortlist(self, worldname, _):
-        world = worlds.get(worldname, None)
-        if not world: return
-        self.openWorld(world)
-
-    def buildMenu(self):
         WorldsMenu = wx.Menu()
         Worlds_worlds  = WorldsMenu.Append(-1, "&Worlds...",  "Browse list of worlds")
         Worlds_connect = WorldsMenu.Append(-1, "&Connect...", "Connect to a host and port")
@@ -113,9 +76,40 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.showHelp,     Help_help  )
         self.Bind(wx.EVT_MENU, self.showAboutBox, Help_about )
 
-    def addEvents(self):
+        _config = wx.ConfigBase.Get()
+
+        h = 600
+        w = 800
+        if _config.ReadBool('save_window_size'):
+            if _config.ReadInt('window_width'):  w = _config.ReadInt('window_width')
+            if _config.ReadInt('window_height'): h = _config.ReadInt('window_height')
+        self.SetSize((w, h))
+
+        self.tabs = MOONotebook(self)
+
         self.Bind(wx.EVT_SIZE, self.onSize)
-        self.Bind(     wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onTabChanged)
+        self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onTabChanged)
+
+        if _config.ReadBool('autoconnect_last_world'):
+            world = worlds.get(_config.Read('last_world'))
+            if world:
+                self.openWorld(world)
+            else:
+                wx.CallAfter(self.showWorldsList)
+        else:
+            wx.CallAfter(self.showWorldsList)
+
+    def openWorld(self, world):
+        conn = Connection(self)
+        conn.connect(world)
+        self.tabs.AddPage(conn, world.get('name'), select = True)
+        self.tabs.showOrHideTabs()
+        conn.input_pane.SetFocus()
+
+    def connect_to_shortlist(self, worldname, _):
+        world = worlds.get(worldname, None)
+        if not world: return
+        self.openWorld(world)
 
     def rebuildShortlist(self):
         shortlist = []
@@ -211,12 +205,12 @@ class Main(wx.Frame):
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.AddDeveloper('lisdude (https://github.com/lisdude)')
             info.AddDeveloper('C Bodt (https://github.com/sirk390)')
-            info.AddDeveloper('Andrea Gavana (http://xoomer.virgilio.it/infinity77/)')
-            info.SetCopyright('(c) 2013-2019')
+            info.AddDeveloper('Andrea Gavana')
+            info.SetCopyright('(c) 2013-2024')
             info.SetWebSite('https://emersonrp.github.io/wxpymoo/')
             info.SetName('wxpymoo')
             info.SetLicense(Path('LICENSE').read_text())
-            info.SetVersion('0.2')
+            info.SetVersion('0.1.8')
             self.about_info = info
         wx.adv.AboutBox(self.about_info)
 
@@ -233,12 +227,12 @@ class MOONotebook(AuiNotebook):
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED,  self.showOrHideTabs)
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onPageChanged)
 
-    def onPageClose(self, evt = None):
+    def onPageClose(self, _ = None):
         status_bar = self.GetCurrentPage().status_bar
         status_bar.update_timer.Stop()
         status_bar.Destroy()
 
-    def showOrHideTabs(self, evt = None):
+    def showOrHideTabs(self, _ = None):
         self.SetTabCtrlHeight(-1 if self.GetPageCount() > 1 else 0)
 
     def onPageChanged(self, evt):
