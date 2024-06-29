@@ -31,7 +31,6 @@ class PrefsEditor(wx.Dialog):
 
         self.update_sample_text(None)
 
-
         self.Bind(wx.EVT_BUTTON, self.update_prefs, id = wx.ID_OK)
 
     def update_prefs(self, evt):
@@ -71,9 +70,6 @@ class PrefsEditor(wx.Dialog):
         fcp = wx.Panel(self.book)
 
         font = wx.Font(config.Read('font'))
-
-        fgcolour = config.Read('fgcolour')
-        bgcolour = config.Read('bgcolour')
 
         # output sample/controls
         self.sample    =    ExpandoTextCtrl(fcp, style = wx.TE_READONLY | wx.TE_RICH | wx.TE_MULTILINE , size = wx.Size(400,-1))
@@ -147,8 +143,9 @@ class PrefsEditor(wx.Dialog):
         textattr = wx.TextAttr(fgcolour, bgcolour, font)
 
         self.sample.SetBackgroundColour(bgcolour)
+        # don't remove the initial \n because the big wad of SetStyle below starts at character '1' not '0'
         self.sample.SetValue(
-            'Emerson says, "This is what your window will look like."\n'
+            '\nEmerson says, "This is what your window will look like."\n'
             'Emerson waves around a brightly-colored banner.\n'
             '\n'
             'It\'s super effective!\n'
