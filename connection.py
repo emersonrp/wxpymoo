@@ -179,6 +179,15 @@ class Connection(wx.SplitterWindow):
             self.ActivateFeature('SSL')
 
 
+        self.connect_time = time.time()
+
+        config = wx.ConfigBase.Get()
+        config.Write('last_world', world.get('name'))
+        config.Flush()
+
+        self.mcp = MCPCore(self)
+
+
 
 
 
@@ -205,15 +214,6 @@ class Connection(wx.SplitterWindow):
 
 
 
-
-
-        self.connect_time = time.time()
-
-        config = wx.ConfigBase.Get()
-        config.Write('last_world', world.get('name'))
-        config.Flush()
-
-        self.mcp = MCPCore(self)
 
         if world.get('auto_login'):
             login_script = world.get('login_script')
