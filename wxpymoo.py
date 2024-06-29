@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import wx
-import os, sys
+from pathlib import Path
 from wxasync import WxAsyncApp
 import asyncio
 from window.main import Main
@@ -15,7 +15,7 @@ async def run():
 
     wx.Log.SetActiveTarget(wx.LogStderr())
 
-    setattr(app, 'path', os.path.dirname(sys.argv[0]))
+    setattr(app, 'path', Path(__file__).parents[0])
 
     # Let's try to unbuffer "print" for easier debug
     # This per "Perkins"' comment on https://stackoverflow.com/questions/107705/disable-output-buffering
