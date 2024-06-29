@@ -44,9 +44,8 @@ class World(dict):
             mainwindow.rebuildShortlist()
 
 worlds      = collections.OrderedDict({})
-_defaults   = {}
 def Initialize():
-    global worlds, _defaults
+    global worlds
     worldsconfig = wx.FileConfig(localFilename = str(prefs.get_prefs_dir() / 'worlds'))
 
     # loop worlds...
