@@ -64,7 +64,7 @@ class MCPCore:
         if debug_mcp_window:
             debug_mcp_window.display(info)
         else:
-            print(self.connection.world.get('name') + ": " + info)
+            wx.LogMessage(self.connection.world.get('name') + ": " + info)
 
     def output_filter(self, output_pane, data):
 
@@ -238,7 +238,7 @@ class MCPCore:
 
     def register(self, pkg, messages):
         if not isinstance(pkg, MCPPackageBase):
-            print("something that isn't an MCP package tried to register")
+            wx.LogMessage("something that isn't an MCP package tried to register")
             return
         self.packages[pkg.package] = pkg
         for message in messages:

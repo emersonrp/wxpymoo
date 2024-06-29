@@ -34,8 +34,6 @@ class InputPane(BasePane):
             if k == 67:
                 self.GetTopLevelParent().handleCopy(evt)
                 return
-            #if k == 86: print("That was a Cmd-V")
-            #if k == 88: print("That was a Cmd-X")
         evt.Skip()
 
     def doClear(self, evt): self.Clear()

@@ -153,7 +153,7 @@ class Connection(wx.SplitterWindow):
             if inst.__class__ == asyncio.TimeoutError:
                 message = "Connection to " + host + ":" + str(port) + " timed out."
             else:
-                print("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
+                wx.LogMessage("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
             wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
             return
         finally:
@@ -199,7 +199,7 @@ class Connection(wx.SplitterWindow):
         if self.writer:
             self.writer.write(stuff)
         else:
-            print(f"Tried to write stuff to closed writer: {stuff}")
+            wx.LogError(f"Tried to write stuff to closed writer: {stuff}")
 
     def reconnect(self):
         if self.writer: self.Close()

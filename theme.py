@@ -65,7 +65,7 @@ class Theme(dict):
         elif index >= 232:
             rgb_R = rgb_G = rgb_B = (index - 232) * 10 + 8
         else:
-            print('bad 256 index: ' + str(index))
+            wx.LogMessage('bad 256 index: ' + str(index))
 
         return self.rgb_to_hex((rgb_R, rgb_G, rgb_B))
 

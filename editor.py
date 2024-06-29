@@ -65,7 +65,9 @@ class Editor(wx.EvtHandler):
 
     def _send_file_if_needed(self, _):
         mtime = os.stat(self.tmpfilename).st_mtime
-        if not mtime: print("wtf is wrong with file?!?")
+        if not mtime:
+            wx.LogError("Something went wrong with the editor:  temp file has no mtime!")
+            return
         if mtime > self._last_sent:
             tmpfile = open(self.tmpfilename, 'r')
             tmpfile.seek(0)

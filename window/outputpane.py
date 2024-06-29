@@ -162,7 +162,6 @@ class OutputPane(BasePane):
             # TODO -- "if beep is enabled in the prefs"
             text, count = re.subn("\007", '', text)
             for _ in range(0, count):
-                print("DEBUG: found an ANSI beep")
                 wx.Bell();
 
             # chop the text into text, ansi, text, ansi....
@@ -172,7 +171,7 @@ class OutputPane(BasePane):
                 # if we're on the last bit, check whether it might be a partial ANSI blob
                 if idx == len(bits)-1:
                     if re.search('\033', bit):
-                        print(f"I think I have a spare ANSI bit ({bit}), requeueing it")
+                        wx.LogMessage(f"I think I have a spare ANSI bit ({bit}), requeueing it")
                         self.global_queue += bit
                         break
 
@@ -195,7 +194,7 @@ class OutputPane(BasePane):
                                 elif subtype == 5:
                                     colour = self.theme.index256_to_hex(codes.pop(0))
                                 else:
-                                    print("Got an unknown fg/bg ANSI subtype: " + str(subtype))
+                                    wx.LogMessage("Got an unknown fg/bg ANSI subtype: " + str(subtype))
                                     colour = "#000000" # TODO - this is probably not right
                             else:
                                 colour = payload
@@ -231,12 +230,12 @@ class OutputPane(BasePane):
                                 'default_fg'          : self.doansi_default_fg,
                                 'default_bg'          : self.doansi_default_bg,
                             }
-                            ansifunc = switcher.get(payload, lambda: print("Unknown ANSI control sequence"))
+                            ansifunc = switcher.get(payload, lambda: wx.LogMessage("Unknown ANSI control sequence"))
                             ansifunc()
                             self.style_thyself()
 
                         else:
-                            print("unknown ANSI command:", command)
+                            wx.LogMessage("unknown ANSI command:", command)
                 else:
                     # is a text-only chunk, check for URLs
                     if _config.ReadBool('highlight_urls'):
@@ -317,10 +316,10 @@ class OutputPane(BasePane):
         self.current_style.SetFont(font)
     def doansi_default_fg(self): self.fg_colour = self.theme.get('foreground')
     def doansi_default_bg(self): self.bg_colour = self.theme.get('background')
-    def doansi_double_underline(self)    : print('Got an ANSI "double_underline"')
+    def doansi_double_underline(self)    : wx.LogMessage('Got an ANSI "double_underline"')
     def doansi_conceal(self):    self.conceal = True
     def doansi_no_conceal(self): self.conceal = False
-    def doansi_framed(self)              : print('Got an ANSI "framed"')
+    def doansi_framed(self)              : wx.LogMessage('Got an ANSI "framed"')
         # TODO - this seems to be correct all the way up to textboxattr having the border set
         # and getting it into current_style, but nothing changes on-screen
         #border = rtc.TextAttrBorders()
@@ -331,10 +330,10 @@ class OutputPane(BasePane):
         #textboxattr.m_border = border
         #self.current_style.SetTextBoxAttr(textboxattr)
 
-    def doansi_encircled(self)           : print('Got an ANSI "encircled"')
-    def doansi_overline(self)            : print('Got an ANSI "overline"')
-    def doansi_no_framed_encircled(self) : print('Got an ANSI "no_framed_encircled"')
-    def doansi_no_overline(self)         : print('Got an ANSI "no_overline"')
+    def doansi_encircled(self)           : wx.LogMessage('Got an ANSI "encircled"')
+    def doansi_overline(self)            : wx.LogMessage('Got an ANSI "overline"')
+    def doansi_no_framed_encircled(self) : wx.LogMessage('Got an ANSI "no_framed_encircled"')
+    def doansi_no_overline(self)         : wx.LogMessage('Got an ANSI "no_overline"')
 
     def foreground_colour(self)    : return self.theme.Colour(self.bg_colour if self.conceal else self.fg_colour, self.intensity)
     def background_colour(self)    : return self.theme.Colour(self.bg_colour)

@@ -1,3 +1,4 @@
+import wx
 # TELNET negotiation filter
 #
 # This code was adapted from the telnetlib library included with Python 2.7,
@@ -178,7 +179,7 @@ def process_line(conn, line):
                     buf[1] = b''
                     result = handle_iac_subnegotiation(sbdataq, conn)
                     if result == "requeue":
-                        print("Time to requeue!")
+                        wx.LogMessage("Time to requeue!")
                         conn.filter_queue = line
                         return
         elif len(iacseq) == 2:
@@ -195,81 +196,81 @@ def process_line(conn, line):
 def handle_iac_do_negotiation(cmd, opt, conn):
     if cmd == DO:
         if opt == MTTS:
-            print("Got IAC DO MTTS;  Sending IAC WILL MTTS")
+            wx.LogMessage("Got IAC DO MTTS;  Sending IAC WILL MTTS")
             conn.ActivateFeature('MTTS')
             conn.output(IAC + WILL + MTTS)
         elif opt == NEW_ENVIRON:
-            print("Got IAC DO NEW_ENVIRON;  Sending IAC WONT NEW_ENVIRON")
+            wx.LogMessage("Got IAC DO NEW_ENVIRON;  Sending IAC WONT NEW_ENVIRON")
             conn.output(IAC + WONT + NEW_ENVIRON)
         elif opt == NAWS:
-            print("Got IAC DO NAWS; Sending IAC WILL NAWS + x/y info")
+            wx.LogMessage("Got IAC DO NAWS; Sending IAC WILL NAWS + x/y info")
             conn.ActivateFeature('NAWS')
             conn.output(IAC + WILL + NAWS)
             handle_naws(conn)
         elif opt == MXP:
             # TODO - support this eventually
-            print("Got IAC DO MXP;  Sending IAC WONT MXP")
+            wx.LogMessage("Got IAC DO MXP;  Sending IAC WONT MXP")
             conn.output(IAC + WONT + MXP)
         elif opt == ATCP:
-            print("Got IAC DO ATCP;  Sending IAC WONT ATCP")
+            wx.LogMessage("Got IAC DO ATCP;  Sending IAC WONT ATCP")
             conn.output(IAC + WONT + ATCP)
         else:
-            print("Got an *unknown* negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
+            wx.LogMessage("Got an *unknown* negotiation IAC DO " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
     else:
         if opt == MTTS:
-            print("Got IAC DONT MTTS; Resetting and sending WONT MTTS")
+            wx.LogMessage("Got IAC DONT MTTS; Resetting and sending WONT MTTS")
             conn.mtts_reply = 0
             conn.output(IAC + WONT + MTTS)
         elif opt == NAWS:
-            print("Got IAC DONT NAWS; Sending IAC WONT NAWS")
+            wx.LogMessage("Got IAC DONT NAWS; Sending IAC WONT NAWS")
             conn.ActivateFeature('NAWS', False)
             conn.output(IAC + WONT + NAWS)
         else:
-            print("Got an *unknown* negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
+            wx.LogMessage("Got an *unknown* negotiation IAC DONT " + str(ord(opt)) + ", saying WONT")
             conn.output(IAC + WONT + opt)
 
 def handle_iac_will_negotiation(cmd, opt, conn):
     if cmd == WILL:
         if opt == MSDP:
             # TODO - support this eventually
-            print("Got IAC WILL MSDP;  Sending IAC DONT MSDP")
+            wx.LogMessage("Got IAC WILL MSDP;  Sending IAC DONT MSDP")
             conn.output(IAC + DONT + MSDP)
         elif opt == MSSP:
-            print("Got IAC WILL MSSP;  Sending IAC DO MSSP")
+            wx.LogMessage("Got IAC WILL MSSP;  Sending IAC DO MSSP")
             conn.output(IAC + DO + MSSP)
             conn.ActivateFeature('MSSP')
         elif opt == MCCP1 or opt == MCCP2:
             if 'MCCP' in conn.features:
                 answer = DONT
-                print("Got IAC WILL MCCP; Already compressing, Sending IAC DONT MCCP")
+                wx.LogMessage("Got IAC WILL MCCP; Already compressing, Sending IAC DONT MCCP")
             else:
                 answer = DO
-                print("Got IAC WILL MCCP;  Sending IAC DO MCCP")
+                wx.LogMessage("Got IAC WILL MCCP;  Sending IAC DO MCCP")
             conn.output(IAC + answer + opt)
         elif opt == MSP:
             # TODO - support this eventually
-            print("Got IAC WILL MSP;  Sending IAC DONT MSP")
+            wx.LogMessage("Got IAC WILL MSP;  Sending IAC DONT MSP")
             conn.output(IAC + DONT + MSP)
         elif opt == ZMP:
-            print("Got IAC WILL ZMP;  Sending IAC DONT ZMP")
+            wx.LogMessage("Got IAC WILL ZMP;  Sending IAC DONT ZMP")
             conn.output(IAC + DONT + ZMP)
         elif opt == GMCP:
             # TODO - support this eventually
-            print("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
+            wx.LogMessage("Got IAC WILL GMCP;  Sending IAC DONT GMCP")
             conn.output(IAC + DONT + GMCP)
         elif opt == ECHO:
-            print("Got IAC WILL ECHO")
+            wx.LogMessage("Got IAC WILL ECHO")
             conn.iac['ECHO'] = False
         else:
-            print("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
+            wx.LogMessage("Got an *unknown* negotiation IAC WILL " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
     elif cmd == WONT:
         if opt == ECHO:
-            print("Got IAC WONT ECHO")
+            wx.LogMessage("Got IAC WONT ECHO")
             conn.iac['ECHO'] = True
         else:
-            print("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
+            wx.LogMessage("Got an *unknown* negotiation IAC WONT " + str(ord(opt)) + ", saying DONT")
             conn.output(IAC + DONT + opt)
 
 def handle_iac_subnegotiation(sbdataq, conn):
@@ -285,8 +286,8 @@ def handle_iac_subnegotiation(sbdataq, conn):
         conn.compressed_bytes = conn.uncompressed_bytes = 0
         return('requeue')
     else:
-        print("unhandled IAC Subnegotiation")
-        print(sbdataq)
+        wx.LogMessage("unhandled IAC Subnegotiation")
+        wx.LogMessage(sbdataq)
     return
 
 

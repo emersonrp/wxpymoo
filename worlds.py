@@ -54,7 +54,6 @@ def Initialize():
     if g_more:  # do we have anything at all from the config file?
         while g_more: # yes, loop and fill stuff out.
 
-            # TODO - enumerate what the various keys might be and use Read() ReadBool() etc as appropriate
             worldsconfig.SetPath(worldname)
 
             worlddata = {}
@@ -68,9 +67,7 @@ def Initialize():
                     worlddata[dataname] = worldsconfig.ReadInt(dataname)
                 else:
                     worlddata[dataname] = worldsconfig.Read(dataname)
-                # ew boolean handling.  Maybe go thru prefs to do this in one place
-                if worlddata[dataname] == "True" : worlddata[dataname] = True
-                if worlddata[dataname] == "False": worlddata[dataname] = False
+
                 e_more, dataname, e_index = worldsconfig.GetNextEntry(e_index)
 
             # build the World object
