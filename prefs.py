@@ -9,7 +9,6 @@ PrefsChangedEvent, EVT_PREFS_CHANGED = wx.lib.newevent.NewEvent()
 if platform.system() == "Linux":
     wx.StandardPaths.Get().SetFileLayout(wx.StandardPaths.Get().FileLayout.FileLayout_XDG)
 
-
 def get_prefs_dir():
     return Path(wx.StandardPaths.Get().GetUserConfigDir()) / 'wxpymoo'
 
@@ -33,12 +32,17 @@ def Initialize():
         'mcp_window_width'  : 600,
         'mcp_window_height' : 400,
 
-        # TODO - set 'external editor' per-platform to something sane
-        'external_editor'  : 'gvim -f',
         'use_x_copy_paste' : platform.system() == 'Linux',
 
         'theme' : 'ANSI',
     }
+    if platform.system() == "Windows":
+        _defaults['external_editor'] = "notepad"
+    elif platform.system() == "Linux":
+        _defaults['external_editor'] = "gvim -f"
+    #elif platform.system() == "Darwin":
+    # TODO what goes here?
+
     prefs_dir = get_prefs_dir()
     if not prefs_dir.exists():
         prefs_dir.mkdir(parents = True)
@@ -50,18 +54,16 @@ def Initialize():
         if get(key) == None:
             set(key, str(def_val))
 
-def get(key, default = None):
-    _config = wx.ConfigBase.Get()
-    val =  _config.Read(key)
-    # ugly string -> Boolean handling.  Hope we never have a value actually named "True" or "False"
-    if val == "True":  val = True
-    if val == "False": val = False
-    if val == ""     : val = default
-    return val
+def get(key): return wx.ConfigBase.Get().Read(key)
 
 def set(param, val):
     _config = wx.ConfigBase.Get()
-    _config.Write(param, str(val))
+    if param in ['save_window_size', 'use_ansi', 'use_ansi_blink', 'highlight_urls', 'save_mcp_window_size', 'autoconnect_last_world', 'local_echo', 'scroll_on_output', 'use_x_copy_paste',]:
+        _config.WriteBool(param, val)
+    elif param == 'theme':
+        _config.Write(param, val)
+    else:
+        _config.WriteInt(param, val)
     _config.Flush()
 
 def update(pw):
