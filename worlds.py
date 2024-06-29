@@ -93,8 +93,6 @@ def Initialize():
             world.save()
             worlds[world.get('name')] = world
 
-
-
 MSSP_VARS = {
     # Offical from https://tintin.sourceforge.io/protocols/mssp/
     'NAME'               : "Name of the MUD.",
