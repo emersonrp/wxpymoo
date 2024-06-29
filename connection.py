@@ -65,16 +65,16 @@ class Connection(wx.SplitterWindow):
         evt.Skip()
 
     def saveSplitterSize(self, evt):
-        _config = wx.ConfigBase.Get()
+        config = wx.ConfigBase.Get()
         size = self.GetSize()
-        _config.WriteInt('input_height', size.GetHeight() - evt.GetSashPosition())
-        _config.Flush()
+        config.WriteInt('input_height', size.GetHeight() - evt.GetSashPosition())
+        config.Flush()
         evt.Skip()
 
     def OnSize(self, evt):
-        _config = wx.ConfigBase.Get()
+        config = wx.ConfigBase.Get()
         size = self.GetSize()
-        input_height = _config.ReadInt('input_height') or 25
+        input_height = config.ReadInt('input_height') or 25
         self.SetSashPosition(size.GetHeight() - input_height, True)
         self.output_pane.ScrollIfAppropriate()
         evt.Skip()
@@ -164,9 +164,9 @@ class Connection(wx.SplitterWindow):
 
         self.connect_time = time.time()
 
-        _config = wx.ConfigBase.Get()
-        _config.Write('last_world', world.get('name'))
-        _config.Flush()
+        config = wx.ConfigBase.Get()
+        config.Write('last_world', world.get('name'))
+        config.Flush()
 
         self.mcp = MCPCore(self)
 

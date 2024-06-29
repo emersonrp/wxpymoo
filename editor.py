@@ -43,8 +43,7 @@ class Editor(wx.EvtHandler):
     def runEditor(self):
         self.Bind(wx.EVT_END_PROCESS, self.OnProcessEnded)
 
-        _config = wx.ConfigBase.Get()
-        cmd = re.split(r' +', _config.Read('external_editor'))
+        cmd = re.split(r' +', wx.ConfigBase.Get().Read('external_editor'))
         cmd.append(f'"{self.tmpfilename}"')
 
         # launch the editor and capture the pid

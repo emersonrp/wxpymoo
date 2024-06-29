@@ -166,10 +166,9 @@ class WorldsList(wx.Dialog):
         self.show_fields_if_appropriate()
 
     def Show(self, show = True):
-        _config = wx.ConfigBase.Get()
         self.world_picker.Clear()
         for world in worlds: self.world_picker.Append(world)
-        last_world_name = _config.Read('last_world', '')
+        last_world_name = wx.ConfigBase.Get().Read('last_world', '')
         last_world = self.world_picker.FindString(last_world_name)
         # if we no longer have that world, go back to the top of the list
         if last_world < 0:
@@ -179,8 +178,7 @@ class WorldsList(wx.Dialog):
         self.world_picker.SetSelection(last_world)
         self.fill_thyself()
 
-        super(WorldsList, self).Show(show)
-
+        super().Show(show)
 
     def select_world(self, _):
         self.fill_thyself()

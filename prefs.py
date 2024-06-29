@@ -57,34 +57,34 @@ def Initialize():
 def get(key): return wx.ConfigBase.Get().Read(key)
 
 def set(param, val):
-    _config = wx.ConfigBase.Get()
+    config = wx.ConfigBase.Get()
     if param in ['save_window_size', 'use_ansi', 'use_ansi_blink', 'highlight_urls', 'save_mcp_window_size', 'autoconnect_last_world', 'local_echo', 'scroll_on_output', 'use_x_copy_paste',]:
-        _config.WriteBool(param, val)
+        config.WriteBool(param, val)
     elif param == 'theme':
-        _config.Write(param, val)
+        config.Write(param, val)
     else:
-        _config.WriteInt(param, val)
-    _config.Flush()
+        config.WriteInt(param, val)
+    config.Flush()
 
 def update(pw):
-    _config = wx.ConfigBase.Get()
+    config = wx.ConfigBase.Get()
     # pw == prefs_window
-    # This is doing some nasty GetAsString and GetNativeFontInfoDesc foo here,
-    # instead of encapsulated in prefs, which I think I'm OK with.
 
-    _config.WriteBool('save_window_size',       pw.save_size_checkbox.GetValue() )
-    _config.WriteBool('autoconnect_last_world', pw.autoconnect_checkbox.GetValue() )
-    _config.WriteBool('use_x_copy_paste',       pw.xmouse_checkbox.GetValue() )
-    _config.WriteBool('local_echo',             pw.local_echo_checkbox.GetValue() )
-    _config.WriteBool('scroll_on_output',       pw.scroll_on_output_checkbox.GetValue() )
+    config.WriteBool('save_window_size',       pw.save_size_checkbox.GetValue() )
+    config.WriteBool('autoconnect_last_world', pw.autoconnect_checkbox.GetValue() )
+    config.WriteBool('use_x_copy_paste',       pw.xmouse_checkbox.GetValue() )
+    config.WriteBool('local_echo',             pw.local_echo_checkbox.GetValue() )
+    config.WriteBool('scroll_on_output',       pw.scroll_on_output_checkbox.GetValue() )
 
-    _config.Write('font',               pw.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
-    _config.WriteBool('use_ansi',       pw.ansi_checkbox.GetValue() )
-    _config.WriteBool('use_ansi_blink', pw.ansi_blink_checkbox.GetValue() )
+    config.Write('font',               pw.font_ctrl.GetSelectedFont().GetNativeFontInfoDesc())
+    config.WriteBool('use_ansi',       pw.ansi_checkbox.GetValue() )
+    config.WriteBool('use_ansi_blink', pw.ansi_blink_checkbox.GetValue() )
 
-    _config.Write('theme',    pw.theme_picker.GetStringSelection() )
+    config.Write('theme',    pw.theme_picker.GetStringSelection() )
 
-    _config.Write('external_editor', pw.external_editor.GetValue() )
+    config.Write('external_editor', pw.external_editor.GetValue() )
+
+    config.Flush()
 
     wx.PostEvent(pw.parent, PrefsChangedEvent())
 
