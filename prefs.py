@@ -29,6 +29,8 @@ def Initialize():
         'local_echo'             : False,
         'scroll_on_output'       : True,
 
+        'editor_path' : '',
+
         'mcp_window_width'  : 600,
         'mcp_window_height' : 400,
 
@@ -37,9 +39,9 @@ def Initialize():
         'theme' : 'ANSI',
     }
     if platform.system() == "Windows":
-        _defaults['external_editor'] = "notepad"
+        _defaults['editor_picker'] = "notepad"
     elif platform.system() == "Linux":
-        _defaults['external_editor'] = "gvim -f"
+        _defaults['editor_picker'] = "Default Editor"
     #elif platform.system() == "Darwin":
     # TODO what goes here?
 
@@ -60,7 +62,7 @@ def set(param, val):
     config = wx.ConfigBase.Get()
     if param in ['save_window_size', 'use_ansi', 'use_ansi_blink', 'highlight_urls', 'save_mcp_window_size', 'autoconnect_last_world', 'local_echo', 'scroll_on_output', 'use_x_copy_paste',]:
         config.WriteBool(param, val)
-    elif param == 'theme':
+    elif param in ['theme', 'editor_picker', 'editor_path']:
         config.Write(param, val)
     else:
         config.WriteInt(param, val)
@@ -82,7 +84,8 @@ def update(pw):
 
     config.Write('theme',    pw.theme_picker.GetStringSelection() )
 
-    config.Write('external_editor', pw.external_editor.GetValue() )
+    config.Write('editor_picker', pw.editor_picker.GetString(pw.editor_picker.GetSelection()))
+    config.Write('editor_path'  , pw.editor_path.GetValue() )
 
     config.Flush()
 
