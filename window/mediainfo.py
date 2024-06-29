@@ -299,7 +299,18 @@ class PlayerPanel(wx.Panel):
         elif state == wx.media.MEDIASTATE_PAUSED:
             self.mc.Play()
 
-    def OnStop(self, _):
+    def OnStop(self, evt):
+        if self.repeats > 0:
+            self.repeats -= 1
+        if evt.GetEventType() == wx.wxEVT_BUTTON:
+            # pressed the stop button, presumably we
+            # explicitly want not to hear it any more
+            self.repeats = 0
+        elif self.repeats != 0:
+            # either there are more, or we were originally sent -1,
+            # which according to the spec means "repeat indefinitely"
+            self.OnPlay()
+            return
         self.mc.Stop()
         self.mc.Seek(0)
         self.seekbar.SetValue(0)
