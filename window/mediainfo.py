@@ -65,8 +65,8 @@ class MediaInfo(wx.Dialog):
             wx.LogMessage(f"no sound dir, making {self.sound_dir}")
             self.sound_dir.mkdir(parents = True)
 
-    def make_player(self, filename, fullpath):
-        player = PlayerPanel(self.sp, filename, fullpath)
+    def make_player(self, sound_type, filename, fullpath):
+        player = PlayerPanel(self.sp, sound_type, filename, fullpath)
         if player:
             self.sizer.Add(player, 0, wx.EXPAND)
             self.sizer.Fit(self.sp)
@@ -158,7 +158,7 @@ class MediaInfo(wx.Dialog):
                 wx.LogError(f"Somehow still don't have a file for MSP sound {filename}, skipping")
                 return
 
-            player = self.players.get(filename) or self.make_player(filename, fullpath)
+            player = self.players.get(filename) or self.make_player(sound_type, filename, fullpath)
             if not player: return
 
             # MSP param parsing
@@ -183,7 +183,7 @@ class PlayerPanel(wx.Panel):
 
     icons = {}
 
-    def __init__(self, parent, filename, fullpath):
+    def __init__(self, parent, sound_type, filename, fullpath):
         wx.Panel.__init__(self, parent, -1, style = wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
 
         self.mc = wx.media.MediaCtrl(self, -1, szBackend = backend)
@@ -192,6 +192,7 @@ class PlayerPanel(wx.Panel):
         self.priority = 50
         self.current_volume = 100
         self.previous_volume = 100 # for when we mute and then unmute
+        self.sound_type = sound_type
 
         if not self.icons:
             if hasattr(sys, '_MEIPASS'):
@@ -265,8 +266,8 @@ class PlayerPanel(wx.Panel):
 
     def OnLoad(self, _):
         self.SetVolume(self.current_volume)
-        self.OnPlay()
         self.seekbar.SetRange(0, self.mc.Length())
+        self.OnPlay()
 
     def OnPlay(self, _ = None):
         state = self.mc.GetState()
