@@ -11,7 +11,7 @@ class Theme(dict):
     def fetch(cls, themename = ''):
         config = wx.ConfigBase.Get()
         global all_themes
-        return all_themes[themename or config.Read('theme')]
+        return all_themes[themename or config.Read('theme', 'ANSI')]
 
     @classmethod
     def all_theme_names(cls): return list(all_themes)
