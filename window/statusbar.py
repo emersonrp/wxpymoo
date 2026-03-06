@@ -1,5 +1,4 @@
 import wx
-import os
 import time
 import sys
 from pathlib import Path
@@ -15,13 +14,13 @@ class StatusBar(ESB.EnhancedStatusBar):
         if hasattr(sys, '_MEIPASS'):
             path = Path(sys._MEIPASS) # pyright: ignore
         else:
-            path = Path(wx.GetApp().path)
+            path = Path(wx.App.Get().path)
 
-        iconpath = os.path.join(path, "icons", "features")
-        if os.path.exists(iconpath):
-            for icon_file in os.listdir(iconpath):
-                feature, _ = icon_file.split('.')
-                icons[feature] = wx.Image(os.path.join(iconpath, icon_file)).ConvertToBitmap()
+        iconpath = path / "icons" / "features"
+        if iconpath.exists():
+            for icon_file in iconpath.iterdir():
+                feature = icon_file.stem
+                icons[feature] = wx.Image(str(iconpath / icon_file)).ConvertToBitmap()
 
         # status field
         self.status_field = wx.Panel(self)
@@ -68,6 +67,7 @@ class StatusBar(ESB.EnhancedStatusBar):
     def Destroy(self):
         if self.update_timer and self.update_timer.IsRunning():  self.update_timer.Stop()
         if self.status_timer and self.status_timer.IsRunning():  self.status_timer.Stop()
+        return True
 
     def UpdateConnectionStatus(self, _ = None):
         self.update_timer.Restart(1000)
@@ -80,7 +80,7 @@ class StatusBar(ESB.EnhancedStatusBar):
             self.conn_status.SetBackgroundColour(wx.RED)
             self.conn_status.Refresh()
             self.conn_time.SetLabel('')
-            self.conn_time.SetToolTip(None)
+            self.conn_time.SetToolTip('')
             self.LayoutWidgets()
             return
 
@@ -90,10 +90,10 @@ class StatusBar(ESB.EnhancedStatusBar):
                 self.conn_time.SetToolTip(time.strftime('Connected since: %c', conn_time))
 
             ctime = time.time() - conn.connect_time
-            dd, rest = divmod(ctime, 3600 * 24)
+            dd, rest = divmod(int(ctime), 3600 * 24)
             hh, rest = divmod(rest, 3600)
             mm, ss   = divmod(rest, 60)
-            conn_time_str = '%02d:%02d:%02d:%02d' % (dd, hh, mm, ss)
+            conn_time_str = f'{dd:02d}:{hh:02d}:{mm:02d}:{ss:02d}'
         else:
             conn_time_str = '--:--:--:--'
 
@@ -133,7 +133,7 @@ class StatusBar(ESB.EnhancedStatusBar):
 
     def StartBlinker(self):
         if self.blinker_timer and self.blinker_timer.IsRunning(): return
-        new_bg = (wx.RED if self.activity_blinker.GetBackgroundColour() != wx.RED else None)
+        new_bg = (wx.RED if self.activity_blinker.GetBackgroundColour() != wx.RED else wx.NullColour)
         self.activity_blinker.SetBackgroundColour(new_bg)
         self.activity_blinker.Refresh()
         self.activity_blinker.SetToolTip("New text has arrived")
@@ -142,8 +142,8 @@ class StatusBar(ESB.EnhancedStatusBar):
     def StopBlinker(self):
         if self.blinker_timer and self.blinker_timer.IsRunning():
             self.blinker_timer.Stop()
-            self.activity_blinker.SetBackgroundColour(None)
-            self.activity_blinker.SetToolTip(None)
+            self.activity_blinker.SetBackgroundColour(wx.NullColour)
+            self.activity_blinker.SetToolTip('')
 
 class FeatureIcon(wx.Panel):
     def __init__(self, parent, i, w):
@@ -155,7 +155,7 @@ class FeatureIcon(wx.Panel):
         self.icon.SetToolTip(i + " enabled")
 
     # Bind mouse events to the bitmaps inside the panel, add "hand" cursor
-    def Bind(self, event, handler, source = None, id = wx.ID_ANY, id2 = wx.ID_ANY):
+    def Bind(self, event, handler, source = None, id = wx.ID_ANY, id2 = wx.ID_ANY): # noqa: A002
         if event == wx.EVT_LEFT_UP:
             self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             self.icon.Bind(event, handler)

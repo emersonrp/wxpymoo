@@ -1,5 +1,4 @@
-import wx
-import re, webbrowser
+import webbrowser
 from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):

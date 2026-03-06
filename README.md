@@ -66,7 +66,7 @@ So I punted, and reimplemented the entire thing in wxPython.  And here we are.
 ## Credits
 wxpymoo contains:
 * [wxasync](https://github.com/sirk390/wxasync) (c) 2018 Christian Bodt
-* EnhancedStatusBar (c) 2005 Andrea Gavana and Nitro
+* [EnhancedStatusBar](https://infinity77.net/main/EnhancedStatusBar.html) (c) 2005 Andrea Gavana and Nitro
 * [Feather Icons](https://feathericons.com/) (c) 2013-2017 Cole Bemis
 * The color themes were lovingly lifted from [Terminal Sexy](http://terminal.sexy) by George Czabania
 

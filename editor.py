@@ -1,5 +1,8 @@
 import wx
-import tempfile, os, re
+import tempfile
+import re
+
+from pathlib import Path
 
 class Editor(wx.EvtHandler):
     def __init__(self, opts):
@@ -17,27 +20,22 @@ class Editor(wx.EvtHandler):
         else:                           extension = '.txt'
 
         # Create the tmpfile...
-        tempfd, self.tmpfilename = tempfile.mkstemp(
+        _tempfd, tmpfilename = tempfile.mkstemp(
                 prefix = self.reference+"_", suffix = extension)
-        tmpfile = open(self.tmpfilename, 'w')
+        self.tmpfile = Path(tmpfilename)
 
         # ...write to it...
-        for line in self.content: tmpfile.write(line + "\n")
-        tmpfile.flush()
-
-        # ... then let's get the os' hands off it so the editor can write to it.
-        tmpfile.close()
-        os.close(tempfd)
+        self.tmpfile.write_text("\n".join(self.content))
 
         # set the "last sent" time so we don't send it instantly
-        self._last_sent = os.stat(self.tmpfilename).st_mtime
+        self._last_sent = self.tmpfile.stat().st_mtime
 
         # hands are off now, start the editor
         self.runEditor()
 
         # We run a timer to check the file a few times a second so that a
         # "save" will send, even without a "quit" attached.
-        self.watchTimer.Start(250, 0)
+        self.watchTimer.Start(250, False)
         self.Bind(wx.EVT_TIMER, self._send_file_if_needed, self.watchTimer)
 
     def runEditor(self):
@@ -49,7 +47,7 @@ class Editor(wx.EvtHandler):
             wx.MessageBox("You have no external editor selected.  Please visit the Preferences dialog.", "No Editor")
             return
         cmd = re.split(r' +', wx.ConfigBase.Get().Read('editor_path'))
-        cmd.append(f'"{self.tmpfilename}"')
+        cmd.append(f'"{self.tmpfile}"')
 
         # launch the editor and capture the pid
         self.process = wx.Process(self)
@@ -63,19 +61,17 @@ class Editor(wx.EvtHandler):
         self._send_file_if_needed(None)
 
         # ...and remove the temp file.
-        os.remove(self.tmpfilename)
+        self.tmpfile.unlink()
 
         self.watchTimer.Stop()
 
     def _send_file_if_needed(self, _):
-        mtime = os.stat(self.tmpfilename).st_mtime
+        mtime = self.tmpfile.stat().st_mtime
         if not mtime:
             wx.LogError("Something went wrong with the editor:  temp file has no mtime!")
             return
         if mtime > self._last_sent:
-            tmpfile = open(self.tmpfilename, 'r')
-            tmpfile.seek(0)
-            self.callback(self._id, tmpfile.readlines())
+            self.callback(self._id, self.tmpfile.read_text().splitlines())
             self._last_sent = mtime
 
     ###################

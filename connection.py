@@ -14,7 +14,6 @@ from window.msspinfo   import MSSPInfo
 from window.mediainfo  import MediaInfo
 
 from mcp21.core import MCPCore
-import prefs
 from prefs import EVT_PREFS_CHANGED
 import filters.telnetiac
 
@@ -119,13 +118,13 @@ class Connection(wx.SplitterWindow):
 
     def Close(self, force = False):
         if self.is_connected():
-            self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
+            self.output_pane.display("=== wxpymoo: Connection closed. ===\n")
 
         if self.writer: self.writer.close()
         self.filter_queue = b''
         self.features.clear()
         self.connect_time = self.reader = self.writer = None
-        super().Close(force)
+        return super().Close(force)
 
     # TODO - we need to cram charset into worlds more deterministically
     def charset(self):
@@ -161,7 +160,7 @@ class Connection(wx.SplitterWindow):
             raise
         except ConnectionRefusedError:
             message = f"Connection to {host}:{port} failed - connection refused"
-        except asyncio.TimeoutError:
+        except TimeoutError:
             message = f"Connection to {host}:{port} timed out."
         except OSError as inst:
             message = f"Connection to {host}:{port} failed - {inst}"
@@ -172,7 +171,6 @@ class Connection(wx.SplitterWindow):
             if message:
                 self.Close()
                 wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
-                return
             wx.EndBusyCursor()
 
         if conntype == "SSL":
@@ -223,7 +221,11 @@ class Connection(wx.SplitterWindow):
             self.output(login_script + "\n")
 
         while True:
-            data = await self.reader.read(65535)
+            if self.reader:
+                data = await self.reader.read(65535)
+            else:
+                break
+
             if not data: break
 
             if self.filter_queue:

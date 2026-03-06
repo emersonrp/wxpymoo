@@ -1,3 +1,4 @@
+# ruff: noqa
 from asyncio.events import get_event_loop
 import asyncio
 import wx
@@ -51,7 +52,7 @@ class WxAsyncApp(wx.App):
 
     def AsyncBind(self, event_binder, async_callback, object, source=None, id=wx.ID_ANY, id2=wx.ID_ANY):
         """Bind a coroutine to a wx Event. Note that when wx object is destroyed, any coroutine still running will be cancelled automatically.
-        """ 
+        """
         # We restrict the object to wx.Windows to be able to cancel the coroutines on EVT_WINDOW_DESTROY, even if wx.Bind works with any wx.EvtHandler
         if not isinstance(object, wx.Window):
             raise Exception("object must be a wx.Window")
@@ -66,7 +67,7 @@ class WxAsyncApp(wx.App):
     def StartCoroutine(self, coroutine, obj):
         """Start and attach a coroutine to a wx object. When object is destroyed, the coroutine will be cancelled automatically.
            returns an asyncio.Task
-        """ 
+        """
         # We restrict the object to wx.Windows to be able to cancel the coroutines on EVT_WINDOW_DESTROY, even if wx.Bind works with any wx.EvtHandler
         if not isinstance(obj, wx.Window):
             raise Exception("obj must be a wx.Window")
@@ -77,7 +78,7 @@ class WxAsyncApp(wx.App):
             obj.Bind(wx.EVT_WINDOW_DESTROY, lambda event: self.OnDestroy(event, obj), obj)
         task = asyncio.create_task(coroutine)
         task.add_done_callback(self.OnTaskCompleted)
-        task.obj = obj
+        task.obj = obj # pyright: ignore
         self.RunningTasks[obj].add(task)
         return task
 
@@ -117,17 +118,17 @@ def StartCoroutine(coroutine, obj):
 
 
 #
-#  Note: os level dialogs like wx.FileDialog, wx.DirDialog, wx.FontDialog, wx.ColourDialog, wx.MessageDialog are 
-#  handled differently: 
+#  Note: os level dialogs like wx.FileDialog, wx.DirDialog, wx.FontDialog, wx.ColourDialog, wx.MessageDialog are
+#  handled differently:
 #    * They only support ShowModal
 #    * They must be run in an executor to avoid blocking the main event loop
-# 
+#
 
 
 async def ShowModalInExecutor(dlg):
-    loop = asyncio.get_running_loop()    
+    loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, dlg.ShowModal)
-        
+
 
 async def AsyncShowDialog(dlg):
     if type(dlg) in [wx.FileDialog, wx.DirDialog, wx.FontDialog, wx.ColourDialog, wx.MessageDialog]:
@@ -139,7 +140,7 @@ async def AsyncShowDialog(dlg):
         closed.set()
     async def on_button(event):
         # Same code as in wxwidgets:/src/common/dlgcmn.cpp:OnButton
-        # to automatically handle OK, CANCEL, APPLY,... buttons 
+        # to automatically handle OK, CANCEL, APPLY,... buttons
         id = event.GetId()
         if id == dlg.GetAffirmativeId():
             if dlg.Validate() and dlg.TransferDataFromWindow():
@@ -165,7 +166,7 @@ async def AsyncShowDialogModal(dlg):
     if type(dlg) in [wx.html.HtmlHelpDialog, wx.FileDialog, wx.DirDialog, wx.FontDialog, wx.ColourDialog, wx.MessageDialog]:
         return await ShowModalInExecutor(dlg)
     else:
-        frames = set(wx.GetTopLevelWindows()) - set([dlg])
+        frames = set(wx.GetTopLevelWindows()) - set([dlg]) # pyright: ignore
         states = {frame: frame.IsEnabled() for frame in frames}
         try:
             for frame in frames:
@@ -177,4 +178,4 @@ async def AsyncShowDialogModal(dlg):
             parent = dlg.GetParent()
             if parent:
                 parent.SetFocus()
-                    
+

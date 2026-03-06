@@ -1,5 +1,5 @@
 import wx
-import re, webbrowser
+import webbrowser
 from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):
@@ -10,7 +10,7 @@ class MCPPackage(MCPPackageBase):
         self.min     = '1.0'
         self.max     = '1.0'
 
-        mainwindow = wx.GetApp().GetTopWindow()
+        mainwindow = wx.App.Get().GetTopWindow()
 
         self.notebook = mainwindow.tabs
         self.notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.updateMenu)

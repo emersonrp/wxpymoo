@@ -1,6 +1,5 @@
 import wx
 import wx.richtext as rtc
-import prefs
 import platform
 from theme import Theme
 

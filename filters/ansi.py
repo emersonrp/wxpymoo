@@ -123,7 +123,7 @@ fansi_oem_to_utf8 = str.maketrans({
     221: "▌",
     222: "▐",
     223: "▀",
-    224: "α",
+    224: "α", # noqa: RUF001
     225: "β",
     226: "Γ",
     227: "π",
@@ -472,7 +472,7 @@ def ansi_test_contents():
 
     fg_cube = bg_cube = ''
 
-    for c in range(0,8):
+    for c in range(8):
         fg_cube += "\033[3" + str(c) + "m*\033[0m"
         bg_cube += "\033[4" + str(c) + "m \033[0m"
     test += fg_cube + "    " + bg_cube + "\n"
@@ -480,9 +480,9 @@ def ansi_test_contents():
 
     test += "\n"
     test += "Color cube, 6x6x6\n"
-    for g in range(0,6):
-        for b in range(0,6):
-            for r in range(0,6):
+    for g in range(6):
+        for b in range(6):
+            for r in range(6):
                 c = ((r * 36) + (g * 6) + b) + 16
                 fg_cube += "\033[38;5;" + str(c) + "m*\033[0m"
                 bg_cube += "\033[48;5;" + str(c) + "m \033[0m"
@@ -501,14 +501,15 @@ def ansi_test_contents():
     test += "Some random 24-bit color samples:\n"
     from random import randint
     line = ""
-    for i in range(0,6):
-        for j in range(0,6):
+    for _i in range(6):
+        for j in range(6):
             r = randint(0,255)
             g = randint(0,255)
             b = randint(0,255)
             fg_bg = 48 if (j % 2) else 38
 
-            line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
+            line += "\033[" + f'{fg_bg:d};2;{r:d};{g:d};{b:d}m ({r:3d},{g:3d},{b:3d})' + "\033[0m"
+                                                                                               # line += "\033[" + ("%d;2;%d;%d;%dm (%3d,%3d,%3d) " % (fg_bg, r, g, b, r, g, b)) + "\033[0m"
         test += line + "\n"
         line = ""
 

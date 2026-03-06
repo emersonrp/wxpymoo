@@ -1,4 +1,3 @@
-import re
 from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):

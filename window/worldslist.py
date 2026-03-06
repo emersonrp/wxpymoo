@@ -2,7 +2,6 @@ import wx
 import wx.html
 
 from worlds import worlds, World
-from connection import Connection
 
 import webbrowser
 
@@ -37,7 +36,7 @@ class WorldsList(wx.Dialog):
         self.conntype = wx.Choice(self, choices = conntypes )
         port_sizer = wx.BoxSizer(wx.HORIZONTAL)
         port_sizer.Add(self.port,     1, wx.EXPAND)
-        port_sizer.Add([5,5],         0, wx.EXPAND)
+        port_sizer.Add(wx.Size(5,5),  0, wx.EXPAND)
         port_sizer.Add(self.conntype, 0, wx.EXPAND)
 
         self.ssh_username_label = wx.StaticText(self, label = "SSH User:")
@@ -48,11 +47,11 @@ class WorldsList(wx.Dialog):
         # UI to show that ssh isn't implemented yet.
         self.ssh_unimp_box      = wx.StaticText(self, label = "")
         self.ssh_unimplemented  = wx.StaticText(self, label = "(SSH not implemented yet)")
-        self.ssh_unimplemented.SetForegroundColour("#999999")
-        self.ssh_username_label.SetForegroundColour("#999999")
-        self.ssh_loc_host_label.SetForegroundColour("#999999")
-        self.ssh_username.Disable();
-        self.ssh_loc_host.Disable();
+        self.ssh_unimplemented.SetForegroundColour(wx.Colour("#999999"))
+        self.ssh_username_label.SetForegroundColour(wx.Colour("#999999"))
+        self.ssh_loc_host_label.SetForegroundColour(wx.Colour("#999999"))
+        self.ssh_username.Disable()
+        self.ssh_loc_host.Disable()
         # end ssh-disable temp UI tweaks
 
         self.auto_login_check   = wx.CheckBox(self, label   = "Auto-Login")
@@ -178,7 +177,7 @@ class WorldsList(wx.Dialog):
         self.world_picker.SetSelection(last_world)
         self.fill_thyself()
 
-        super().Show(show)
+        return super().Show(show)
 
     def select_world(self, _):
         self.fill_thyself()
@@ -236,7 +235,7 @@ class WorldsList(wx.Dialog):
             return
         worldname = self.new_world_name_dialog.GetValue()
 
-        if worlds.get(worldname) == None:
+        if worlds.get(worldname) is None:
             worlds[worldname] = World({ "name" : worldname })
             self.world_picker.Append(worldname)
             self.world_picker.SetSelection(self.world_picker.FindString(worldname))
@@ -264,7 +263,7 @@ class WorldsList(wx.Dialog):
         if not desc or desc == "None": desc = ''
         self.desc.SetPage(desc)
         # TODO - figure out how to get the Right Size instead of hard-coded 200px
-        self.desc.SetMinSize((1, 200))
+        self.desc.SetMinSize(wx.Size(1, 200))
 
         #note = str(world.get('note'))
         #if not note or note == "None": note = ''

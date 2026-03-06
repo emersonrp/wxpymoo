@@ -6,9 +6,11 @@ import json
 import sys
 from pathlib import Path
 
+from typing import ClassVar
+
 class World(dict):
 
-    _defaults = {
+    _defaults: ClassVar[dict] = {
         'port'         : 7777,
         'auto_login'   : False,
         'login_script' : 'connect %u %p',
@@ -28,19 +30,18 @@ class World(dict):
         worldsconfig.SetPath(worldname)
 
         for f in self:
-            if self.get(f):
-                if f in ['auto_login', 'use_mcp', 'use_login_dialog', 'on_shortlist', 'use_fansi',]:
-                    worldsconfig.WriteBool(f, self.get(f))
-                elif f == 'port':
-                    worldsconfig.WriteInt(f, self.get(f))
+            if val := self.get(f):
+                if f in ['auto_login', 'use_mcp', 'use_login_dialog', 'on_shortlist', 'use_fansi',] and isinstance(val, bool):
+                    worldsconfig.WriteBool(f, val)
+                elif f == 'port' and isinstance(val, int):
+                    worldsconfig.WriteInt(f, val)
                 else:
-                    worldsconfig.Write(f, self.get(f))
+                    worldsconfig.Write(f, val)
 
         worldsconfig.SetPath('/')
         worldsconfig.Flush()
 
-        mainwindow = wx.GetApp().GetTopWindow()
-        if mainwindow:
+        if mainwindow := wx.App.Get().GetTopWindow():
             mainwindow.rebuildShortlist()
 
 worlds      = collections.OrderedDict({})
@@ -80,11 +81,11 @@ def Initialize():
         if hasattr(sys, '_MEIPASS'):
             path = Path(sys._MEIPASS) # pyright: ignore
         else:
-            path = Path(wx.GetApp().path)
+            path = Path(wx.App.Get().path)
 
         initial_worlds = []
         try:
-            initial_worlds = json.load(open(path / 'initial_worlds.json','r'))
+            initial_worlds = json.load((path / 'initial_worlds.json').open())
         except Exception as e:
             wx.LogError(f"initial_worlds.json file could not be loaded: {e}")
 
@@ -164,7 +165,6 @@ MSSP_VARS = {
     'TRAINING SYSTEM'    : '"None", "Level", "Skill", "Both"',
     'WORLD ORIGINALITY'  : '"All Stock", "Mostly Stock", "Mostly Original", "All Original"',
     'ATCP'               : 'Supports ATCP? "1" or "0"',
-    'MSDP'               : 'Supports MSDP? "1" or "0"',
     'SSL'                : 'SSL port, use "0" if not supported.',
     'ZMP'                : 'Supports ZMP? "1" or "0"',
 }

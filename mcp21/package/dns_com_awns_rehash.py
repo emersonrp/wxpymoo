@@ -1,4 +1,3 @@
-import re
 from mcp21.package import MCPPackageBase
 
 # This has been pulled from the tab-completion scheme in favor of

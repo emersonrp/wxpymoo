@@ -52,6 +52,10 @@ import wx
 # ======================================
 
 from collections import deque
+from filters.telnetiac.naws import handle_naws
+from filters.telnetiac.mtts import handle_mtts
+from filters.telnetiac.mssp import handle_mssp
+from window.mediainfo import msp_filter
 
 # Telnet protocol characters (don't change)
 IAC     = bytes([255]) # "Interpret As Command"
@@ -79,19 +83,16 @@ LINEMODE    = bytes([34]) # Linemode option
 EOR         = bytes([25]) # end or record
 NEW_ENVIRON = bytes([39]) # New - Environment variables
 
-from filters.telnetiac.naws import handle_naws
 NAWS     = bytes([31]) # window size
 
 # MTTS - MUD Terminal Type Standard (https://tintin.sourceforge.io/protocols/mtts/)
 #    (specific implementation of arpa Telnet IAC TTYPE command)
-from filters.telnetiac.mtts import handle_mtts
 MTTS = bytes([24]) # terminal type
 
 # MSDP - MUD Server Data Protocol
 MSDP = bytes([69])
 
 # MSSP - MUD Server Status Protocol
-from filters.telnetiac.mssp import handle_mssp
 MSSP = bytes([70])
 
 # MCCP - MUD Client Compression Protocol (http://www.gammon.com.au/mccp/protocol.html)
@@ -99,7 +100,6 @@ MCCP1 = bytes([85])
 MCCP2 = bytes([86])
 
 # MSP - Mud Sound Protocol (https://www.zuggsoft.com/zmud/msp.htm)
-from window.mediainfo import msp_filter
 MSP = bytes([90])
 
 # MXP - MUD eXtension Protocol (https://www.zuggsoft.com/zmud/mxp.htm)
@@ -120,7 +120,6 @@ def process_line(conn, line):
     iacseq  = b''
     sbdataq = b''
     sb = 0
-    option_callback = None
 
     # if we're compressing, decompress us back into a wad of bytes here.
     if 'MCCP' in conn.features:

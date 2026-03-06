@@ -1,3 +1,4 @@
+# ruff: noqa
 # --------------------------------------------------------------------------- #
 # ENHANCEDSTATUSBAR wxPython IMPLEMENTATION
 # Python Code By:
@@ -220,14 +221,15 @@ class EnhancedStatusBar(wx.StatusBar):
 
         if horizontalalignment not in [ESB_ALIGN_CENTER_HORIZONTAL, ESB_EXACT_FIT,
                                        ESB_ALIGN_LEFT, ESB_ALIGN_RIGHT]:
-            raise Exception('ERROR: Parameter "horizontalalignment" Should Be One Of '\
-                  '"ESB_ALIGN_CENTER_HORIZONTAL", "ESB_ALIGN_LEFT", "ESB_ALIGN_RIGHT"' \
+            raise Exception(
+                'ERROR: Parameter "horizontalalignment" Should Be One Of '
+                  '"ESB_ALIGN_CENTER_HORIZONTAL", "ESB_ALIGN_LEFT", "ESB_ALIGN_RIGHT"'
                   '"ESB_EXACT_FIT"')
 
         if verticalalignment not in [ESB_ALIGN_CENTER_VERTICAL, ESB_EXACT_FIT,
                                      ESB_ALIGN_TOP, ESB_ALIGN_BOTTOM]:
-            raise Exception('\nERROR: Parameter "verticalalignment" Should Be One Of '\
-                  '"ESB_ALIGN_CENTER_VERTICAL", "ESB_ALIGN_TOP", "ESB_ALIGN_BOTTOM"' \
+            raise Exception('\nERROR: Parameter "verticalalignment" Should Be One Of '
+                  '"ESB_ALIGN_CENTER_VERTICAL", "ESB_ALIGN_TOP", "ESB_ALIGN_BOTTOM"'
                   '"ESB_EXACT_FIT"')
 
 

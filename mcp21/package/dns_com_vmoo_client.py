@@ -1,4 +1,3 @@
-import re
 from mcp21.package import MCPPackageBase
 from window.outputpane import EVT_ROW_COL_CHANGED
 

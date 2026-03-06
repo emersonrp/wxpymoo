@@ -37,13 +37,13 @@ class ConnectDialog(wx.Dialog):
         self.host.Bind(wx.EVT_KEY_UP, self.check_fields)
         self.port.Bind(wx.EVT_KEY_UP, self.check_fields)
 
-        self.check_fields(None);
+        self.check_fields(None)
 
     def Show(self, show = True):
         if show:
             self.Centre(wx.BOTH)
             self.host.SetFocus()
-        super(wx.Dialog, self).Show(show)
+        return super().Show(show)
 
     def SelectAllText(self, evt):
         evt.GetEventObject().SelectAll()

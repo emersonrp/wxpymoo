@@ -8,8 +8,8 @@ from editor import Editor
 from window.basepane import BasePane
 from filters.ansi import fansi_replace, ansi_test_contents
 
-#import webbrowser, re, math, emoji
-import webbrowser, re, math
+import webbrowser
+import math
 
 LOCALEDIT_LINE = re.compile(utility.OOB_PREFIX.pattern + ' edit name: (.+?) upload: (.+)')
 
@@ -80,7 +80,7 @@ class OutputPane(BasePane):
     def on_url_click(self, evt):
         url = evt.GetString()
         wx.BeginBusyCursor()
-        if not re.match(r'^https?://', url, re.I):
+        if not re.match(r'^https?://', url, re.IGNORECASE):
             url = "http://" + url
         webbrowser.open(url)
         wx.EndBusyCursor()
@@ -102,7 +102,7 @@ class OutputPane(BasePane):
 
     ######################################
     def WriteText(self, text):
-        super(OutputPane, self).WriteText(text)
+        super().WriteText(text)
         self.ScrollIfAppropriate()
         if self.is_scrolled_back:
             self.connection.status_bar.StartBlinker()
@@ -116,7 +116,7 @@ class OutputPane(BasePane):
             self.Refresh()
 
     def Thaw(self):
-        super(OutputPane, self).Thaw()
+        super().Thaw()
         self.ScrollIfAppropriate()
 
     def display(self, text):
@@ -139,7 +139,7 @@ class OutputPane(BasePane):
         # should examine the remainder for further handling or enqueueing.
         for fil in self.filters:
             text = fil(self, text)
-            if text == None: return  # output_filter must return None if it handled it
+            if text is None: return  # output_filter must return None if it handled it
 
         #if (True or config.ReadBool('render_emoji'):
             # TODO - preference?  "if (we detect an emoji)?"
@@ -161,8 +161,8 @@ class OutputPane(BasePane):
             # snip and ring bells
             # TODO -- "if beep is enabled in the prefs"
             text, count = re.subn("\007", '', text)
-            for _ in range(0, count):
-                wx.Bell();
+            for _ in range(count):
+                wx.Bell()
 
             # chop the text into text, ansi, text, ansi....
             bits = re.split(r'\033\[(\d+(?:;\d+)*)m', text)
@@ -410,22 +410,22 @@ class OutputPane(BasePane):
             self.localedit_contents[0] = upload
 
             if re.match('@program', upload):
-                type = "moo-code"
+                filetype = "moo-code"
             else:
-                type = "text"
+                filetype = "text"
 
-            editor = Editor({
+            _ = Editor({
                 'reference': name,
-                'filetype' : type,
+                'filetype' : filetype,
                 'content'  : self.localedit_contents,
                 'callback' : self._send_file
             })
         else:
             wx.LogError("No matches in localedit_contents, in outputpane.send_localedit_to_editor")
 
-    def _send_file(self, id, content):
-        for l in content:
-            self.connection.output(l + "\n")
+    def _send_file(self, _, content):
+        for line in content:
+            self.connection.output(line + "\n")
 
 
 ansi_codes = {

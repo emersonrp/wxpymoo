@@ -11,7 +11,7 @@ class Theme(dict):
     def fetch(cls, themename = ''):
         config = wx.ConfigBase.Get()
         global all_themes
-        return all_themes[themename or config.Read('theme')]
+        return all_themes[themename or config.Read('theme', 'ANSI')]
 
     @classmethod
     def all_theme_names(cls): return list(all_themes)
@@ -77,7 +77,7 @@ class Theme(dict):
         return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
     def rgb_to_hex(self, rgb):
-        return '#%02x%02x%02x' % rgb
+        return f'#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}'
 
     # this one from Mark Ransom http://stackoverflow.com/a/141943
     def redist_rgb(self, r, g, b):
