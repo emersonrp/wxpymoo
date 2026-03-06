@@ -28,10 +28,10 @@ class MCPPackage(MCPPackageBase):
         if re.match('mcp-negotiate-end', msg.message): self.do_mcp_negotiate_end()
 
     def do_mcp_negotiate_can(self, msg):
-        min = msg.data['min-version']
-        max = msg.data['max-version']
-        pkg = msg.data['package']
-        ver = self.mcp.get_best_version(pkg, min, max)
+        minver = msg.data['min-version']
+        maxver = msg.data['max-version']
+        pkg    = msg.data['package']
+        ver    = self.mcp.get_best_version(pkg, minver, maxver)
         if ver:
             self.mcp.debug("activating " + pkg)
             self.mcp.packages[pkg].activated = ver

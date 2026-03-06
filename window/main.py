@@ -1,5 +1,6 @@
 import wx
 import wx.aui
+from wx.aui import AuiNotebook
 import wx.adv
 from connection import Connection
 from window.connectdialog import ConnectDialog
@@ -8,6 +9,8 @@ from window.worldslist import WorldsList
 from functools import partial
 
 from pathlib import Path
+
+from typing import cast
 
 from worlds import worlds
 
@@ -83,7 +86,7 @@ class Main(wx.Frame):
         if config.ReadBool('save_window_size'):
             if config.ReadInt('window_width'):  w = config.ReadInt('window_width')
             if config.ReadInt('window_height'): h = config.ReadInt('window_height')
-        self.SetSize((w, h))
+        self.SetSize(wx.Size(w, h))
 
         self.tabs = MOONotebook(self)
 
@@ -139,7 +142,7 @@ class Main(wx.Frame):
         self.currentConnection().reconnect()
 
     def currentConnection(self):
-        return self.tabs.GetCurrentPage()
+        return cast('Connection', self.tabs.GetCurrentPage())
 
     def onSize(self, evt):
         config = wx.ConfigBase.Get()
@@ -154,7 +157,7 @@ class Main(wx.Frame):
         current_status = self.GetStatusBar()
         if current_status:
             current_status.Hide()
-            self.SetStatusBar(None)
+            self.SetStatusBar(None) # pyright: ignore
         new_status = self.currentConnection().status_bar
         self.SetStatusBar(new_status)
         new_status.Show()
@@ -218,7 +221,6 @@ class Main(wx.Frame):
         self.closeConnection(evt)
         self.Close(True)
 
-from wx.aui import AuiNotebook
 class MOONotebook(AuiNotebook):
     def __init__(self, parent):
         AuiNotebook.__init__(self, parent, style =
@@ -228,7 +230,8 @@ class MOONotebook(AuiNotebook):
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onPageChanged)
 
     def onPageClose(self, _ = None):
-        status_bar = self.GetCurrentPage().status_bar
+        currpage = cast('Connection', self.GetCurrentPage())
+        status_bar = currpage.status_bar
         status_bar.update_timer.Stop()
         status_bar.Destroy()
 
@@ -237,6 +240,7 @@ class MOONotebook(AuiNotebook):
 
     def onPageChanged(self, evt):
         # Remove the "(*)" from the tab title
-        conn = self.GetCurrentPage()
-        conn.SetTitle(conn.world.get('name'))
+        conn = cast('Connection', self.GetCurrentPage())
+        if conn.world:
+            conn.SetTitle(conn.world.get('name'))
         evt.Skip()

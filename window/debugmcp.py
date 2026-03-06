@@ -1,9 +1,6 @@
 import wx
 import re
 
-import prefs
-
-
 serverMsgAttr = wx.TextAttr(wx.Colour(128, 0, 0))
 clientMsgAttr = wx.TextAttr(wx.Colour(0,   0, 128))
 plainMsgAttr  = wx.TextAttr(wx.Colour(0,   0, 0))
@@ -25,7 +22,7 @@ class DebugMCP(wx.Dialog):
         if (config.ReadBool('save_mcp_window_size')):
             w = config.ReadInt('mcp_window_width')  or 600
             h = config.ReadInt('mcp_window_height') or 400
-            self.SetSize([int(w), int(h)])
+            self.SetSize(wx.Size(int(w), int(h)))
 
         sizer = wx.BoxSizer( wx.VERTICAL )
         sizer.Add(self.output_pane, 1, wx.ALL|wx.GROW, 5)
@@ -42,6 +39,7 @@ class DebugMCP(wx.Dialog):
 
     def Close(self, force = False):
         self.toggle_visible()
+        return super().Close()
 
     def display(self, data):
         op = self.output_pane

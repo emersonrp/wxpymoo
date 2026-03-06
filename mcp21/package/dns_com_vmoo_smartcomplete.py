@@ -1,5 +1,4 @@
 import wx
-import re
 from mcp21.package import MCPPackageBase
 
 

@@ -1,4 +1,3 @@
-# coding: utf-8
 import re
 
 OOB_PREFIX   = re.compile(r'^#\$#', re.MULTILINE)
@@ -33,5 +32,5 @@ URL_REGEX = re.compile(r"""(?xi:
         |                                # or
     [^\s`!()\[\]{};:\'".,<>?«»“”‘’]      # not a space or one of these punct chars
 )
-)""", re.VERBOSE)
+)""", re.VERBOSE) # noqa: RUF001
 

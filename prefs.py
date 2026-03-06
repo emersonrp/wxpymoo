@@ -6,8 +6,10 @@ from pathlib import Path
 PrefsChangedEvent, EVT_PREFS_CHANGED = wx.lib.newevent.NewEvent()
 
 # set us up XDG please
+stdpaths = wx.StandardPaths.Get()
 if platform.system() == "Linux":
-    wx.StandardPaths.Get().SetFileLayout(wx.StandardPaths.Get().FileLayout.FileLayout_XDG)
+    stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
+
 
 def get_prefs_dir():
     return Path(wx.StandardPaths.Get().GetUserConfigDir()) / 'wxpymoo'
@@ -53,12 +55,12 @@ def Initialize():
 
     for key, def_val in _defaults.items():
         # if nothing exists for that key, set it to the default.
-        if get(key) == None:
-            set(key, str(def_val))
+        if get_pref(key) is None:
+            set_pref(key, str(def_val))
 
-def get(key): return wx.ConfigBase.Get().Read(key)
+def get_pref(key): return wx.ConfigBase.Get().Read(key)
 
-def set(param, val):
+def set_pref(param, val):
     config = wx.ConfigBase.Get()
     if param in ['save_window_size', 'use_ansi', 'use_ansi_blink', 'highlight_urls', 'save_mcp_window_size', 'autoconnect_last_world', 'local_echo', 'scroll_on_output', 'use_x_copy_paste',]:
         config.WriteBool(param, val)

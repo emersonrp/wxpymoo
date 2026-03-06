@@ -26,8 +26,8 @@ class MCPPackage(MCPPackageBase):
         })
         self.in_progress[editor._id] = msg
 
-    def _send_file(self, id, content):
-        msg = self.in_progress[id]
+    def _send_file(self, edit_id, content):
+        msg = self.in_progress[edit_id]
         self.mcp.server_notify(
             'dns-org-mud-moo-simpleedit-set', {
                 'reference' : msg.data['reference'],

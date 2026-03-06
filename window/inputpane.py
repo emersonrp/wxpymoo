@@ -13,8 +13,9 @@ class InputPane(BasePane):
 
         self.cmd_history    = CommandHistory(self)
         self.tab_completion = TabCompletion(self, connection)
+        self.connection     = connection
 
-        self.tabs = wx.GetApp().GetTopWindow().tabs
+        self.tabs = wx.App.Get().GetTopWindow().tabs
 
         self.Bind(wx.EVT_TEXT_ENTER, self.send_to_connection )
         self.Bind(wx.EVT_TEXT,       self.onTextChange )
@@ -30,7 +31,7 @@ class InputPane(BasePane):
         if evt.CmdDown():
             k = evt.GetKeyCode()
             if k == 67:
-                self.GetTopLevelParent().handleCopy(evt)
+                self.connection.mainwindow.handleCopy(evt)
                 return
         evt.Skip()
 
@@ -62,7 +63,7 @@ class InputPane(BasePane):
             self.cmd_history.add(stuff)
             self.connection.output(stuff + "\n")
             self.Clear()
-            if wx.ConfigBase.Get().ReadBool('local_echo') and (not 'ECHO' in self.connection.iac or self.connection.iac['ECHO'] == True):
+            if wx.ConfigBase.Get().ReadBool('local_echo') and ('ECHO' not in self.connection.iac or self.connection.iac['ECHO']):
                 self.connection.output_pane.display(">" + stuff + "\n")
 
     def check_for_interesting_keystrokes(self, evt):
@@ -317,7 +318,7 @@ class TabCompletion(wx.PopupWindow):
 
                 adj = 1
                 if platform.system() == "Windows": adj = 10
-                self.SetSize((w + adj, avail_height))
+                self.SetSize(wx.Size(w + adj, avail_height))
                 self.Layout()
 
                 # find the x and y location to pop up the menu
@@ -330,7 +331,7 @@ class TabCompletion(wx.PopupWindow):
                 x_pos += self.parent.GetCaret().GetPosition()[0]
                 self.parent.SetInsertionPointEnd()
 
-                self.SetPosition((x_pos, y_pos - avail_height))
+                self.SetPosition(wx.Point(x_pos, y_pos - avail_height))
                 self.Show(True)
 
         # pressing tab but no completions
@@ -369,7 +370,7 @@ class CompletionList(wx.ListCtrl):
             height += self.GetItemRect(idx).height
 
         self.SetColumnWidth(0,-1)
-        self.SetSize((self.GetColumnWidth(0) + 5, height))
+        self.SetSize(wx.Size(self.GetColumnWidth(0) + 5, height))
 
         self.Select(0)
 

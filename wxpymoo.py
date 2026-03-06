@@ -10,12 +10,16 @@ import prefs
 import worlds
 import theme
 
+class WxPyMooApp(WxAsyncApp):
+    def __init__(self):
+        super().__init__()
+
+        self.path = Path(__file__).parents[0]
+
 async def run():
-    app = WxAsyncApp()
+    app = WxPyMooApp()
 
     wx.Log.SetActiveTarget(wx.LogStderr())
-
-    setattr(app, 'path', Path(__file__).parents[0])
 
     # Let's try to unbuffer "print" for easier debug
     # This per "Perkins"' comment on https://stackoverflow.com/questions/107705/disable-output-buffering

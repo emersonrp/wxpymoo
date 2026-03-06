@@ -1,29 +1,34 @@
 import wx
-import re, random, os, importlib, sys
+import re
+import random
+import os
+import importlib
+import sys
 from pathlib import Path
 import utility
+
+from mcp21.package import MCPPackageBase
 
 # This module was developed by squinting directly at both the MCP spec
 # at http://www.moo.mud.org/mcp2/mcp2.html and tkMOO-light's plugins/mcp21.tcl
 # file, to which this code bears more than a little resemblance and owes
 # more than a little debt.
 
-#    my $simpleChars = q|[-a-z0-9~`!@#$%^&*()=+{}[\]\|';?/><.,]|;
-#    while ($raw =~ /([-_*a-z0-9]+)              # keyword
-#                        :                       # followed by colon
-#                        \s+                     # some space
-#                        (                       # and either
-#                            (?:"[^"]*")         # a quoted string - TODO - the grammar is more picky than [^"]
-#                            |                   # or
-#                            (?:$simpleChars)+   # a value
-#                        )/igx)
+#    /([-_*a-z0-9]+)              # keyword
+#         :                       # followed by colon
+#         \s+                     # some space
+#         (                       # and either
+#             (?:"[^"]*")         # a quoted string - TODO - the grammar is more picky than [^"]
+#             |                   # or
+#             (?:$simpleChars)+   # a value
+#         )/igx)
 raw_re = re.compile(r'([-_*a-z0-9]+):\s+((?:"[^"]*")|(?:[-a-z0-9~`!@#$%^&*()=+{}[\]\|\';?/><.,])+)')
 
 def _version_cmp(v1, v2):
     v1_maj, v1_min = re.split(r'\.', v1)
     v2_maj, v2_min = re.split(r'\.', v2)
 
-    return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min));
+    return (v1_maj > v2_maj or (v1_maj == v2_maj and v1_min >= v2_min))
 
 class MCPCore:
     def __init__(self, conn):
@@ -45,7 +50,7 @@ class MCPCore:
         if hasattr(sys, '_MEIPASS'):
             path = Path(sys._MEIPASS) # pyright: ignore
         else:
-            path = Path(wx.GetApp().path)
+            path = Path(wx.App.Get().path)
         for package_file in Path(path / 'mcp21' / 'package').glob('*.py'):
             package = package_file.stem
 
@@ -55,7 +60,7 @@ class MCPCore:
             mod = importlib.import_module('mcp21.package.' + package)
 
             # then go find the thing called "MCPPackage" (the subclass constructor) and call it
-            getattr(mod, 'MCPPackage')(self)
+            mod.MCPPackage(self)
 
     def debug(self, info):
         info = re.sub('\n$', '', info)
@@ -115,7 +120,7 @@ class MCPCore:
                             message = self.multiline_messages[tag]
                             message._data_tag = tag
 
-                            if not field in message.data: message.data[field] = []
+                            if field not in message.data: message.data[field] = []
 
                             message.data[field].append(value)
                         else:
@@ -140,7 +145,7 @@ class MCPCore:
                             message.message = message.message or message_name
 
                             if message.multi_in_progress:
-                                if not message._data_tag in self.multiline_messages:
+                                if message._data_tag not in self.multiline_messages:
                                     self.multiline_messages[message._data_tag] = message
                             else:
                                 # don't dispatch multilines in progress
@@ -199,7 +204,9 @@ class MCPCore:
 
         if package.activated: package.dispatch(message)
 
-    def server_notify(self, msg, args = {}):
+    def server_notify(self, msg, args = None):
+
+        args = args or {}
 
         out = "#$#" + msg + " " + self.mcp_auth_key
 
@@ -222,8 +229,8 @@ class MCPCore:
 
         if multiline:
             for k in multiline:
-                l = multiline[k]
-                for line in l:
+                lines = multiline[k]
+                for line in lines:
                     self.server_send("#$#* " + datatag + " " + k + ": " + line)
                 self.server_send("#$#: " + datatag)
 
@@ -245,7 +252,7 @@ class MCPCore:
 
     # next two subs taken from MCP 2.1 specification, section 2.4.3
     def get_best_version(self, pkg, smin, smax):
-        if not pkg in self.packages: return
+        if pkg not in self.packages: return
 
         cmax = self.packages[pkg].max
         cmin = self.packages[pkg].min
@@ -261,7 +268,6 @@ class MCPCore:
 ### we put this here because it needs/provides special bootstrapping that the
 ### other packages don't
 
-from mcp21.package import MCPPackageBase
 class MCP(MCPPackageBase):
     def __init__(self, mcp):
         self.package   = 'mcp'
@@ -281,7 +287,7 @@ class MCP(MCPPackageBase):
             self.mcp.mcp_active = True
         else:
             self.mcp.debug("mcp version doesn't match, bailing")
-            return;
+            return
 
         # we both support 2.1 - ship the server a key and start haggling
         key = str(os.getpid())

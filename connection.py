@@ -13,7 +13,6 @@ from window.debugmcp   import DebugMCP
 from window.msspinfo   import MSSPInfo
 
 from mcp21.core import MCPCore
-import prefs
 from prefs import EVT_PREFS_CHANGED
 import filters.telnetiac
 
@@ -111,13 +110,13 @@ class Connection(wx.SplitterWindow):
 
     def Close(self, force = False):
         if self.is_connected():
-            self.output_pane.display("=== wxpymoo: Connection closed. ===\n");
+            self.output_pane.display("=== wxpymoo: Connection closed. ===\n")
 
         if self.writer: self.writer.close()
         self.filter_queue = b''
         self.features.clear()
         self.connect_time = self.reader = self.writer = None
-        super().Close(force)
+        return super().Close(force)
 
     # TODO - we need to cram charset into worlds more deterministically
     def charset(self):
@@ -147,16 +146,22 @@ class Connection(wx.SplitterWindow):
             self.reader, self.writer = await asyncio.wait_for(
                 asyncio.open_connection(host, port, ssl = (conntype == "SSL")),
                 timeout = 15)
+            message = ""
+        except asyncio.CancelledError:
+            raise
+        except ConnectionRefusedError:
+            message = f"Connection to {host}:{port} failed - connection refused"
+        except TimeoutError:
+            message = f"Connection to {host}:{port} timed out."
+        except OSError as inst:
+            message = f"Connection to {host}:{port} failed - {inst}"
         except Exception as inst:
-            self.Close()
-            message = "Connection error: " + str(inst)
-            if inst.__class__ == asyncio.TimeoutError:
-                message = "Connection to " + host + ":" + str(port) + " timed out."
-            else:
-                wx.LogMessage("DEBUG: Connection Exception " + str(inst.__class__) + " " + str(inst))
-            wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
-            return
+            message = f"Connection error: {inst}"
+            wx.LogError(f"DEBUG: Connection Exception {inst.__class__} {inst}")
         finally:
+            if message:
+                self.Close()
+                wx.MessageDialog(self, message, "Error", style = wx.OK|wx.ICON_ERROR).ShowModal()
             wx.EndBusyCursor()
 
         if conntype == "SSL":
@@ -178,7 +183,11 @@ class Connection(wx.SplitterWindow):
             self.output(login_script + "\n")
 
         while True:
-            data = await self.reader.read(65535)
+            if self.reader:
+                data = await self.reader.read(65535)
+            else:
+                break
+
             if not data: break
 
             if self.filter_queue:

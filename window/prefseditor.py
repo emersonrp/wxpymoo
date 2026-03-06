@@ -7,7 +7,7 @@ from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 
 class PrefsEditor(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, size=(500,500), title="WxPyMOO Preferences")
+        wx.Dialog.__init__(self, parent, size=wx.Size(500,500), title="WxPyMOO Preferences")
 
         self.parent = parent
 
