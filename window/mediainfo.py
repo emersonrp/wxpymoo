@@ -2,11 +2,14 @@ import wx
 import wx.media
 import wx.lib.scrolledpanel as scrolled
 import re
-import os, glob, random, sys
+import random
+import sys
 import platform
 import urllib.request
 from pathlib import Path
 import prefs
+
+from typing import ClassVar
 
 backend = {
     'Windows' : wx.media.MEDIABACKEND_WMP10,
@@ -39,10 +42,10 @@ class MediaInfo(wx.Dialog):
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 
-        #mainwindow = wx.GetApp().GetTopWindow()
+        #mainwindow = wx.App.Get().GetTopWindow()
         #size = mainwindow.GetSize()
         #self.SetMaxSize((int(size.GetWidth() * 0.75), int(size.GetHeight() * 0.75)))
-        self.SetMaxSize((800,400))
+        self.SetMaxSize(wx.Size(800,400))
 
         self.connection = conn
 
@@ -53,7 +56,7 @@ class MediaInfo(wx.Dialog):
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sp.SetSizer(self.sizer)
-        self.sp.SetAutoLayout(1)
+        self.sp.SetAutoLayout(True)
         self.sp.SetupScrolling(scroll_x = False)
 
         self.connection.status_bar.feature_icons['MSP'].Bind(wx.EVT_LEFT_UP, self.toggle_visible)
@@ -81,6 +84,7 @@ class MediaInfo(wx.Dialog):
 
     def Close(self, force = False):
         self.toggle_visible()
+        return super().Close(force)
 
     def play_msp_sound(self, sound_type, filename, params):
         wx.LogMessage(f"MediaInfo going to play {sound_type}, {filename}, {params}")
@@ -100,7 +104,7 @@ class MediaInfo(wx.Dialog):
 
         else:
             # TODO - parse filename for wildcards and bail on invalid name
-            if os.path.isabs(filename):
+            if Path(filename).is_absolute():
                 wx.LogError(f"Error: absolute filename specified in MSP path  '{filename}', ignoring")
                 return
 
@@ -115,17 +119,17 @@ class MediaInfo(wx.Dialog):
 
             # Now we should have a sane filename, let's go search for it
 
-            paths_to_check = [os.path.join(self.sound_dir, globfile)]
+            paths_to_check = [self.sound_dir]
             # params['T'] can be used to specify subdir, so try that first:
             if 'T' in params:
-                paths_to_check = [os.path.join(self.sound_dir, params['T'], filename)] + paths_to_check
+                paths_to_check = [self.sound_dir / params['T'], *paths_to_check]
 
             for checkpath in paths_to_check:
                 wx.LogMessage(f"about to check for {checkpath}")
-                filelist = glob.glob(checkpath)
-                if filelist:
+
+                if filelist := sorted(checkpath.glob(globfile)):
                     # We got results;  if there's more than one, pick one at random
-                    fullpath = (filelist[0] if len(filelist) == 1 else random.choice(filelist))
+                    fullpath = random.choice(filelist)
                     break
 
             if not fullpath:   # glob didn't find it
@@ -142,13 +146,13 @@ class MediaInfo(wx.Dialog):
                 # params['T'] can be used to specify subdir, so try that first:
                 if 'T' in params:
                     extra_path = params['T']
-                    urls_to_check = [extra_path + "/" + filename] + urls_to_check
+                    urls_to_check = [extra_path + "/" + filename, *urls_to_check]
 
                 for url in urls_to_check:
-                    newfile, headers = urllib.request.urlretrieve(url_path + filename,
-                            os.path.join(self.sound_dir, extra_path, filename))
+                    newfile, _ = urllib.request.urlretrieve(url_path + url,
+                            self.sound_dir / extra_path / filename)
                     # TODO - how do we check for errors?
-                    if os.path.exists(newfile):
+                    if Path(newfile).exists():
                         wx.LogMessage(f"Found MSP sound {filename} at {url_path + filename}, saving to {newfile}")
                         fullpath = newfile
                         break
@@ -172,7 +176,7 @@ class MediaInfo(wx.Dialog):
 
             if 'C' in params and sound_type == "MUSIC":
                 wx.LogMessage(f"Setting Continue to {params['C']}")
-                player.SetContinue(int((params['C'])))
+                player.SetContinue(int(params['C']))
 
             if 'P' in params and sound_type == "SOUND":
                 wx.LogMessage(f"Setting Priority to {params['P']}")
@@ -181,7 +185,7 @@ class MediaInfo(wx.Dialog):
 
 class PlayerPanel(wx.Panel):
 
-    icons = {}
+    icons : ClassVar[dict] = {}
 
     def __init__(self, parent, sound_type, filename, fullpath):
         wx.Panel.__init__(self, parent, -1, style = wx.TAB_TRAVERSAL|wx.CLIP_CHILDREN)
@@ -198,7 +202,7 @@ class PlayerPanel(wx.Panel):
             if hasattr(sys, '_MEIPASS'):
                 configpath = Path(sys._MEIPASS) # pyright: ignore
             else:
-                configpath = Path(wx.GetApp().path)
+                configpath = Path(wx.App.Get().path)
 
             iconpath = configpath / 'icons' / 'media'
             if iconpath.exists():
@@ -206,38 +210,38 @@ class PlayerPanel(wx.Panel):
                     button = icon_file.stem
                     self.icons[button] = wx.Bitmap(str(icon_file))
 
-        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn1 = wx.ToggleButton(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = wx.Size(20,20))
         btn1.SetBitmap(self.icons['volume'])
         btn1.SetBitmapPressed(self.icons['mute'])
         btn1.Bind(wx.EVT_TOGGLEBUTTON, self.OnMute)
         btn1.SetToolTip("Mute")
 
-        medialabel = wx.StaticText(self, label = Path(filename).stem, size = (150,-1),
+        medialabel = wx.StaticText(self, label = Path(filename).stem, size = wx.Size(150,-1),
                                   style = wx.ALIGN_CENTER|wx.ST_ELLIPSIZE_MIDDLE,)
 
         volume_ctrl = wx.Slider(self, -1, 0, 0, 100)
         self.volume_ctrl = volume_ctrl
-        volume_ctrl.SetMinSize((100, -1))
+        volume_ctrl.SetMinSize(wx.Size(100, -1))
         volume_ctrl.Bind(wx.EVT_SLIDER, self.OnVol)
         volume_ctrl.SetToolTip("Volume")
 
         seekbar = wx.Slider(self, -1, 0, 0, 10)
         self.seekbar = seekbar
-        seekbar.SetMinSize((150, -1))
+        seekbar.SetMinSize(wx.Size(150, -1))
         seekbar.Bind(wx.EVT_SLIDER, self.OnSeek)
         seekbar.SetToolTip("Seek")
 
-        btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn2 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = wx.Size(20,20))
         btn2.SetBitmap(self.icons['play'])
         btn2.Bind(wx.EVT_BUTTON, self.OnPlay)
         btn2.SetToolTip("Play")
 
-        btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn3 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = wx.Size(20,20))
         btn3.SetBitmap(self.icons['pause'])
         btn3.Bind(wx.EVT_BUTTON, self.OnPause)
         btn3.SetToolTip("Pause")
 
-        btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = (20,20))
+        btn4 = wx.Button(self, style = wx.BU_EXACTFIT|wx.BORDER_NONE, size = wx.Size(20,20))
         btn4.SetBitmap(self.icons['stop'])
         btn4.Bind(wx.EVT_BUTTON, self.OnStop)
         btn4.SetToolTip("Stop")
