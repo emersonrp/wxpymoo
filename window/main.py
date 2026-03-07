@@ -17,7 +17,7 @@ from worlds import worlds
 class Main(wx.Frame):
 
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title)
+        super().__init__(parent, title = title)
 
         self.about_info     = None
         self.connect_dialog = None
@@ -223,7 +223,7 @@ class Main(wx.Frame):
 
 class MOONotebook(AuiNotebook):
     def __init__(self, parent):
-        AuiNotebook.__init__(self, parent, style =
+        super().__init__(parent, style =
                 wx.aui.AUI_NB_TAB_FIXED_WIDTH|wx.aui.AUI_NB_CLOSE_ON_ALL_TABS|wx.aui.AUI_NB_DEFAULT_STYLE)
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSE,   self.onPageClose)
         self.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CLOSED,  self.showOrHideTabs)

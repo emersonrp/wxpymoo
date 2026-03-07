@@ -3,7 +3,7 @@ import wx
 class MSSPInfo(wx.Dialog):
     def __init__(self, conn):
         worldname = conn.world.get('name')
-        wx.Dialog.__init__(self, conn, title = "MSSP Info: " + worldname,
+        super().__init__(conn, title = "MSSP Info: " + worldname,
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 

@@ -19,6 +19,7 @@ class WxPyMooApp(WxAsyncApp):
 async def run():
     app = WxPyMooApp()
 
+    # Set logging to STDERR for now
     wx.Log.SetActiveTarget(wx.LogStderr())
 
     # Let's try to unbuffer "print" for easier debug

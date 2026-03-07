@@ -6,7 +6,7 @@ from pathlib import Path
 
 class Editor(wx.EvtHandler):
     def __init__(self, opts):
-        wx.EvtHandler.__init__(self)
+        super().__init__()
 
         self._id        = wx.NewId()
         self.filetype   = opts['filetype']

@@ -10,7 +10,6 @@ stdpaths = wx.StandardPaths.Get()
 if platform.system() == "Linux":
     stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
 
-
 def get_prefs_dir():
     return Path(wx.StandardPaths.Get().GetUserConfigDir()) / 'wxpymoo'
 

@@ -14,8 +14,7 @@ conntypes = [ 'Direct', 'SSL', 'SSH Fwd' ]
 class WorldsList(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title = 'Worlds List', style =
-                wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
+        super().__init__(parent, title = 'Worlds List', style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 
         self.parent = parent
 

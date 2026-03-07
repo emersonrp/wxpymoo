@@ -3,7 +3,7 @@ from mcp21.package import MCPPackageBase
 
 class MCPPackage(MCPPackageBase):
     def __init__(self, mcp):
-        MCPPackageBase.__init__(self, mcp)
+        super().__init__(mcp)
 
         self.package = 'dns-com-awns-displayurl'
         self.min     = '1.0'

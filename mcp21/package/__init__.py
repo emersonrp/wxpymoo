@@ -2,7 +2,7 @@ import wx
 
 class MCPPackageBase(wx.EvtHandler):
     def __init__(self, mcp):
-        wx.EvtHandler.__init__(self)
+        super().__init__()
 
         self.activated = None
         self.callback = None

@@ -16,10 +16,8 @@ LOCALEDIT_LINE = re.compile(utility.OOB_PREFIX.pattern + ' edit name: (.+?) uplo
 RowColChangeEvent, EVT_ROW_COL_CHANGED = wx.lib.newevent.NewEvent()
 
 class OutputPane(BasePane):
-    def __init__(self, parent, connection):
-        BasePane.__init__(self, parent, connection,
-            style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE
-        )
+    def __init__(self, parent):
+        super().__init__(parent, style = wx.TE_AUTO_URL | wx.TE_READONLY | wx.TE_NOHIDESEL | wx.TE_MULTILINE)
 
         # state toggles for ANSI processing
         self.intensity        = ''

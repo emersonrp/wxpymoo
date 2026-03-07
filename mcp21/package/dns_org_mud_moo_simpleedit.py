@@ -3,7 +3,7 @@ from mcp21.package import MCPPackageBase
 from editor import Editor
 class MCPPackage(MCPPackageBase):
     def __init__(self, mcp):
-        MCPPackageBase.__init__(self, mcp)
+        super().__init__(mcp)
 
         self.package = 'dns-org-mud-moo-simpleedit'
         self.min     = '1.0'

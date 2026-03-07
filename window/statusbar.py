@@ -6,7 +6,7 @@ import EnhancedStatusBar as ESB
 
 class StatusBar(ESB.EnhancedStatusBar):
     def __init__(self, parent, connection):
-        ESB.EnhancedStatusBar.__init__(self, parent)
+        super().__init__(parent)
         self.parent = parent
         self.connection = connection
 
@@ -147,7 +147,7 @@ class StatusBar(ESB.EnhancedStatusBar):
 
 class FeatureIcon(wx.Panel):
     def __init__(self, parent, i, w):
-        wx.Panel.__init__(self, parent)
+        super().__init__(parent)
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.icon = wx.StaticBitmap(self, -1, w)
         sizer.Add(self.icon)

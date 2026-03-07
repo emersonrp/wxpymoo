@@ -19,7 +19,7 @@ import filters.telnetiac
 # the 'connection' contains both the network connection and the i/o ui
 class Connection(wx.SplitterWindow):
     def __init__(self, mainwindow):
-        wx.SplitterWindow.__init__(self, mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
+        super().__init__(mainwindow.tabs, style = wx.SP_LIVE_UPDATE)
         self.world          = None
 
         # these two are set with dns_com_awns_serverinfo but hypothetically
@@ -43,8 +43,8 @@ class Connection(wx.SplitterWindow):
         self.reader = None
         self.writer = None
 
-        self.input_pane  = InputPane(self, self)
-        self.output_pane = OutputPane(self, self)
+        self.input_pane  = InputPane(self)
+        self.output_pane = OutputPane(self)
         self.status_bar  = StatusBar(mainwindow, self)
         self.mainwindow  = mainwindow
         self.debug_mcp   = None

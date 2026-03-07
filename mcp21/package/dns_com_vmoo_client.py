@@ -3,7 +3,7 @@ from window.outputpane import EVT_ROW_COL_CHANGED
 
 class MCPPackage(MCPPackageBase):
     def __init__(self, mcp):
-        MCPPackageBase.__init__(self, mcp)
+        super().__init__(mcp)
 
         self.package = 'dns-com-vmoo-client'
         self.min     = '1.0'

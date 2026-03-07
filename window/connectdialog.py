@@ -3,7 +3,7 @@ from worlds import World
 
 class ConnectDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
+        super().__init__(parent, title = 'Connect to World', style = wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
 
         self.parent = parent
 

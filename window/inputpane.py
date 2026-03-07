@@ -6,14 +6,11 @@ from theme import Theme
 
 class InputPane(BasePane):
 
-    def __init__(self, parent, connection):
-        BasePane.__init__(self, parent, connection,
-            style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE
-        )
+    def __init__(self, parent):
+        super().__init__(parent, style = wx.TE_PROCESS_ENTER | wx.TE_MULTILINE)
 
         self.cmd_history    = CommandHistory(self)
-        self.tab_completion = TabCompletion(self, connection)
-        self.connection     = connection
+        self.tab_completion = TabCompletion(self, parent)
 
         self.tabs = wx.App.Get().GetTopWindow().tabs
 
@@ -228,9 +225,7 @@ class CommandHistory:
 
 class TabCompletion(wx.PopupWindow):
     def __init__(self, parent, connection):
-        wx.PopupWindow.__init__(self, parent,
-            flags = wx.BORDER_SIMPLE
-        )
+        super().__init__(parent, flags = wx.BORDER_SIMPLE)
         self.verbs = []
         self.names = []
         self.parent = parent
@@ -342,9 +337,7 @@ class TabCompletion(wx.PopupWindow):
 class CompletionList(wx.ListCtrl):
     def __init__(self, parent):
 
-        wx.ListCtrl.__init__(self, parent,
-            style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL
-        )
+        super().__init__(parent, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL)
 
         self.parent = parent
 

@@ -8,7 +8,7 @@ plainMsgAttr  = wx.TextAttr(wx.Colour(0,   0, 0))
 class DebugMCP(wx.Dialog):
     def __init__(self, parent, conn):
         worldname = conn.world.get('name')
-        wx.Dialog.__init__(self, parent, title = "Debug MCP: " + worldname,
+        super().__init__(parent, title = "Debug MCP: " + worldname,
             style = wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE
         )
 

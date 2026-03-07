@@ -5,7 +5,7 @@ from mcp21.package import MCPPackageBase
 # list of rehashed thingies, with which it does nothing.
 class MCPPackage(MCPPackageBase):
     def __init__(self, mcp):
-        MCPPackageBase.__init__(self, mcp)
+        super().__init__(mcp)
 
         self.package = 'dns-com-awns-rehash'
         self.min     = '1.0'

@@ -5,10 +5,10 @@ from theme import Theme
 
 class BasePane(rtc.RichTextCtrl):
 
-    def __init__(self, parent, connection, style):
-        rtc.RichTextCtrl.__init__(self, parent, style)
+    def __init__(self, parent, style):
+        super().__init__(parent, style)
 
-        self.connection = connection
+        self.connection = parent
         self.cols = 0
         self.rows = 0
         self.basic_style = None
@@ -23,10 +23,10 @@ class BasePane(rtc.RichTextCtrl):
         self.Clear()
         self.restyle_thyself()
 
-        self.Bind(wx.EVT_MIDDLE_DOWN                 , self.paste_with_middle_mouse )
-        self.Bind(wx.EVT_LEFT_UP                     , self.left_mouse_up)
-        self.Bind(wx.EVT_LEFT_DOWN                   , self.left_mouse_down)
-        self.Bind(wx.EVT_MOTION                      , self.mouse_moved)
+        self.Bind(wx.EVT_MIDDLE_DOWN , self.paste_with_middle_mouse )
+        self.Bind(wx.EVT_LEFT_UP     , self.left_mouse_up)
+        self.Bind(wx.EVT_LEFT_DOWN   , self.left_mouse_down)
+        self.Bind(wx.EVT_MOTION      , self.mouse_moved)
 
     # reinventing xmouse, one event at a time.
     def mouse_moved(self, evt):
