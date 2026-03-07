@@ -203,14 +203,16 @@ class Main(wx.Frame):
         ...
 
     def showAboutBox(self, _):
+        from datetime import datetime, UTC
+        this_year = datetime.now(tz = UTC).year
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
-            info.AddDeveloper('R Pickett (emerson@hayseed.net)')
-            info.AddDeveloper('lisdude (https://github.com/lisdude)')
-            info.AddDeveloper('C Bodt (https://github.com/sirk390)')
-            info.AddDeveloper('Andrea Gavana')
-            info.SetCopyright('(c) 2013-2024')
-            info.SetWebSite('https://emersonrp.github.io/wxpymoo/')
+            info.AddDeveloper('R Pickett https://github.com/emersonrp')
+            info.AddDeveloper('lisdude https://github.com/lisdude')
+            info.AddDeveloper('C Bodt https://github.com/sirk390')
+            info.AddDeveloper('Andrea Gavana https://github.com/infinity77')
+            info.SetCopyright(f'\u00A9 2013-{this_year} R Pickett <emerson@hayseed.net>')
+            info.SetWebSite('https://github.com/emersonrp/wxpymoo/')
             info.SetName('wxpymoo')
             info.SetLicense(Path('LICENSE').read_text())
             info.SetVersion('0.1.8')
