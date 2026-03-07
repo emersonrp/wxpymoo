@@ -48,6 +48,7 @@ class Connection(wx.SplitterWindow):
         self.status_bar  = StatusBar(mainwindow, self)
         self.mainwindow  = mainwindow
         self.debug_mcp   = None
+        self.mssp_info   = None
 
         self.SplitHorizontally(self.output_pane, self.input_pane)
         self.SetMinimumPaneSize(self.input_pane.font_size()[1] * 2)
@@ -219,7 +220,9 @@ class Connection(wx.SplitterWindow):
 
     ### feature init callbacks
     def mcp_init_callback(self):
-        self.debug_mcp = DebugMCP(self.mainwindow, self)
+        if not self.debug_mcp:
+            self.debug_mcp = DebugMCP(self.mainwindow, self)
 
     def mssp_init_callback(self):
-        self.mssp_info = MSSPInfo(self)
+        if not self.mssp_info:
+            self.mssp_info = MSSPInfo(self)
